@@ -1,0 +1,271 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Montserrat', sans-serif;
+    background: #ffffff;
+}
+
+.page {
+    display: flex;
+    flex-direction: row;
+    margin: 10px;
+}
+
+.error {
+    color: red;
+}
+
+.success {
+    color: green;
+}
+
+.body {
+    display: block;
+    flex-direction: column;
+    width: 85%;
+    justify-content: center;
+    background: #ffffff;
+}
+
+.sidebar {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    border-left: 3px solid #B8D5CD;
+    background: #ffffff;
+}
+
+.header {
+    display: block;
+    font-size: 36pt;
+    color: #006A4E;
+    text-align: center;
+}
+
+a.header {
+    text-decoration: none;
+}
+
+.description {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 16pt;
+    color: #006A4E;
+    text-align: center;
+}
+
+.page-name {
+    display: block;
+    margin-top: 10px;
+    margin-left: 10px;
+    font-size: 24pt;
+    color: #006A4E;
+    text-align: left;
+}
+
+.content {
+    margin: 10px;
+    size: 16pt;
+}
+
+ul.account-menu {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+    background: #B8D5CD;
+}
+
+.account {
+    display: flex;
+    flex-direction: row;
+    margin: 10px;
+}
+
+ul.account-menu {
+    justify-content: center;
+    align-content: center;
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
+    display: block;
+    background: #B8D5CD;
+}
+
+a.account-menu {
+    width: 130px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 14pt;
+    padding: 15px;
+    display: block;
+    color: #006A4E;
+    border-bottom: 1px solid #006A4E;
+}
+
+.account-content {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    display: inline-flex;
+    flex-direction: column;
+    size: 16pt;
+    font-family: 'Montserrat', sans-serif;
+}
+
+a.account-menu:hover {
+    background: #fff9e6;
+}
+
+p.content {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+}
+
+.footer {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: #006A4E;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:visited {
+    color: #006A4E;
+}
+
+ul.menu {
+    justify-content: center;
+    align-content: center;
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+    display: -webkit-flex;
+    display: flex;
+    background: #B8D5CD;
+}
+
+a.menu {
+    text-decoration: none;
+    font-size: 14pt;
+    padding: 1em;
+    display: block;
+    color: #006A4E;
+    border-right: 1px solid #B8D5CD;
+}
+
+a.menu:hover {
+    background: #8ABAAE;
+}
+
+body {
+    background-color: #ffffff;
+}
+
+.reviews {
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+.review {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 10px;
+    border: 1px solid #006A4E;
+    background-color: #B8D5CD;
+    display: block;
+}
+
+.entities {
+    display: -webkit-flex;
+    flex-direction: column;
+}
+
+.entity {
+    border: 1px solid #006A4E;
+    background-color: #B8D5CD;
+    display: block;
+}
+
+.pagination {
+    margin-top: 5pt;
+}
+
+.pagination a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+}
+
+.pagination a.active {
+    background-color: dodgerblue;
+    color: white;
+}
+
+.pagination a:hover:not(.active) {
+    background-color: #ddd;
+}
+
+ul.footer {
+    justify-content: center;
+    align-content: center;
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+    display: -webkit-flex;
+    display: flex;
+    background: #ffffff;
+}
+
+a.footer {
+    text-decoration: none;
+    font-size: 12pt;
+    padding: 1em;
+    display: block;
+    color: #006A4E;
+}
+
+.feedback {
+    border: 1px solid #006A4E;
+    background-color: #B8D5CD;
+    display: block;
+}
+
+img.account-menu {
+    position: center;
+    size: 14px;
+}
+
+img.menu {
+    position: center;
+    size: 14px;
+}
+
+.statictics-block {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    padding: 10px;
+    border: 1px solid #006A4E;
+    background-color: #B8D5CD;
+    display: block;
+}
+
+.search {
+    margin: 10px;
+    display: block;
+    justify-content: center;
+    flex-direction: column;
+    border-bottom: 1px solid #fdf3dc;
+    background: #ffffff;
+}

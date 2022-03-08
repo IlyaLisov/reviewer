@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Reviewer - отзывы об учреждениях образования Беларуси</title>
+    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+</head>
+<body>
+<div class=container>
+    <div th:insert="blocks/header :: header"></div>
+    <div class="page">
+        <div class="body">
+            <div class="content">
+                <p class="content"> Reviewer - веб-сервис для просмотра и добавления отзывов об учреждениях образования
+                    Беларуси. </p>
+                <p class="content"> Выбрать правильное место учебы - важный шаг. Наши отзывы подтверждены
+                    документами. </p>
+                <p class="content"> Для взаимодействия с сервисом необходимо <a th:href="@{/login}"> авторизоваться </a>
+                    или
+                    <a th:href="@{/register}"> зарегистрироваться</a> . </p>
+            </div>
+        </div>
+        <div th:insert="blocks/sidebar :: sidebar"></div>
+    </div>
+    <div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>

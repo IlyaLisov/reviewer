@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Аккаунт - Reviewer</title>
+    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div th:insert="blocks/header :: header"></div>
+    <div class="page">
+        <div class="body">
+            <div class="page-name">
+                Аккаунт
+            </div>
+            <div class="account">
+                <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu :: account-menu-admin} : ~{blocks/account-menu :: account-menu-user}"></div>
+                <div class="account-content">
+                    <p>Добро пожаловать, <a th:text="${session.user.name}"></a></p>
+                    <p>Ваш рейтинг: <a th:text="${session.user.rating}"></a> </p>
+                    <p>Это Ваша личная учетная запись. С помощью нее Вы можете голосовать за правильные на Ваш взгляд
+                        отзывы, а также оставлять свои собственные отзывы и оценки.</p>
+                    <p>Вы можете оставить отзыв только о тех учреждениях образования, документы которых Вы <a th:href="@{/roles}">загрузили</a>, и об их сотрудниках.</p>
+                    <p class="success" th:text="${success}"></p>
+                    <p class="error" th:text="${error}"></p>
+                </div>
+            </div>
+        </div>
+        <div th:insert="blocks/sidebar :: sidebar"></div>
+    </div>
+    <div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>
