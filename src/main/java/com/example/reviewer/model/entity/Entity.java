@@ -1,17 +1,56 @@
 package com.example.reviewer.model.entity;
 
-public class Entity {
-    private Long id;
-    private EntityType type;
-    private String name;
-    private Region region;
-    private District district;
-    private String address;
-    private String siteURL;
-    private int rating;
+import com.example.reviewer.model.user.User;
+import com.sun.istack.NotNull;
+import org.hibernate.annotations.Formula;
 
-    private int reviewsAmount;
-    private int peopleEnvolved;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+@javax.persistence.Entity
+public class Entity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private EntityType type;
+
+    @NotNull
+    private String name;
+
+    @NotNull
+    @Enumerated(value = EnumType.STRING)
+    private Region region;
+
+    @NotNull
+    @Enumerated(value = EnumType.STRING)
+    private District district;
+
+    private String address;
+
+    private String siteURL;
+
+    @NotNull
+    private Integer rating;
+
+    @NotNull
+    @ManyToOne
+    private User author;
+
+    @ManyToOne
+    private Entity parentEntity;
+
+    @Formula("(SELECT COUNT(*) FROM rdb.review r WHERE r.entity_id = id)")
+    private Integer reviewsAmount;
+
+    @Formula("(SELECT COUNT(DISTINCT author_id) FROM rdb.review r WHERE r.entity_id = id)")
+    private Integer peopleEnvolved;
 
     public Long getId() {
         return id;
@@ -69,27 +108,43 @@ public class Entity {
         this.siteURL = siteURL;
     }
 
-    public int getRating() {
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Integer rating) {
         this.rating = rating;
     }
 
-    public int getReviewsAmount() {
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public Entity getParentEntity() {
+        return parentEntity;
+    }
+
+    public void setParentEntity(Entity parentEntity) {
+        this.parentEntity = parentEntity;
+    }
+
+    public Integer getReviewsAmount() {
         return reviewsAmount;
     }
 
-    public void setReviewsAmount(int reviewsAmount) {
+    public void setReviewsAmount(Integer reviewsAmount) {
         this.reviewsAmount = reviewsAmount;
     }
 
-    public int getPeopleEnvolved() {
+    public Integer getPeopleEnvolved() {
         return peopleEnvolved;
     }
 
-    public void setPeopleEnvolved(int peopleEnvolved) {
+    public void setPeopleEnvolved(Integer peopleEnvolved) {
         this.peopleEnvolved = peopleEnvolved;
     }
 }

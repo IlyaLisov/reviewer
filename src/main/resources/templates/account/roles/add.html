@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить роль - Reviewer</title>
+    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div th:insert="blocks/header :: header"></div>
+    <div class="page">
+        <div class="body">
+            <div class="page-name">
+                Аккаунт
+            </div>
+            <div class="account">
+                <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu :: account-menu-admin} : ~{blocks/account-menu :: account-menu-user}"></div>
+                <div class="account-content">
+                    <p> Для получения возможности оставлять отзывы Вам необходимо получить роль, подтвердив ее
+                        документом с места работы или учебы. </p>
+                    <p> На фотографии документа должна присутствовать дата выдачи и печать учреждения образования. </p>
+                    <p> Допустимые типы фото: .png, .jpeg, .jpg. </p>
+                    <form th:action="@{/account/roles/add}" method="post" enctype="multipart/form-data">
+                        <label for="name">Введите название учреждения образования</label><br><br>
+                        <input type="text" id="name" name="name" required/><br><br>
+                        <label for="role">Выберите Вашу роль в данном учреждении образования:</label><br><br>
+                        <select id="role" name="role" required>
+                            <option value="student">Учащийся</option>
+                            <option value="former_student">Выпускник</option>
+                            <option value="employee">Сотрудник</option>
+                            <option value="former_employee">Бывший сотрудник</option>
+                        </select><br><br>
+                        Выберите фотографию документа: <input type="file" name="file" required>
+                        <br><br>
+                        <button>Загрузить</button>
+                    </form>
+                    <p class="success" th:text="${success}"></p>
+                    <p class="error" th:text="${error}"></p>
+                </div>
+            </div>
+        </div>
+        <div th:insert="blocks/sidebar :: sidebar"></div>
+    </div>
+    <div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>

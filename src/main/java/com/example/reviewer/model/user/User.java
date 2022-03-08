@@ -3,27 +3,56 @@ package com.example.reviewer.model.user;
 import com.example.reviewer.model.entity.Entity;
 import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.role.RoleEntity;
+import com.sun.istack.NotNull;
 
+import javax.persistence.CascadeType;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@javax.persistence.Entity
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @NotNull
     private String name;
+
+    @NotNull
     private String login;
+
+    @NotNull
     private String password;
-    private int rating;
+
+    @NotNull
+    private Integer rating;
+
+    @NotNull
     private LocalDate registerDate;
+
+    @NotNull
     private LocalDate lastSeenDate;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    private List<RoleEntity> roles;
+    @OneToMany
+    private List<RoleEntity> roles = new ArrayList<>();
 
     public User() {
+        this.rating = 0;
         this.registerDate = LocalDate.now();
         this.lastSeenDate = LocalDate.now();
-        this.roles = new ArrayList<>();
     }
 
     public Long getId() {
@@ -58,11 +87,11 @@ public class User {
         this.password = password;
     }
 
-    public int getRating() {
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Integer rating) {
         this.rating = rating;
     }
 
@@ -92,6 +121,10 @@ public class User {
 
     public List<RoleEntity> getRoles() {
         return roles;
+    }
+
+    public void setRoles(List<RoleEntity> roles) {
+        this.roles = roles;
     }
 
     public void addRole(Role role, Entity entity) {

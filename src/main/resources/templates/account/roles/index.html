@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои роли - Reviewer</title>
+    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div th:insert="blocks/header :: header"></div>
+    <div class="page">
+        <div class="body">
+            <div class="page-name">
+                Аккаунт
+            </div>
+            <div class="account">
+                <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu :: account-menu-admin} : ~{blocks/account-menu :: account-menu-user}"></div>
+                <div class="account-content">
+                    <p>В этом разделе расположены все Ваши роли в учреждениях образования. Они полностью анонимны и
+                        информация об их авторстве доступна только Вам.</p>
+                    <p>Вы можете добавить свою роль в любое время. Она появится в Вашем профиле сразу после
+                        подтверждения. После этого вы сможете использовать весь функционал приложения, доступный для
+                        данной роли, а именно:</p>
+                    <li>Вы сможете оставлять отзывы на эти учреждения образования и их сотрудников;</li>
+                    <li>Если у вас роль Администратора в данном учреждении образования, то вы можете создавать его сотрудников и модерировать это учреждение образования.</li>
+                    <h4>Подтвержденные роли: </h4>
+                    <h4><a th:href="@{/account/roles/add}"> Добавить роль </a></h4>
+                </div>
+            </div>
+        </div>
+        <div th:insert="blocks/sidebar :: sidebar"></div>
+    </div>
+    <div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>

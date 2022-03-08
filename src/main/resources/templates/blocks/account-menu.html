@@ -1,0 +1,26 @@
+<div th:fragment="account-menu-admin">
+    <div class="account-menu">
+        <ul class="account-menu">
+            <li><a class="account-menu" th:href="@{/account}"> Аккаунт </a></li>
+            <li><a class="account-menu" th:href="@{/account/admin}"> Панель администратора </a></li>
+            <li><a class="account-menu" th:href="@{/account/roles}"> Ваши роли </a></li>
+            <li><a class="account-menu" th:href="@{/account/reviews}"> Ваши отзывы </a></li>
+            <li><a class="account-menu" th:href="@{/account/bookmarks}"> Ваши оценки </a></li>
+            <li><a class="account-menu" th:href="@{/account/settings}"> Настройки </a></li>
+            <li><a class="account-menu" th:href="@{/logout}"> Выйти </a></li>
+        </ul>
+    </div>
+</div>
+
+<div th:fragment="account-menu-user">
+    <div class="account-menu">
+        <ul class="account-menu">
+            <li><a class="account-menu" th:href="@{/account}"> Аккаунт </a></li>
+            <li><a class="account-menu" th:href="@{/account/roles}"> Ваши роли </a></li>
+            <li><a class="account-menu" th:href="@{/account/reviews}"> Ваши отзывы </a></li>
+            <li><a class="account-menu" th:href="@{/account/bookmarks}"> Ваши оценки </a></li>
+            <li><a class="account-menu" th:href="@{/account/settings}"> Настройки </a></li>
+            <li><a class="account-menu" th:href="@{/logout}"> Выйти </a></li>
+        </ul>
+    </div>
+</div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Обратная связь - Reviewer</title>
@@ -31,7 +31,8 @@
                     <textarea style="width: 90%; height: 150px; resize: none;" id = "text" name = "text" required></textarea><br><br>
                     <button type="submit">Отправить</button>
                 </form>
-                <p class="success" th:text="${success}"><p/>
+                <p class="success" th:text="${success}"></p>
+                <p class="error" th:text="${error}"></p>
             </div>
         </div>
         <div th:insert="blocks/sidebar :: sidebar"></div>

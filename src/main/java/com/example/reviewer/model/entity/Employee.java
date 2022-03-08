@@ -1,11 +1,32 @@
 package com.example.reviewer.model.entity;
 
+import com.sun.istack.NotNull;
+
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+@javax.persistence.Entity
 public class Employee {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
     private EmployeeType employeeType;
+
+    @NotNull
     private String name;
+
+    @NotNull
+    @ManyToOne
     private Entity entity;
-    private int rating;
+
+    private Integer rating;
 
     public Long getId() {
         return id;
@@ -39,11 +60,11 @@ public class Employee {
         this.entity = entity;
     }
 
-    public int getRating() {
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Integer rating) {
         this.rating = rating;
     }
 }

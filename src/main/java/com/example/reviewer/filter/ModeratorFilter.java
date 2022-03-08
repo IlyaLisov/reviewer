@@ -11,12 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class AdminFilter implements Filter {
+public class ModeratorFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         User user = (User) ((HttpServletRequest) (servletRequest)).getSession().getAttribute("user");
 
-        if (user == null || !user.isAdmin()) {
+        if (user == null || !(user.isAdmin() || user.isModerator())) {
             HttpServletResponse response = (HttpServletResponse) servletResponse;
             response.sendRedirect("/account");
         } else {
