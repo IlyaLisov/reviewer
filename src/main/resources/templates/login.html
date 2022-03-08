@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход в аккаунт - Reviewer</title>
+    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class=container>
+    <div th:insert="blocks/header :: header"></div>
+    <div class="page">
+        <div class="body">
+            <div class="page-name">
+                Вход в аккаунт
+            </div>
+            <div class="content">
+                <form id="auth" th:action="@{/login}" method="post">
+                    <label for="login">Логин</label><br>
+                    <input type="text" name="login" id="login" required placeholder="обязательное поле">
+                    <br><br><label for="password">Пароль</label><br>
+                    <input type="password" name="password" id="password" required placeholder="обязательное поле">
+                    <br><br><input type="submit" value="Войти">
+                </form>
+                <p class="error" th:text="${error}"></p>
+                <h4> Ещё нет аккаунта? <a th:href="@{/register}"> Зарегистрироваться </a></h4>
+            </div>
+        </div>
+        <div th:insert="blocks/sidebar :: sidebar"></div>
+    </div>
+    <div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>

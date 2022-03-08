@@ -11,6 +11,14 @@
     margin: 10px;
 }
 
+.error {
+    color: red;
+}
+
+.success {
+    color: green;
+}
+
 .body {
     display: block;
     flex-direction: column;
@@ -30,7 +38,7 @@
 .header {
     display: block;
     font-size: 36pt;
-    color: #1B1BB3;
+    color: #006A4E;
     text-align: center;
 }
 
@@ -42,7 +50,7 @@ a.header {
     display: block;
     margin-bottom: 10px;
     font-size: 16pt;
-    color: #1B1BB3;
+    color: #006A4E;
     text-align: center;
 }
 
@@ -51,7 +59,7 @@ a.header {
     margin-top: 10px;
     margin-left: 10px;
     font-size: 24pt;
-    color: #1B1BB3;
+    color: #006A4E;
     text-align: left;
 }
 
@@ -67,7 +75,7 @@ ul.account-menu {
     list-style: none;
     margin: 0;
     padding-left: 0;
-    background: #FFD7A7;
+    background: #B8D5CD;
 }
 
 .account {
@@ -85,7 +93,7 @@ ul.account-menu {
     display: -webkit-flex;
     -webkit-flex-direction: column;
     display: block;
-    background: #FFD7A7;
+    background: #B8D5CD;
 }
 
 a.account-menu {
@@ -95,8 +103,8 @@ a.account-menu {
     font-size: 14pt;
     padding: 15px;
     display: block;
-    color: #1B1BB3;
-    border-bottom: 1px solid #FFAB51;
+    color: #006A4E;
+    border-bottom: 1px solid #006A4E;
 }
 
 .account-content {
@@ -121,7 +129,7 @@ p.content {
 .footer {
     margin-top: 10px;
     margin-bottom: 10px;
-    color: #1B1BB3;
+    color: #006A4E;
     font-family: 'Montserrat', sans-serif;
     text-align: center;
 }
@@ -131,7 +139,7 @@ a {
 }
 
 a:visited {
-    color: #1B1BB3;
+    color: #006A4E;
 }
 
 ul.menu {
@@ -142,7 +150,7 @@ ul.menu {
     padding-left: 0;
     display: -webkit-flex;
     display: flex;
-    background: #FFD7A7;
+    background: #B8D5CD;
 }
 
 a.menu {
@@ -150,12 +158,12 @@ a.menu {
     font-size: 14pt;
     padding: 1em;
     display: block;
-    color: #1B1BB3;
-    border-right: 1px solid #FFAB51;
+    color: #006A4E;
+    border-right: 1px solid #B8D5CD;
 }
 
 a.menu:hover {
-    background: #fff9e6;
+    background: #8ABAAE;
 }
 
 body {
@@ -171,8 +179,8 @@ body {
     margin-top: 5px;
     margin-bottom: 5px;
     padding: 10px;
-    border: 1px solid #FFAB51;
-    background-color: #fdf3dc;
+    border: 1px solid #006A4E;
+    background-color: #B8D5CD;
     display: block;
 }
 
@@ -182,8 +190,8 @@ body {
 }
 
 .entity {
-    border: 1px solid #FFAB51;
-    background-color: #fdf3dc;
+    border: 1px solid #006A4E;
+    background-color: #B8D5CD;
     display: block;
 }
 
@@ -224,12 +232,12 @@ a.footer {
     font-size: 12pt;
     padding: 1em;
     display: block;
-    color: #1B1BB3;
+    color: #006A4E;
 }
 
 .feedback {
-    border: 1px solid #FFAB51;
-    background-color: #fdf3dc;
+    border: 1px solid #006A4E;
+    background-color: #B8D5CD;
     display: block;
 }
 
@@ -248,8 +256,8 @@ img.menu {
     margin-bottom: 5px;
     margin-right: 5px;
     padding: 10px;
-    border: 1px solid #FFAB51;
-    background-color: #fdf3dc;
+    border: 1px solid #006A4E;
+    background-color: #B8D5CD;
     display: block;
 }
 

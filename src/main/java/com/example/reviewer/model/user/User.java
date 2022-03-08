@@ -5,6 +5,7 @@ import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.role.RoleEntity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class User {
@@ -15,8 +16,15 @@ public class User {
     private int rating;
     private LocalDate registerDate;
     private LocalDate lastSeenDate;
+    private UserRole userRole;
 
     private List<RoleEntity> roles;
+
+    public User() {
+        this.registerDate = LocalDate.now();
+        this.lastSeenDate = LocalDate.now();
+        this.roles = new ArrayList<>();
+    }
 
     public Long getId() {
         return id;
@@ -74,11 +82,31 @@ public class User {
         this.lastSeenDate = lastSeenDate;
     }
 
+    public UserRole getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
+    }
+
     public List<RoleEntity> getRoles() {
         return roles;
     }
 
     public void addRole(Role role, Entity entity) {
         roles.add(new RoleEntity(this, entity, role));
+    }
+
+    public boolean isAdmin() {
+        return userRole.equals(UserRole.ADMIN);
+    }
+
+    public boolean isModerator() {
+        return userRole.equals(UserRole.MODERATOR);
+    }
+
+    public boolean isUser() {
+        return userRole.equals(UserRole.USER);
     }
 }
