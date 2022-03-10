@@ -20,8 +20,8 @@
                 <p> Чтобы иметь возможность получить ответ, необходимо авторизоваться. </p><br>
                 <b> Если на момент отправки сообщения Вы вошли в аккаунт, то мы будем знать ваш логин. </b><br><br>
                 <form id="feedback" th:action="@{/feedback}" method="post">
-                    <label for="select">Тема</label>
-                    <select id="select" name="select" required>
+                    <label for="theme">Тема</label>
+                    <select id="theme" name="theme" required>
                         <option value="bug">Баг, ошибка в работе сайта</option>
                         <option value="incorrect">Устаревшая или некорректная информация</option>
                         <option value="wish">Рекомендация</option>

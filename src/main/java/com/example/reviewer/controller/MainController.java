@@ -1,8 +1,11 @@
-package com.example.reviewer.controller.main;
+package com.example.reviewer.controller;
 
+import com.example.reviewer.model.feedback.Feedback;
+import com.example.reviewer.model.feedback.FeedbackType;
 import com.example.reviewer.model.user.Crypter;
 import com.example.reviewer.model.user.User;
 import com.example.reviewer.model.user.UserRole;
+import com.example.reviewer.repository.FeedbackRepository;
 import com.example.reviewer.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,9 +21,12 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 
 @Controller
-public class MainController extends com.example.reviewer.controller.main.Controller {
+public class MainController extends com.example.reviewer.controller.Controller {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
+
+    @Autowired
+    private FeedbackRepository feedbackRepository;
 
     @GetMapping("/")
     public String index() {
@@ -46,10 +52,12 @@ public class MainController extends com.example.reviewer.controller.main.Control
                 session.setAttribute("user", userFromDataBase.get());
             } else {
                 model.addAttribute("error","Проверьте правильность введенных данных.");
+                model.addAttribute("login", login);
                 return "login";
             }
         } else {
             model.addAttribute("error", "Проверьте правильность введенных данных.");
+            model.addAttribute("login", login);
             return "login";
         }
         return "redirect:account";
@@ -71,6 +79,8 @@ public class MainController extends com.example.reviewer.controller.main.Control
             Optional<User> userFromDatabase = userRepository.getByLogin(login);
             if(userFromDatabase.isPresent()) {
                 model.addAttribute("error", "Пользователь с таким логином уже существует.");
+                model.addAttribute("name", name);
+                model.addAttribute("login", login);
                 return "register";
             } else {
                 User user = new User();
@@ -86,20 +96,31 @@ public class MainController extends com.example.reviewer.controller.main.Control
             }
         } else {
             model.addAttribute("error", "Введенные пароли не совпадают.");
+            model.addAttribute("name", name);
+            model.addAttribute("login", login);
             return "register";
         }
         return "redirect:account";
     }
 
     @GetMapping("/feedback")
-    public String feedback() {
+    public String feedback(HttpSession session, Model model) {
         return "feedback";
     }
 
     @PostMapping("/feedback")
-    public synchronized String doFeedback(HttpSession session, Model model) {
-        //doFeedback
-        return "feedback";
+    public synchronized String doFeedback(@RequestParam("theme") String theme, @RequestParam("text") String text,
+                                          HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        Feedback feedback = new Feedback();
+        feedback.setFeedbackType(FeedbackType.valueOf(theme.toUpperCase()));
+        feedback.setText(text);
+        if(user != null) {
+            feedback.setAuthor(user);
+        }
+        feedbackRepository.save(feedback);
+        model.addAttribute("success", "Ваше сообщение успешно отправлено.");
+        return feedback(session, model);
     }
 
     @GetMapping("/rules")

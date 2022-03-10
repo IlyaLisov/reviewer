@@ -49,7 +49,7 @@ public class Entity {
     @Formula("(SELECT COUNT(*) FROM rdb.review r WHERE r.entity_id = id)")
     private Integer reviewsAmount;
 
-    @Formula("(SELECT COUNT(DISTINCT author_id) FROM rdb.review r WHERE r.entity_id = id)")
+    @Formula("(SELECT COUNT(DISTINCT r.author_id) FROM rdb.review r WHERE r.entity_id = id)")
     private Integer peopleEnvolved;
 
     public Long getId() {

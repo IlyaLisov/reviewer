@@ -16,7 +16,7 @@
             <div class="content">
                 <form id="auth" th:action="@{/login}" method="post">
                     <label for="login">Логин</label><br>
-                    <input type="text" name="login" id="login" required placeholder="обязательное поле">
+                    <input type="text" name="login" id="login" th:value="*{login}" required placeholder="обязательное поле">
                     <br><br><label for="password">Пароль</label><br>
                     <input type="password" name="password" id="password" required placeholder="обязательное поле">
                     <br><br>
