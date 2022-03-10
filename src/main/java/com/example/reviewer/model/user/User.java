@@ -5,21 +5,19 @@ import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.role.RoleEntity;
 import com.sun.istack.NotNull;
 
-import javax.persistence.CascadeType;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @javax.persistence.Entity
-public class User {
+public class User implements Comparable<User> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -46,8 +44,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    @OneToMany
-    private List<RoleEntity> roles = new ArrayList<>();
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<RoleEntity> roles;
 
     public User() {
         this.rating = 0;
@@ -141,5 +139,23 @@ public class User {
 
     public boolean isUser() {
         return userRole.equals(UserRole.USER);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public int compareTo(User user) {
+        return rating - user.rating;
     }
 }

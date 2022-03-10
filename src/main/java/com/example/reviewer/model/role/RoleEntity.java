@@ -9,7 +9,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @javax.persistence.Entity
@@ -20,7 +19,6 @@ public class RoleEntity {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "user_id")
     private User user;
 
     @NotNull
@@ -37,7 +35,7 @@ public class RoleEntity {
 
     public RoleEntity(User user, Entity entity, Role role) {
         this.user = user;
-        this.entity = entity;
+//        this.entity = entity;
         this.role = role;
     }
 
@@ -56,14 +54,14 @@ public class RoleEntity {
     public void setUser(User user) {
         this.user = user;
     }
-
-    public Entity getEntity() {
-        return entity;
-    }
-
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-    }
+//
+//    public Entity getEntity() {
+//        return entity;
+//    }
+//
+//    public void setEntity(Entity entity) {
+//        this.entity = entity;
+//    }
 
     public Role getRole() {
         return role;

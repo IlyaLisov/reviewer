@@ -46,10 +46,12 @@ public class MainController extends com.example.reviewer.controller.main.Control
                 session.setAttribute("user", userFromDataBase.get());
             } else {
                 model.addAttribute("error","Проверьте правильность введенных данных.");
+                model.addAttribute("login", login);
                 return "login";
             }
         } else {
             model.addAttribute("error", "Проверьте правильность введенных данных.");
+            model.addAttribute("login", login);
             return "login";
         }
         return "redirect:account";
@@ -71,6 +73,8 @@ public class MainController extends com.example.reviewer.controller.main.Control
             Optional<User> userFromDatabase = userRepository.getByLogin(login);
             if(userFromDatabase.isPresent()) {
                 model.addAttribute("error", "Пользователь с таким логином уже существует.");
+                model.addAttribute("name", name);
+                model.addAttribute("login", login);
                 return "register";
             } else {
                 User user = new User();
@@ -86,6 +90,8 @@ public class MainController extends com.example.reviewer.controller.main.Control
             }
         } else {
             model.addAttribute("error", "Введенные пароли не совпадают.");
+            model.addAttribute("name", name);
+            model.addAttribute("login", login);
             return "register";
         }
         return "redirect:account";
