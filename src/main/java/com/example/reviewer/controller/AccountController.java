@@ -1,4 +1,4 @@
-package com.example.reviewer.controller.main;
+package com.example.reviewer.controller;
 
 import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.role.RoleDocument;
