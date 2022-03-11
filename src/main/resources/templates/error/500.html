@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>500 - Reviewer</title>
-    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class=container>
@@ -12,7 +12,8 @@
         <div class="body">
             <div class="page-name">500 - Ошибка сайта</div>
             <div class="content">
-                <p>Упс. Что-то пошло не так на стороне сайта, мы постараемся это починить, а пока попробуйте что-то другое :)</p>
+                <p>Упс. Что-то пошло не так на стороне сайта, мы постараемся это починить, а пока попробуйте что-то
+                    другое :)</p>
             </div>
         </div>
         <div th:insert="blocks/sidebar :: sidebar"></div>

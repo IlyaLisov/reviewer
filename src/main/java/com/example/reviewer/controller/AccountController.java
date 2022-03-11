@@ -26,15 +26,13 @@ import java.util.UUID;
 @Controller
 @RequestMapping(value = "/account")
 public class AccountController {
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleDocumentRepository roleDocumentRepository;
-
     private final String uploadPath = "data/users/";
     private final String[] contentTypes = {"image/jpg", "image/png", "image/jpeg"};
     private final Long MAX_UPLOAD_SIZE = 8 * 1024 * 1024L; //8MB
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RoleDocumentRepository roleDocumentRepository;
 
     @GetMapping()
     public String index(HttpSession session, Model model) {
@@ -72,11 +70,7 @@ public class AccountController {
                         model.addAttribute("error", "Превышен допустимый размер файла.");
                     } else {
                         String uuid = String.valueOf(UUID.randomUUID());
-                        File userDir = new File(uploadPath + "/" + user.getId());
-                        if (!userDir.exists()) {
-                            userDir.mkdir();
-                        }
-                        File convertFile = new File(userDir + "/" + uuid + "." + file.getContentType().replace("image/", ""));
+                        File convertFile = new File(uploadPath + "/" + uuid + "." + file.getContentType().replace("image/", ""));
                         convertFile.createNewFile();
                         FileOutputStream fout = new FileOutputStream(convertFile);
                         fout.write(file.getBytes());
@@ -84,6 +78,7 @@ public class AccountController {
                         RoleDocument document = new RoleDocument(name, Role.valueOf(role.toUpperCase()), user, uuid);
                         roleDocumentRepository.save(document);
                         model.addAttribute("success", "Документ загружен успешно.");
+                        model.addAttribute("name", name);
                     }
                 } catch (IOException e) {
                     model.addAttribute("error", "Произошла ошибка при загрузке документа.");

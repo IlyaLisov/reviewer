@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Панель администратора - Reviewer</title>
-    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class="container">
@@ -14,7 +14,7 @@
                 Панель администратора
             </div>
             <div class="account">
-                <div th:insert="~{blocks/account-menu-admin :: account-menu-admin}"></div>
+                <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
                 <div class="account-content">
                     <p>Скоро тут можно будет делать многое...</p>
                     <p class="success" th:text="${success}"></p>

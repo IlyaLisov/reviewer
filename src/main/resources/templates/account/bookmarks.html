@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Мои оценки - Reviewer</title>
-    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class="container">
@@ -14,7 +14,7 @@
                 Аккаунт
             </div>
             <div class="account">
-                <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu :: account-menu-admin} : ~{blocks/account-menu :: account-menu-user}"></div>
+                <div th:insert="${session.user.isAdmin() || session.user.isModerator()}? ~{blocks/account-menu :: account-menu-admin} : ~{blocks/account-menu :: account-menu-user}"></div>
                 <div class="account-content">
                     <p>В этом разделе расположены все Ваши оценки учреждений образования и отзывов других пользователей.
                         Они полностью анонимны и информация об их авторстве доступна только Вам.</p>

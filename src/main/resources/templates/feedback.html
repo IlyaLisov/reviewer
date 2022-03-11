@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Обратная связь - Reviewer</title>
-    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class="container">
@@ -14,12 +14,14 @@
                 Обратная связь
             </div>
             <div class="content">
-                <p> Если у Вас возникли вопросы или Вы хотите оставить предложения по улучшению качества работы (найденные баги,
+                <p> Если у Вас возникли вопросы или Вы хотите оставить предложения по улучшению качества работы
+                    (найденные баги,
                     ошибки пунктуации, устаревшая информация), то Вы можете заполнить эту форму. </p>
-                <p> Так же Вы можете указать здесь учреждение образования, которое не было добавлено на сайт. Выберите тему "Новое учреждение образования или сотрудник"</p>
+                <p> Так же Вы можете указать здесь учреждение образования, которое не было добавлено на сайт. Выберите
+                    тему "Новое учреждение образования или сотрудник"</p>
                 <p> Чтобы иметь возможность получить ответ, необходимо авторизоваться. </p><br>
                 <b> Если на момент отправки сообщения Вы вошли в аккаунт, то мы будем знать ваш логин. </b><br><br>
-                <form id="feedback" th:action="@{/feedback}" method="post">
+                <form id="feedback" method="post" th:action="@{/feedback}">
                     <label for="theme">Тема</label>
                     <select id="theme" name="theme" required>
                         <option value="bug">Баг, ошибка в работе сайта</option>
@@ -28,7 +30,8 @@
                         <option value="new">Новое учреждение образования или сотрудник</option>
                     </select><br><br>
                     <label for="text">Ваше сообщение</label><br>
-                    <textarea style="width: 90%; height: 150px; resize: none;" id = "text" name = "text" required></textarea><br><br>
+                    <textarea id="text" name="text" required
+                              style="width: 90%; height: 150px; resize: none;"></textarea><br><br>
                     <button type="submit">Отправить</button>
                 </form>
                 <p class="success" th:text="${success}"></p>

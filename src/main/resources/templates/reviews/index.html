@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Отзывы - Reviewer</title>
-    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class=container>
@@ -11,8 +11,19 @@
     <div class="page">
         <div class="body">
             <div class="page-name">Отзывы</div>
-            <div class="content">
-                <p>Скоро тут можно будет увидеть все отзывы.</p>
+            <div class="two-items">
+                <div class="content">
+                    <h4>Отзывы на учреждения образования:</h4>
+                    <div class="reviews" th:each="review : ${entityReviews}">
+                        <div th:insert="blocks/review :: entity-review-with-anchor(r = ${review})"></div>
+                    </div>
+                </div>
+                <div class="content">
+                    <h4>Отзывы на сотрудников:</h4>
+                    <div class="reviews" th:each="review : ${employeeReviews}">
+                        <div th:insert="blocks/review :: employee-review-with-anchor(r = ${review})"></div>
+                    </div>
+                </div>
             </div>
         </div>
         <div th:insert="blocks/sidebar :: sidebar"></div>

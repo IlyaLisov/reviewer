@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${employee.name} + ' - Reviewer'"></title>
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class=container>
+    <div th:insert="blocks/header :: header"></div>
+    <div class="page">
+        <div class="body">
+            <div class="page-name">
+                <p th:text="${employee.name}"></p>
+            </div>
+            <div class="content">
+                <div class="two-items">
+                    <div style="margin-right: 30px">
+                        <img class="employee-page" th:src="@{/images/employee/{imageURL}(imageURL=${imageURL})}">
+                    </div>
+                    <div>
+                        <p th:text="${employee.type.name}"></p>
+                        <p>Работает в <a th:href="@{/entity/{id}(id=${employee.entity.id})}"
+                                         th:text="${employee.entity.name}"></a></p>
+                        <br><br>
+                        <p th:text="'Рейтинг: ' + ${employee.getAverageRating()}"></p>
+                        <p th:text="'Отзывов оставлено: ' + ${employee.reviewsAmount}"></p>
+                        <p th:text="${employee.peopleInvolved} + ' людей написали эти отзывы'"></p>
+                    </div>
+                </div>
+
+                <div th:unless="${reviews.isEmpty()}">
+                    <h4>Отзывы:</h4>
+                    <div class="reviews" th:each="review : ${reviews}">
+                        <div th:insert="blocks/review :: employee-review(r = ${review})"></div>
+                    </div>
+                </div>
+                <div th:if="${reviews.isEmpty()}">
+                    <h4>Отзывов еще нет.</h4>
+                </div>
+            </div>
+        </div>
+        <div th:insert="blocks/sidebar :: sidebar"></div>
+    </div>
+</div>
+<div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>

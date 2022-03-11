@@ -35,7 +35,7 @@ public class MainController extends com.example.reviewer.controller.Controller {
 
     @GetMapping("/login")
     public String login(HttpSession session) {
-        if(session.getAttribute("user") != null) {
+        if (session.getAttribute("user") != null) {
             return "redirect:account";
         }
         return "login";
@@ -44,14 +44,14 @@ public class MainController extends com.example.reviewer.controller.Controller {
     @PostMapping("/login")
     public synchronized String doLogin(@RequestParam("login") String login, @RequestParam("password") String password, HttpSession session, Model model) {
         Optional<User> userFromDataBase = userRepository.getByLogin(login);
-        if(userFromDataBase.isPresent()) {
+        if (userFromDataBase.isPresent()) {
             String generatedPassword = Crypter.crypt(password, userFromDataBase.get().getRegisterDate().toString());
-            if(generatedPassword.equals(userFromDataBase.get().getPassword())) {
+            if (generatedPassword.equals(userFromDataBase.get().getPassword())) {
                 userFromDataBase.get().setLastSeenDate(LocalDate.now());
                 userRepository.save(userFromDataBase.get());
                 session.setAttribute("user", userFromDataBase.get());
             } else {
-                model.addAttribute("error","Проверьте правильность введенных данных.");
+                model.addAttribute("error", "Проверьте правильность введенных данных.");
                 model.addAttribute("login", login);
                 return "login";
             }
@@ -65,7 +65,7 @@ public class MainController extends com.example.reviewer.controller.Controller {
 
     @GetMapping("/register")
     public String register(HttpSession session) {
-        if(session.getAttribute("user") != null) {
+        if (session.getAttribute("user") != null) {
             return "redirect:account";
         }
         return "register";
@@ -73,11 +73,11 @@ public class MainController extends com.example.reviewer.controller.Controller {
 
     @PostMapping("/register")
     public synchronized String doRegister(@RequestParam("name") String name, @RequestParam("login") String login,
-                             @RequestParam("password") String password, @RequestParam("passwordConfirmation") String passwordConfirmation,
-                             HttpSession session, Model model) {
-        if(password.equals(passwordConfirmation)) {
+                                          @RequestParam("password") String password, @RequestParam("passwordConfirmation") String passwordConfirmation,
+                                          HttpSession session, Model model) {
+        if (password.equals(passwordConfirmation)) {
             Optional<User> userFromDatabase = userRepository.getByLogin(login);
-            if(userFromDatabase.isPresent()) {
+            if (userFromDatabase.isPresent()) {
                 model.addAttribute("error", "Пользователь с таким логином уже существует.");
                 model.addAttribute("name", name);
                 model.addAttribute("login", login);
@@ -115,7 +115,7 @@ public class MainController extends com.example.reviewer.controller.Controller {
         Feedback feedback = new Feedback();
         feedback.setFeedbackType(FeedbackType.valueOf(theme.toUpperCase()));
         feedback.setText(text);
-        if(user != null) {
+        if (user != null) {
             feedback.setAuthor(user);
         }
         feedbackRepository.save(feedback);
