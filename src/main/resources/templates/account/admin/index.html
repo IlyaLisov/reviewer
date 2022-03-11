@@ -14,7 +14,7 @@
                 Панель администратора
             </div>
             <div class="account">
-                <div th:insert="~{blocks/account-menu-admin :: account-menu-admin}"></div>
+                <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
                 <div class="account-content">
                     <p>Скоро тут можно будет делать многое...</p>
                     <p class="success" th:text="${success}"></p>

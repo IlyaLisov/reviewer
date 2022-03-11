@@ -13,7 +13,7 @@
                 Аккаунт
             </div>
             <div class="account">
-                <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu :: account-menu-admin} : ~{blocks/account-menu :: account-menu-user}"></div>
+                <div th:insert="${session.user.isAdmin() || session.user.isModerator()}? ~{blocks/account-menu :: account-menu-admin} : ~{blocks/account-menu :: account-menu-user}"></div>
                 <div class="account-content">
                     <form id="settings" method="post" th:action="@{/account/settings}">
                         <br><label for="password">Новый пароль</label><br>
