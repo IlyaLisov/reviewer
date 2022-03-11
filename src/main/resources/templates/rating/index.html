@@ -11,8 +11,57 @@
     <div class="page">
         <div class="body">
             <div class="page-name">Рейтинг</div>
-            <div class="content">
-                <p>Скоро тут можно будет увидеть рейтинг всех учреждений образования и сотрудников.</p>
+            <div style="flex-direction: row; display: flex; flex-wrap: wrap">
+                <div class="content">
+                    <p>Рейтинг учреждений образования:</p>
+                    <table>
+                        <thead>
+                        <tr>
+                            <td>№</td>
+                            <td>Рейтинг</td>
+                            <td>Название</td>
+                            <td>Тип</td>
+                            <td>Адрес</td>
+                        </tr>
+                        </thead>
+                        <div th:each="entity, iter : ${entities}">
+                            <tr>
+                                <td><span th:text="${iter.count}"></span></td>
+                                <td><span th:text="${entity.getAverageRating()}"></span></td>
+                                <td><a th:text="${entity.name}" th:href="@{/entity/{id}(id = ${entity.id})}"></a></td>
+                                <td><span th:text="${entity.type.name}"></span></td>
+                                <td><span th:text="${entity.address}"></span></td>
+                            </tr>
+                        </div>
+                    </table>
+                </div>
+                <div class="content">
+                    <p>Рейтинг сотрудников:</p>
+                    <table>
+                        <thead>
+                        <tr>
+                            <td>№</td>
+                            <td>Фотография</td>
+                            <td>Рейтинг</td>
+                            <td>ФИО</td>
+                            <td>Статус</td>
+                            <td>Учреждение образования</td>
+                        </tr>
+                        </thead>
+                        <div th:each="employee, iter : ${employees}">
+                            <tr>
+                                <td><span th:text="${iter.count}"></span></td>
+                                <td>Soon</td>
+                                <td><span th:text="${employee.getAverageRating()}"></span></td>
+                                <td><a th:text="${employee.name}" th:href="@{/employee/{id}(id = ${employee.id})}"></a>
+                                </td>
+                                <td><span th:text="${employee.type.name}"></span></td>
+                                <td><a th:text="${employee.entity.name}"
+                                       th:href="@{/templates/entity/{id}(id = ${employee.entity.id})}"></a></td>
+                            </tr>
+                        </div>
+                    </table>
+                </div>
             </div>
         </div>
         <div th:insert="blocks/sidebar :: sidebar"></div>

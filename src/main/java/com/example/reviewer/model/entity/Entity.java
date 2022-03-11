@@ -4,6 +4,7 @@ import com.example.reviewer.model.user.User;
 import com.sun.istack.NotNull;
 import org.hibernate.annotations.Formula;
 
+import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -22,6 +23,7 @@ public class Entity {
     private EntityType type;
 
     @NotNull
+    @Column(length = 1024)
     private String name;
 
     @NotNull
@@ -37,9 +39,6 @@ public class Entity {
     private String siteURL;
 
     @NotNull
-    private Integer rating;
-
-    @NotNull
     @ManyToOne
     private User author;
 
@@ -50,7 +49,10 @@ public class Entity {
     private Integer reviewsAmount;
 
     @Formula("(SELECT COUNT(DISTINCT r.author_id) FROM rdb.review r WHERE r.entity_id = id)")
-    private Integer peopleEnvolved;
+    private Integer peopleInvolved;
+
+    @Formula("(SELECT SUM(r.mark) FROM rdb.review r WHERE r.entity_id = id)")
+    private Integer rating;
 
     public Long getId() {
         return id;
@@ -140,11 +142,15 @@ public class Entity {
         this.reviewsAmount = reviewsAmount;
     }
 
-    public Integer getPeopleEnvolved() {
-        return peopleEnvolved;
+    public Integer getPeopleInvolved() {
+        return peopleInvolved;
     }
 
-    public void setPeopleEnvolved(Integer peopleEnvolved) {
-        this.peopleEnvolved = peopleEnvolved;
+    public void setPeopleInvolved(Integer peopleInvolved) {
+        this.peopleInvolved = peopleInvolved;
+    }
+
+    public String getAverageRating() {
+        return (reviewsAmount != null && rating != null && reviewsAmount != 0) ? String.format("%.1f", 1.0f * rating / reviewsAmount) : "Нет оценок";
     }
 }

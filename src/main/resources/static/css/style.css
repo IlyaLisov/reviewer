@@ -20,10 +20,11 @@
 }
 
 .body {
-    display: block;
+    display: flex;
     flex-direction: column;
+    flex-wrap: wrap;
     width: 85%;
-    justify-content: center;
+    justify-content: space-between;
     background: #ffffff;
 }
 
@@ -64,6 +65,7 @@ a.header {
 }
 
 .content {
+    display: block;
     margin: 10px;
     size: 16pt;
 }
@@ -251,14 +253,13 @@ img.menu {
     size: 14px;
 }
 
-.statictics-block {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    margin-right: 5px;
-    padding: 10px;
-    border: 1px solid #006A4E;
-    background-color: #B8D5CD;
+.stats {
+    margin: 10px;
     display: block;
+    justify-content: center;
+    flex-direction: column;
+    border-bottom: 1px solid #B8D5CD;
+    background: #ffffff;
 }
 
 .search {
@@ -266,6 +267,46 @@ img.menu {
     display: block;
     justify-content: center;
     flex-direction: column;
-    border-bottom: 1px solid #fdf3dc;
+    border-bottom: 1px solid #B8D5CD;
     background: #ffffff;
+}
+
+table {
+    border-collapse: collapse;
+    border : 1px solid gray;
+}
+
+td {
+    padding: 10px;
+    border : 1px solid gray;
+    vertical-align: top;
+}
+
+.hidden {
+    display: none;
+}
+.hidden + label ~ div{
+    display: none;
+}
+
+.hidden + label {
+    border-bottom: 1px dotted #006A4E;
+    padding: 0;
+    color: #006A4E;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.hidden:checked + label {
+    color: #006A4E;
+    border-bottom: 0;
+}
+
+.hidden:checked + label + div {
+    display: block;
+    background: #efefef;
+    -moz-box-shadow: inset 3px 3px 10px #7d8e8f;
+    -webkit-box-shadow: inset 3px 3px 10px #7d8e8f;
+    box-shadow: inset 3px 3px 10px #7d8e8f;
+    padding: 10px;
 }

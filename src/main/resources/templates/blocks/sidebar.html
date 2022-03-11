@@ -1,5 +1,8 @@
 <div th:fragment="sidebar">
     <div class="sidebar">
+        <div th:insert="blocks/statistics :: statistics"></div>
+    </div>
+    <div class="sidebar">
         <div th:insert="blocks/search :: search"></div>
     </div>
 </div>

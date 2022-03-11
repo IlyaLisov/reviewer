@@ -1,0 +1,9 @@
+<div class="review" th:fragment="entity-review(r)">
+    <p>"<span th:text="${r.text}"></span>"</p>
+    <div>
+        <b>Отзыв оставлен: </b><span th:text="${r.reviewDate}"></span><br>
+        <b>Отзыв оставил: </b><span th:text="${r.authorRole.name}"></span><br>
+        <b>Оценка: </b><span th:text="${r.mark}"></span><br>
+        <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
+    </div>
+</div>

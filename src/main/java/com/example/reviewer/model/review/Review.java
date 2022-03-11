@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.time.LocalDate;
 
 @Entity
 public class Review {
@@ -18,7 +19,6 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
     private String text;
 
     @NotNull
@@ -31,6 +31,17 @@ public class Review {
 
     @NotNull
     private Integer rating;
+
+    @NotNull
+    private Integer mark;
+
+    @NotNull
+    private LocalDate reviewDate;
+
+    public Review() {
+        this.rating = 0;
+        this.reviewDate = LocalDate.now();
+    }
 
     public Long getId() {
         return id;
@@ -70,5 +81,21 @@ public class Review {
 
     public void setRating(Integer rating) {
         this.rating = rating;
+    }
+
+    public Integer getMark() {
+        return mark;
+    }
+
+    public void setMark(Integer mark) {
+        this.mark = mark;
+    }
+
+    public LocalDate getReviewDate() {
+        return reviewDate;
+    }
+
+    public void setReviewDate(LocalDate reviewDate) {
+        this.reviewDate = reviewDate;
     }
 }

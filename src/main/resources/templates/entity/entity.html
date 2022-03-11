@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${entity.name} + ' - Reviewer'"></title>
+    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class=container>
+    <div th:insert="blocks/header :: header"></div>
+    <div class="page">
+        <div class="body">
+            <div class="page-name">
+                <p th:text="${entity.name}"></p>
+            </div>
+            <div class="content">
+                <p th:text="${entity.type.name}"></p>
+                <p th:text="'Адрес: ' + (${entity.address != null} ? ${entity.address} : '') + ', ' + ${entity.district}"></p>
+                <div th:if="${entity.siteURL != null}">
+                    Сайт: <a th:text="${entity.siteURL}" th:href="@{//{site}(site=${entity.siteURL})}"
+                             target="_blank"></a>
+                </div>
+                <br><br>
+                <p th:text="'Рейтинг: ' + ${entity.getAverageRating()}"></p>
+                <p th:text="'Отзывов оставлено: ' + ${entity.reviewsAmount}"></p>
+                <p th:text="${entity.peopleInvolved} + ' людей написали эти отзывы'"></p>
+
+                <div th:unless="${employees.isEmpty()}">
+                    <input type="checkbox" id="hd-1" class="hidden"/>
+                    <label for="hd-1">Нажмите здесь, чтобы увидеть список сотрудников</label>
+                    <div>
+                        <div th:each="employee : ${employees}">
+                            <a th:text="${employee.name} + ' - ' + ${employee.type.name}"
+                               th:href="@{/employees/{id}(id=${employee.getId()})}"></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:unless="${reviews.isEmpty()}">
+                    <h4>Отзывы:</h4>
+                    <div class="reviews" th:each="review : ${reviews}">
+                        <div th:insert="blocks/review :: entity-review(r = ${review})"></div>
+                    </div>
+                </div>
+                <div th:if="${reviews.isEmpty()}">
+                    <h4>Отзывов еще нет.</h4>
+                </div>
+            </div>
+        </div>
+        <div th:insert="blocks/sidebar :: sidebar"></div>
+    </div>
+</div>
+<div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>
