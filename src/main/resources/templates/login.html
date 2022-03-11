@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Вход в аккаунт - Reviewer</title>
-    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class=container>
@@ -14,11 +14,12 @@
                 Вход в аккаунт
             </div>
             <div class="content">
-                <form id="auth" th:action="@{/login}" method="post">
+                <form id="auth" method="post" th:action="@{/login}">
                     <label for="login">Логин</label><br>
-                    <input type="text" name="login" id="login" th:value="*{login}" required placeholder="обязательное поле">
+                    <input id="login" name="login" placeholder="обязательное поле" required th:value="*{login}"
+                           type="text">
                     <br><br><label for="password">Пароль</label><br>
-                    <input type="password" name="password" id="password" required placeholder="обязательное поле">
+                    <input id="password" name="password" placeholder="обязательное поле" required type="password">
                     <br><br>
                     <button>Войти</button>
                 </form>

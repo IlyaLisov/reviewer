@@ -66,7 +66,8 @@ public enum District {
     MSTISLAVL("Мстиславский", Region.MOGILEV), OSIPOVICHI("Осиповичский", Region.MOGILEV),
     SLAVGOROD("Славгородский", Region.MOGILEV), HOTIMSK("Хотимский", Region.MOGILEV),
     CHAUSU("Чаусский", Region.MOGILEV), CHERIKOV("Чериковский", Region.MOGILEV),
-    SHKLOV("Шкловский", Region.MOGILEV),;
+    SHKLOV("Шкловский", Region.MOGILEV),
+    ;
 
     private final String name;
     private final Region region;

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${entity.name} + ' - Reviewer'"></title>
-    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class=container>
@@ -22,8 +22,8 @@
                         <p th:text="${entity.type.name}"></p>
                         <p th:text="'Адрес: ' + (${entity.address != null} ? ${entity.address} : '') + ', ' + ${entity.district}"></p>
                         <div th:if="${entity.siteURL != null}">
-                            Сайт: <a th:text="${entity.siteURL}" th:href="@{//{site}(site=${entity.siteURL})}"
-                                     target="_blank"></a>
+                            Сайт: <a target="_blank" th:href="@{//{site}(site=${entity.siteURL})}"
+                                     th:text="${entity.siteURL}"></a>
                         </div>
                         <br><br>
                         <p th:text="'Рейтинг: ' + ${entity.getAverageRating()}"></p>
@@ -33,12 +33,12 @@
                 </div>
 
                 <div th:unless="${employees.isEmpty()}">
-                    <input type="checkbox" id="hd-1" class="hidden"/>
+                    <input class="hidden" id="hd-1" type="checkbox"/>
                     <label for="hd-1">Нажмите здесь, чтобы увидеть список сотрудников</label>
                     <div>
                         <div th:each="employee : ${employees}">
-                            <a th:text="${employee.name} + ' - ' + ${employee.type.name}"
-                               th:href="@{/employee/{id}(id=${employee.getId()})}"></a>
+                            <a th:href="@{/employee/{id}(id=${employee.getId()})}"
+                               th:text="${employee.name} + ' - ' + ${employee.type.name}"></a>
                         </div>
                     </div>
                 </div>

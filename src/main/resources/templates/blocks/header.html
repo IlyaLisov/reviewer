@@ -9,18 +9,18 @@
         <ul class="menu">
             <li><a class="menu" href="/"> Главная </a></li>
             <li th:if="${session.user != null}">
-                    <a class = "menu" th:href="@{/account}"> Аккаунт </a>
+                <a class="menu" th:href="@{/account}"> Аккаунт </a>
             </li>
             <li th:unless="${session.user != null}">
-                <a class = "menu" th:href="@{/login}"> Войти </a>
+                <a class="menu" th:href="@{/login}"> Войти </a>
             </li>
             <li th:unless="${session.user != null}">
-                <a class = "menu" th:href="@{/register}"> Зарегистрироваться </a>
+                <a class="menu" th:href="@{/register}"> Зарегистрироваться </a>
             </li>
             <li><a class="menu" th:href="@{/rating}"> Рейтинги </a></li>
             <li><a class="menu" th:href="@{/reviews}"> Все отзывы </a></li>
             <li th:if="${session.user != null}">
-                <a class = "menu" th:href="@{/logout}"> Выйти </a>
+                <a class="menu" th:href="@{/logout}"> Выйти </a>
             </li>
         </ul>
     </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Регистрация аккаунта - Reviewer</title>
-    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class="container">
@@ -14,16 +14,20 @@
                 Регистрация аккаунта
             </div>
             <div class="content">
-                <form id="register" th:action="@{/register}" method="post">
+                <form id="register" method="post" th:action="@{/register}">
                     <label for="name">Имя (используйте настоящее, необходимо для подтверждения документов)</label><br>
-                    <input type="text" name="name" id="name" th:value="*{name}" required placeholder="обязательное поле">
+                    <input id="name" name="name" placeholder="обязательное поле" required th:value="*{name}"
+                           type="text">
                     <br><br><label for="login">Логин</label><br>
-                    <input type="text" name="login" id="login" th:value="*{login}" required placeholder="обязательное поле">
+                    <input id="login" name="login" placeholder="обязательное поле" required th:value="*{login}"
+                           type="text">
                     <br><br><label for="password">Пароль</label><br>
-                    <input type="password" name="password" id="password" required placeholder="обязательное поле">
+                    <input id="password" name="password" placeholder="обязательное поле" required type="password">
                     <br><br><label for="passwordConfirmation">Подтверждение пароля</label><br>
-                    <input type="password" name="passwordConfirmation" id="passwordConfirmation" required placeholder="обязательное поле">
-                    <br><br><input type="checkbox" name="agreement" id="agreement" required>
+                    <input id="passwordConfirmation" name="passwordConfirmation" placeholder="обязательное поле"
+                           required
+                           type="password">
+                    <br><br><input id="agreement" name="agreement" required type="checkbox">
                     <label for="agreement">Согласен с <a th:href="@{/rules}"> Правилами пользования сайтом
                         Reviewer </a></label><br>
                     <input type="submit" value="Зарегистрироваться">

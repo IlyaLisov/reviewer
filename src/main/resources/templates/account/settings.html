@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Настройки - Reviewer</title>
-    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class="container">
@@ -15,12 +15,13 @@
             <div class="account">
                 <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu :: account-menu-admin} : ~{blocks/account-menu :: account-menu-user}"></div>
                 <div class="account-content">
-                    <form id="settings" th:action="@{/account/settings}" method="post">
+                    <form id="settings" method="post" th:action="@{/account/settings}">
                         <br><label for="password">Новый пароль</label><br>
-                        <input type="password" name="password" id="password" required placeholder="обязательное поле">
+                        <input id="password" name="password" placeholder="обязательное поле" required type="password">
                         <br><br><label for="passwordConfirmation">Подтверждение нового пароля</label><br>
-                        <input type="password" name="passwordConfirmation" id="passwordConfirmation" required
-                               placeholder="обязательное поле">
+                        <input id="passwordConfirmation" name="passwordConfirmation" placeholder="обязательное поле"
+                               required
+                               type="password">
                         <br><br>
                         <button>Сохранить</button>
                     </form>

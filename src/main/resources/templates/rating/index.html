@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Рейтинг - Reviewer</title>
-    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class=container>
@@ -28,7 +28,7 @@
                             <tr>
                                 <td><span th:text="${iter.count}"></span></td>
                                 <td><span th:text="${entity.getAverageRating()}"></span></td>
-                                <td><a th:text="${entity.name}" th:href="@{/entity/{id}(id = ${entity.id})}"></a></td>
+                                <td><a th:href="@{/entity/{id}(id = ${entity.id})}" th:text="${entity.name}"></a></td>
                                 <td><span th:text="${entity.type.name}"></span></td>
                                 <td><span th:text="${entity.address}"></span></td>
                             </tr>
@@ -51,13 +51,15 @@
                         <div th:each="employee, iter : ${employees}">
                             <tr>
                                 <td><span th:text="${iter.count}"></span></td>
-                                <td><img class="employee-rating" th:src="@{/images/employee/{imageURL}(imageURL = ${employee.imageURL == null ? 'default.jpg' : employee.imageURL})}"></td>
+                                <td><img class="employee-rating"
+                                         th:src="@{/images/employee/{imageURL}(imageURL = ${employee.imageURL == null ? 'default.jpg' : employee.imageURL})}">
+                                </td>
                                 <td><span th:text="${employee.getAverageRating()}"></span></td>
-                                <td><a th:text="${employee.name}" th:href="@{/employee/{id}(id = ${employee.id})}"></a>
+                                <td><a th:href="@{/employee/{id}(id = ${employee.id})}" th:text="${employee.name}"></a>
                                 </td>
                                 <td><span th:text="${employee.type.name}"></span></td>
-                                <td><a th:text="${employee.entity.name}"
-                                       th:href="@{/entity/{id}(id = ${employee.entity.id})}"></a></td>
+                                <td><a th:href="@{/entity/{id}(id = ${employee.entity.id})}"
+                                       th:text="${employee.entity.name}"></a></td>
                             </tr>
                         </div>
                     </table>

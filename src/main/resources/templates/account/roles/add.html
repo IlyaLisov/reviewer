@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Добавить роль - Reviewer</title>
-    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class="container">
@@ -18,13 +18,14 @@
                 <div class="account-content">
                     <p> Для получения возможности оставлять отзывы Вам необходимо получить роль, подтвердив ее
                         документом (пропуском) с места работы или учебы. </p>
-                    <p>Вы уже отправили <b th:text="${requestAmount}"></b> документов. Они будут рассмотрены в скором времени.</p>
+                    <p>Вы уже отправили <b th:text="${requestAmount}"></b> документов. Они будут рассмотрены в скором
+                        времени.</p>
                     <p> На фотографии документа должна присутствовать дата выдачи и печать учреждения образования. </p>
                     <p><b>Допустимые типы фото:</b> .png, .jpeg, .jpg. </p>
                     <p><b>Максимально допустимый размер файла:</b> 8 MB</p>
-                    <form th:action="@{/account/roles/add}" method="post" enctype="multipart/form-data">
+                    <form enctype="multipart/form-data" method="post" th:action="@{/account/roles/add}">
                         <label for="name">Введите название учреждения образования</label><br><br>
-                        <input type="text" id="name" name="name" th:value="${name}" required/><br><br>
+                        <input id="name" name="name" required th:value="${name}" type="text"/><br><br>
                         <label for="role">Выберите Вашу роль в данном учреждении образования:</label><br><br>
                         <select id="role" name="role" required>
                             <option value="student">Учащийся</option>
@@ -32,7 +33,7 @@
                             <option value="employee">Сотрудник</option>
                             <option value="former_employee">Бывший сотрудник</option>
                         </select><br><br>
-                        Выберите фотографию документа: <input type="file" name="file" required>
+                        Выберите фотографию документа: <input name="file" required type="file">
                         <br><br>
                         <button>Загрузить</button>
                     </form>

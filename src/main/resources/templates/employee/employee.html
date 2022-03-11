@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${employee.name} + ' - Reviewer'"></title>
-    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class=container>
@@ -20,8 +20,8 @@
                     </div>
                     <div>
                         <p th:text="${employee.type.name}"></p>
-                        <p>Работает в <a th:text="${employee.entity.name}"
-                                         th:href="@{/entity/{id}(id=${employee.entity.id})}"></a></p>
+                        <p>Работает в <a th:href="@{/entity/{id}(id=${employee.entity.id})}"
+                                         th:text="${employee.entity.name}"></a></p>
                         <br><br>
                         <p th:text="'Рейтинг: ' + ${employee.getAverageRating()}"></p>
                         <p th:text="'Отзывов оставлено: ' + ${employee.reviewsAmount}"></p>

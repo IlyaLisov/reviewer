@@ -8,6 +8,18 @@
     </div>
 </div>
 
+<div class="review" th:fragment="entity-review-with-anchor(r)">
+    <p>"<span th:text="${r.text}"></span>"</p>
+    <a th:name="${r.id}"></a>
+    <div>
+        <b>Отзыв оставлен: </b><span th:text="${r.reviewDate}"></span><br>
+        <b>Отзыв оставил: </b><span th:text="${r.authorRole.name}"></span><br>
+        <b>Оценка: </b><span th:text="${r.mark}"></span><br>
+        <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
+    </div>
+    <p><a th:href="@{/entity/{id}(id=${r.entity.id})}" th:text="'Перейти к учреждению образования'"></a></p>
+</div>
+
 <div class="review" th:fragment="employee-review(r)">
     <p>"<span th:text="${r.text}"></span>"</p>
     <div>
@@ -16,4 +28,15 @@
         <b>Оценка: </b><span th:text="${r.mark}"></span><br>
         <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
     </div>
+</div>
+
+<div class="review" th:fragment="employee-review-with-anchor(r)">
+    <p>"<span th:text="${r.text}"></span>"</p>
+    <div>
+        <b>Отзыв оставлен: </b><span th:text="${r.reviewDate}"></span><br>
+        <b>Отзыв оставил: </b><span th:text="${r.authorRole.name}"></span><br>
+        <b>Оценка: </b><span th:text="${r.mark}"></span><br>
+        <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
+    </div>
+    <p><a th:href="@{/employee/{id}(id=${r.employee.id})}" th:text="'Перейти к сотруднику'"></a></p>
 </div>
