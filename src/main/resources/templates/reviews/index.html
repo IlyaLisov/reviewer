@@ -11,8 +11,19 @@
     <div class="page">
         <div class="body">
             <div class="page-name">Отзывы</div>
-            <div class="content">
-                <p>Скоро тут можно будет увидеть все отзывы.</p>
+            <div class="two-items">
+                <div class="content">
+                    <h4>Отзывы на учреждения образования:</h4>
+                    <div class="reviews" th:each="review : ${entityReviews}">
+                        <div th:insert="blocks/review :: entity-review(r = ${review})"></div>
+                    </div>
+                </div>
+                <div class="content">
+                    <h4>Отзывы на сотрудников:</h4>
+                    <div class="reviews" th:each="review : ${employeeReviews}">
+                        <div th:insert="blocks/review :: employee-review(r = ${review})"></div>
+                    </div>
+                </div>
             </div>
         </div>
         <div th:insert="blocks/sidebar :: sidebar"></div>

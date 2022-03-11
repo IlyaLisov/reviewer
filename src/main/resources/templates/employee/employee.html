@@ -14,7 +14,7 @@
                 <p th:text="${employee.name}"></p>
             </div>
             <div class="content">
-                <div style="flex-direction: row; display: flex; flex-wrap: wrap">
+                <div class="two-items">
                     <div style="margin-right: 30px">
                         <img class="employee-page" th:src="@{/images/employee/{imageURL}(imageURL=${imageURL})}">
                     </div>
@@ -32,7 +32,7 @@
                 <div th:unless="${reviews.isEmpty()}">
                     <h4>Отзывы:</h4>
                     <div class="reviews" th:each="review : ${reviews}">
-                        <div th:insert="blocks/review :: entity-review(r = ${review})"></div>
+                        <div th:insert="blocks/review :: employee-review(r = ${review})"></div>
                     </div>
                 </div>
                 <div th:if="${reviews.isEmpty()}">

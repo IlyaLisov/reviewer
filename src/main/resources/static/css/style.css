@@ -324,3 +324,9 @@ img.entity-page {
     height: 300px;
     width: 300px;
 }
+
+.two-items {
+    flex-direction: row;
+    display: flex;
+    flex-wrap: wrap;
+}
