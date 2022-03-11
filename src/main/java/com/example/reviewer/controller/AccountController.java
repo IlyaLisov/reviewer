@@ -72,11 +72,7 @@ public class AccountController {
                         model.addAttribute("error", "Превышен допустимый размер файла.");
                     } else {
                         String uuid = String.valueOf(UUID.randomUUID());
-                        File userDir = new File(uploadPath + "/" + user.getId());
-                        if (!userDir.exists()) {
-                            userDir.mkdir();
-                        }
-                        File convertFile = new File(userDir + "/" + uuid + "." + file.getContentType().replace("image/", ""));
+                        File convertFile = new File(uploadPath + "/" + uuid + "." + file.getContentType().replace("image/", ""));
                         convertFile.createNewFile();
                         FileOutputStream fout = new FileOutputStream(convertFile);
                         fout.write(file.getBytes());
@@ -84,6 +80,7 @@ public class AccountController {
                         RoleDocument document = new RoleDocument(name, Role.valueOf(role.toUpperCase()), user, uuid);
                         roleDocumentRepository.save(document);
                         model.addAttribute("success", "Документ загружен успешно.");
+                        model.addAttribute("name", name);
                     }
                 } catch (IOException e) {
                     model.addAttribute("error", "Произошла ошибка при загрузке документа.");

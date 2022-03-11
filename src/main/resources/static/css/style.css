@@ -20,11 +20,11 @@
 }
 
 .body {
-    display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     width: 85%;
     justify-content: space-between;
+    border-right: 3px solid #B8D5CD;
     background: #ffffff;
 }
 
@@ -32,7 +32,6 @@
     display: flex;
     justify-content: flex-start;
     flex-direction: column;
-    border-left: 3px solid #B8D5CD;
     background: #ffffff;
 }
 
@@ -309,4 +308,19 @@ td {
     -webkit-box-shadow: inset 3px 3px 10px #7d8e8f;
     box-shadow: inset 3px 3px 10px #7d8e8f;
     padding: 10px;
+}
+
+img.employee-page {
+    height: 300px;
+    width: 300px;
+}
+
+img.employee-rating {
+    height: 80px;
+    width: 80px;
+}
+
+img.entity-page {
+    height: 300px;
+    width: 300px;
 }

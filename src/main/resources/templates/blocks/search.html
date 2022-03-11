@@ -1,10 +1,10 @@
 <div class="search" th:fragment="search">
-    <form name="searchEntity" th:action="@{/search/education}" method="get">
+    <form  name="searchEntity" th:action="@{/search/education}" method="get">
         <label for="entityQuery">Поиск учреждения образования:</label><br>
         <input type="text" id="entityQuery" name="query" required>
         <button type="submit">Найти</button>
     </form>
-    <form name="searchEmployee" th:action="@{/search/employees}" method="get">
+    <form style="margin-top: 10px; margin-bottom: 10px" name="searchEmployee" th:action="@{/search/employees}" method="get">
         <label for="employeeQuery">Поиск сотрудника:</label><br>
         <input type="text" id="employeeQuery" name="query" required>
         <button type="submit">Найти</button>

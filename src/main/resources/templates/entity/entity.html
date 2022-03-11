@@ -14,16 +14,23 @@
                 <p th:text="${entity.name}"></p>
             </div>
             <div class="content">
-                <p th:text="${entity.type.name}"></p>
-                <p th:text="'Адрес: ' + (${entity.address != null} ? ${entity.address} : '') + ', ' + ${entity.district}"></p>
-                <div th:if="${entity.siteURL != null}">
-                    Сайт: <a th:text="${entity.siteURL}" th:href="@{//{site}(site=${entity.siteURL})}"
-                             target="_blank"></a>
+                <div style="flex-direction: row; display: flex; flex-wrap: wrap">
+                    <div style="margin-right: 30px">
+                        <img class="entity-page" th:src="@{/images/entity/{imageURL}(imageURL=${imageURL})}">
+                    </div>
+                    <div>
+                        <p th:text="${entity.type.name}"></p>
+                        <p th:text="'Адрес: ' + (${entity.address != null} ? ${entity.address} : '') + ', ' + ${entity.district}"></p>
+                        <div th:if="${entity.siteURL != null}">
+                            Сайт: <a th:text="${entity.siteURL}" th:href="@{//{site}(site=${entity.siteURL})}"
+                                     target="_blank"></a>
+                        </div>
+                        <br><br>
+                        <p th:text="'Рейтинг: ' + ${entity.getAverageRating()}"></p>
+                        <p th:text="'Отзывов оставлено: ' + ${entity.reviewsAmount}"></p>
+                        <p th:text="${entity.peopleInvolved} + ' людей написали эти отзывы'"></p>
+                    </div>
                 </div>
-                <br><br>
-                <p th:text="'Рейтинг: ' + ${entity.getAverageRating()}"></p>
-                <p th:text="'Отзывов оставлено: ' + ${entity.reviewsAmount}"></p>
-                <p th:text="${entity.peopleInvolved} + ' людей написали эти отзывы'"></p>
 
                 <div th:unless="${employees.isEmpty()}">
                     <input type="checkbox" id="hd-1" class="hidden"/>
@@ -31,7 +38,7 @@
                     <div>
                         <div th:each="employee : ${employees}">
                             <a th:text="${employee.name} + ' - ' + ${employee.type.name}"
-                               th:href="@{/employees/{id}(id=${employee.getId()})}"></a>
+                               th:href="@{/employee/{id}(id=${employee.getId()})}"></a>
                         </div>
                     </div>
                 </div>

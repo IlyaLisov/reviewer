@@ -1,5 +1,6 @@
 package com.example.reviewer.model.entity;
 
+import com.example.reviewer.model.user.User;
 import com.sun.istack.NotNull;
 import org.hibernate.annotations.Formula;
 
@@ -27,13 +28,19 @@ public class Employee {
     @ManyToOne
     private Entity entity;
 
+    @NotNull
+    @ManyToOne
+    private User author;
+
+    private String imageURL;
+
     @Formula("(SELECT COUNT(*) FROM rdb.review r WHERE r.employee_id = id)")
     private Integer reviewsAmount;
 
     @Formula("(SELECT COUNT(DISTINCT r.author_id) FROM rdb.review r WHERE r.employee_id = id)")
-    private Integer peopleEnvolved;
+    private Integer peopleInvolved;
 
-    @Formula("(SELECT SUM(r.rating) FROM rdb.review r WHERE r.employee_id = id)")
+    @Formula("(SELECT SUM(r.mark) FROM rdb.review r WHERE r.employee_id = id)")
     private Integer rating;
 
     public Long getId() {
@@ -68,6 +75,38 @@ public class Employee {
         this.entity = entity;
     }
 
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
+    public Integer getReviewsAmount() {
+        return reviewsAmount;
+    }
+
+    public void setReviewsAmount(Integer reviewsAmount) {
+        this.reviewsAmount = reviewsAmount;
+    }
+
+    public Integer getPeopleInvolved() {
+        return peopleInvolved;
+    }
+
+    public void setPeopleInvolved(Integer peopleInvolved) {
+        this.peopleInvolved = peopleInvolved;
+    }
+
     public Integer getRating() {
         return rating;
     }
@@ -77,6 +116,6 @@ public class Employee {
     }
 
     public String getAverageRating() {
-        return (peopleEnvolved != null && rating != null && peopleEnvolved != 0) ? String.format("%f.1", 1.0f * rating / peopleEnvolved) : "Нет оценок";
+        return (reviewsAmount != null && rating != null && reviewsAmount != 0) ? String.format("%.1f", 1.0f * rating / reviewsAmount) : "Нет оценок";
     }
 }

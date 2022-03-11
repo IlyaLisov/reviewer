@@ -36,6 +36,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
             List<EntityReview> reviews = (List<EntityReview>) entityReviewRepository.findAll();
             List<Employee> employees = employeeRepository.findAllByEntityId(entity.get().getId());
             model.addAttribute("entity", entity.get());
+            model.addAttribute("imageURL", entity.get().getImageURL() == null ? "default.png" : entity.get().getImageURL());
             model.addAttribute("reviews", reviews.stream()
                     .filter(review -> review.getText() != null && !review.getText().isEmpty())
                     .collect(Collectors.toList()));

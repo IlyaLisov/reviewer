@@ -24,7 +24,7 @@
                     <p><b>Максимально допустимый размер файла:</b> 8 MB</p>
                     <form th:action="@{/account/roles/add}" method="post" enctype="multipart/form-data">
                         <label for="name">Введите название учреждения образования</label><br><br>
-                        <input type="text" id="name" name="name" required/><br><br>
+                        <input type="text" id="name" name="name" th:value="${name}" required/><br><br>
                         <label for="role">Выберите Вашу роль в данном учреждении образования:</label><br><br>
                         <select id="role" name="role" required>
                             <option value="student">Учащийся</option>

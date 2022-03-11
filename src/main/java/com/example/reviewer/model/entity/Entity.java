@@ -42,6 +42,8 @@ public class Entity {
     @ManyToOne
     private User author;
 
+    private String imageURL;
+
     @ManyToOne
     private Entity parentEntity;
 
@@ -124,6 +126,14 @@ public class Entity {
 
     public void setAuthor(User author) {
         this.author = author;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 
     public Entity getParentEntity() {
