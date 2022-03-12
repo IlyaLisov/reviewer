@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель администратора - Reviewer</title>
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div th:insert="blocks/header :: header"></div>
+    <div class="page">
+        <div class="body">
+            <div class="page-name">
+                Панель администратора
+            </div>
+            <div class="account">
+                <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
+                <div class="account-content">
+                    <p>В этом разделе Вы можете редактировать существующего пользователя.</p>
+                    <form method="post" th:action="@{/account/admin/edit-user/{login}(login=${user.login})}">
+                        <label for="name">Имя (используйте настоящее, необходимо для подтверждения
+                            документов)</label><br>
+                        <input id="name" name="name" th:value="${user.name}" type="text">
+                        <br><br><label for="login">Логин</label><br>
+                        <input id="login" name="login" readonly th:value="${user.login}" type="text">
+                        <br><br><label for="password">Пароль</label><br>
+                        <input id="password" name="password" type="password">
+                        <br><br><label for="passwordConfirmation">Подтверждение пароля</label><br>
+                        <input id="passwordConfirmation" name="passwordConfirmation" type="password"><br><br>
+                        <label for="userRole">Роль пользователя:</label><br>
+                        <select id="userRole" name="userRole">
+                            <option th:each="userRole : ${userRoles}" th:selected="${user.userRole.equals(userRole)}" th:text="${userRole.name}"
+                                    th:value="${userRole}"></option>
+                        </select><br><br>
+                        <button type="submit">Сохранить</button>
+                    </form>
+                    <h4>Роли пользователя:</h4>
+                    <div th:each="roleEntity : ${user.roles}">
+                        <a th:href="@{/entity/{id}(id=${roleEntity.entity.id})}"
+                           th:text="${roleEntity.entity.name}"></a><span
+                            th:text="' - ' + ${roleEntity.role.name}"></span><br>
+                    </div>
+                    <p class="success" th:text="${success}"></p>
+                    <p class="error" th:text="${error}"></p>
+                </div>
+            </div>
+        </div>
+        <div th:insert="blocks/sidebar :: sidebar"></div>
+    </div>
+    <div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>

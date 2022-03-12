@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель администратора - Reviewer</title>
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div th:insert="blocks/header :: header"></div>
+    <div class="page">
+        <div class="body">
+            <div class="page-name">
+                Панель администратора
+            </div>
+            <div class="account">
+                <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
+                <div class="account-content">
+                    <p>В этом разделе Вы можете создать нового пользователя.</p>
+                    <form method="post" th:action="@{/account/admin/add-user}">
+                        <label for="name">Имя (используйте настоящее, необходимо для подтверждения
+                            документов)</label><br>
+                        <input id="name" name="name" placeholder="обязательное поле" required th:value="${name}"
+                               type="text">
+                        <br><br><label for="login">Логин</label><br>
+                        <input id="login" name="login" placeholder="обязательное поле" required th:value="${login}"
+                               type="text">
+                        <br><br><label for="password">Пароль</label><br>
+                        <input id="password" name="password" placeholder="обязательное поле" required type="password">
+                        <br><br><label for="passwordConfirmation">Подтверждение пароля</label><br>
+                        <input id="passwordConfirmation" name="passwordConfirmation" placeholder="обязательное поле" required
+                               type="password"><br><br>
+                        <button type="submit">Создать</button>
+                    </form>
+                    <p class="success" th:text="${success}"></p>
+                    <p class="error" th:text="${error}"></p>
+                </div>
+            </div>
+        </div>
+        <div th:insert="blocks/sidebar :: sidebar"></div>
+    </div>
+    <div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>

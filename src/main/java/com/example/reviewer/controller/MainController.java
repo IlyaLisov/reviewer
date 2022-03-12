@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
 @Controller
@@ -53,12 +51,12 @@ public class MainController extends com.example.reviewer.controller.Controller {
             } else {
                 model.addAttribute("error", "Проверьте правильность введенных данных.");
                 model.addAttribute("login", login);
-                return "login";
+                return login(session);
             }
         } else {
             model.addAttribute("error", "Проверьте правильность введенных данных.");
             model.addAttribute("login", login);
-            return "login";
+            return login(session);
         }
         return "redirect:account";
     }
@@ -81,13 +79,12 @@ public class MainController extends com.example.reviewer.controller.Controller {
                 model.addAttribute("error", "Пользователь с таким логином уже существует.");
                 model.addAttribute("name", name);
                 model.addAttribute("login", login);
-                return "register";
+                return register(session);
             } else {
                 User user = new User();
                 user.setName(name);
                 user.setLogin(login);
                 user.setUserRole(UserRole.USER);
-                ZonedDateTime zdtNow = ZonedDateTime.now(ZoneOffset.UTC);
                 String generatedPassword = Crypter.crypt(password, user.getRegisterDate().toString());
                 user.setPassword(generatedPassword);
 
@@ -98,7 +95,7 @@ public class MainController extends com.example.reviewer.controller.Controller {
             model.addAttribute("error", "Введенные пароли не совпадают.");
             model.addAttribute("name", name);
             model.addAttribute("login", login);
-            return "register";
+            return register(session);
         }
         return "redirect:account";
     }

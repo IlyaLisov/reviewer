@@ -33,7 +33,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
     public String id(@PathVariable("id") Long id, Model model) {
         Optional<Entity> entity = entityRepository.findById(id);
         if (entity.isPresent()) {
-            List<EntityReview> reviews = (List<EntityReview>) entityReviewRepository.findAll();
+            List<EntityReview> reviews = entityReviewRepository.findAllByEntityId(id);
             List<Employee> employees = employeeRepository.findAllByEntityId(entity.get().getId());
             model.addAttribute("entity", entity.get());
             model.addAttribute("imageURL", entity.get().getImageURL() == null ? "default.png" : entity.get().getImageURL());

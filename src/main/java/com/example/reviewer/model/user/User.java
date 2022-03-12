@@ -93,6 +93,10 @@ public class User implements Comparable<User> {
         this.rating = rating;
     }
 
+    public void upRating(Integer rating) {
+        this.rating += 10;
+    }
+
     public LocalDate getRegisterDate() {
         return registerDate;
     }
