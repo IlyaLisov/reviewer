@@ -20,7 +20,8 @@
                     </div>
                     <div>
                         <p th:text="${entity.type.name}"></p>
-                        <p th:text="'Адрес: ' + (${entity.address != null} ? ${entity.address} : '') + ', ' + ${entity.district}"></p>
+                        <p th:text="'Адрес: ' + (${entity.address != null} ? ${entity.address} : '') + ', ' +
+                            ${entity.district.name} + ' район, ' + ${entity.district.getRegion().name} + ' область'"></p>
                         <div th:if="${entity.siteURL != null}">
                             Сайт: <a target="_blank" th:href="@{//{site}(site=${entity.siteURL})}"
                                      th:text="${entity.siteURL}"></a>

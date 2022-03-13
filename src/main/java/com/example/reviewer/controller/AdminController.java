@@ -1,13 +1,18 @@
 package com.example.reviewer.controller;
 
 import com.example.reviewer.model.entity.District;
+import com.example.reviewer.model.entity.Employee;
+import com.example.reviewer.model.entity.EmployeeType;
 import com.example.reviewer.model.entity.Entity;
 import com.example.reviewer.model.entity.EntityType;
 import com.example.reviewer.model.entity.Region;
+import com.example.reviewer.model.role.RoleDocument;
 import com.example.reviewer.model.user.Crypter;
 import com.example.reviewer.model.user.User;
 import com.example.reviewer.model.user.UserRole;
+import com.example.reviewer.repository.EmployeeRepository;
 import com.example.reviewer.repository.EntityRepository;
+import com.example.reviewer.repository.RoleDocumentRepository;
 import com.example.reviewer.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,10 +34,19 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/account/admin")
 public class AdminController {
     private static final int RATING_FOR_CREATION_ENTITY = 10;
+    private static final int RATING_FOR_CREATION_EMPLOYEE = 5;
+    private static final String USER_DOCUMENTS_FOLDER = "data/users/";
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private EntityRepository entityRepository;
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private RoleDocumentRepository roleDocumentRepository;
 
     @GetMapping()
     public String index() {
@@ -162,7 +178,7 @@ public class AdminController {
     public String doAddEntity(@RequestParam("name") String name, @RequestParam("type") String type,
                               @RequestParam(value = "parentEntity", required = false) Long entityId, @RequestParam("region") String region,
                               @RequestParam("district") String district, @RequestParam("address") String address,
-                              @RequestParam("siteURL") String siteURL, HttpSession session, Model model) {
+                              @RequestParam(value = "siteURL", required = false) String siteURL, HttpSession session, Model model) {
         Entity entity = new Entity();
         if (!entityRepository.findByName(name).isPresent()) {
             entity.setName(name);
@@ -187,7 +203,81 @@ public class AdminController {
             model.addAttribute("success", "Учреждение образования успешно создано.");
         } else {
             model.addAttribute("error", "Учреждение образования с таким названием уже существует.");
+            model.addAttribute("name", name);
         }
         return addEntity(model);
+    }
+
+    @GetMapping("/add-employee")
+    public String addEmployee(Model model) {
+        List<Entity> entities = (List<Entity>) entityRepository.findAll();
+        model.addAttribute("entities", entities.stream()
+                .sorted(Comparator.comparing(Entity::getName))
+                .collect(Collectors.toList()));
+        model.addAttribute("employeeTypes", EmployeeType.values());
+        return "account/admin/add-employee";
+    }
+
+    @PostMapping("/add-employee")
+    public String doAddEmployee(@RequestParam("name") String name, @RequestParam("type") String type,
+                                @RequestParam(value = "entity", required = false) Long id, HttpSession session, Model model) {
+        Employee employee = new Employee();
+        Optional<Entity> entity = entityRepository.findById(id);
+        if (!employeeRepository.findByNameAndEntity(name, entity.get()).isPresent()) {
+            employee.setName(name);
+            employee.setType(EmployeeType.valueOf(type));
+            employee.setEntity(entity.get());
+            User user = (User) session.getAttribute("user");
+            user.upRating(RATING_FOR_CREATION_EMPLOYEE);
+            employee.setAuthor(user);
+
+            userRepository.save(user);
+            employeeRepository.save(employee);
+            model.addAttribute("success", "Сотрудник успешно создан.");
+        } else {
+            model.addAttribute("error", "Сотрудник с таким именем в этом учреждении образования уже существует.");
+            model.addAttribute("name", name);
+            model.addAttribute("type", type);
+            model.addAttribute("entityId", id);
+        }
+        return addEmployee(model);
+    }
+
+    @GetMapping("/verify")
+    public String verify(Model model) {
+        List<RoleDocument> roleDocuments = (List<RoleDocument>) roleDocumentRepository.findAll();
+        model.addAttribute("roleDocuments", roleDocuments);
+        List<Entity> entities = (List<Entity>) entityRepository.findAll();
+        model.addAttribute("entities", entities);
+        return "account/admin/verify";
+    }
+
+    @PostMapping("/verify/submit/{id}")
+    public String verifySubmit(@PathVariable("id") Long id, @RequestParam("entity") Long entityId, Model model) {
+        Optional<RoleDocument> roleDocument = roleDocumentRepository.findById(id);
+        if (roleDocument.isPresent()) {
+            User user = roleDocument.get().getUser();
+            Entity entity = entityRepository.findById(entityId).get();
+
+            user.addRole(roleDocument.get().getRole(), entity);
+            userRepository.save(user);
+            File file = new File(USER_DOCUMENTS_FOLDER + "/" + roleDocument.get().getPhotoId());
+            file.delete();
+            roleDocumentRepository.delete(roleDocument.get());
+            model.addAttribute("success", "Роль была подтверждена.");
+        }
+        return verify(model);
+    }
+
+    @PostMapping("/verify/discard/{id}")
+    public String verifyDiscard(@PathVariable("id") Long id, Model model) {
+        Optional<RoleDocument> roleDocument = roleDocumentRepository.findById(id);
+        if (roleDocument.isPresent()) {
+            File file = new File(USER_DOCUMENTS_FOLDER + "/" + roleDocument.get().getPhotoId());
+            file.delete();
+            roleDocumentRepository.delete(roleDocument.get());
+            model.addAttribute("success", "Роль была отклонена.");
+        }
+        return verify(model);
     }
 }

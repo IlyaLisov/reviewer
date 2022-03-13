@@ -75,7 +75,7 @@ public class AccountController {
                         FileOutputStream fout = new FileOutputStream(convertFile);
                         fout.write(file.getBytes());
                         fout.close();
-                        RoleDocument document = new RoleDocument(name, Role.valueOf(role.toUpperCase()), user, uuid);
+                        RoleDocument document = new RoleDocument(name, Role.valueOf(role.toUpperCase()), user, uuid + "." + file.getContentType().replace("image/", ""));
                         roleDocumentRepository.save(document);
                         model.addAttribute("success", "Документ загружен успешно.");
                         model.addAttribute("name", name);

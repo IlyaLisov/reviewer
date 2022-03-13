@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,7 +41,9 @@ public class EntityController extends com.example.reviewer.controller.Controller
             model.addAttribute("reviews", reviews.stream()
                     .filter(review -> review.getText() != null && !review.getText().isEmpty())
                     .collect(Collectors.toList()));
-            model.addAttribute("employees", employees);
+            model.addAttribute("employees", employees.stream()
+                    .sorted(Comparator.comparing(Employee::getName))
+                    .collect(Collectors.toList()));
         } else {
             return "error/404";
         }

@@ -29,7 +29,8 @@
                         <input id="passwordConfirmation" name="passwordConfirmation" type="password"><br><br>
                         <label for="userRole">Роль пользователя:</label><br>
                         <select id="userRole" name="userRole">
-                            <option th:each="userRole : ${userRoles}" th:selected="${user.userRole.equals(userRole)}" th:text="${userRole.name}"
+                            <option th:each="userRole : ${userRoles}" th:selected="${user.userRole.equals(userRole)}"
+                                    th:text="${userRole.name}"
                                     th:value="${userRole}"></option>
                         </select><br><br>
                         <button type="submit">Сохранить</button>
