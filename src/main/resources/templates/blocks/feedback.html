@@ -1,0 +1,11 @@
+<div class="review" th:fragment="feedback(feedback)">
+    <p>"<span th:text="${feedback.text}"></span>"</p>
+    <div>
+        <b>Дата: </b><span th:text="${feedback.date}"></span><br>
+        <b>Тема: </b><span th:text="${feedback.feedbackType.name}"></span><br>
+        <div th:if="${feedback.author != null}">
+            <b>Отзыв оставил: </b><a th:href="@{/account/admin/edit-user/{login}(login=${feedback.author.login})}"
+                                     th:text="${feedback.author.login}"></a><br>
+        </div>
+    </div>
+</div>

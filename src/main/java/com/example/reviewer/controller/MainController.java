@@ -16,12 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
 @Controller
 public class MainController extends com.example.reviewer.controller.Controller {
+    private final int MAX_FEEDBACK_LENGTH = 1024;
     @Autowired
     private UserRepository userRepository;
 
@@ -53,12 +52,12 @@ public class MainController extends com.example.reviewer.controller.Controller {
             } else {
                 model.addAttribute("error", "Проверьте правильность введенных данных.");
                 model.addAttribute("login", login);
-                return "login";
+                return login(session);
             }
         } else {
             model.addAttribute("error", "Проверьте правильность введенных данных.");
             model.addAttribute("login", login);
-            return "login";
+            return login(session);
         }
         return "redirect:account";
     }
@@ -81,13 +80,12 @@ public class MainController extends com.example.reviewer.controller.Controller {
                 model.addAttribute("error", "Пользователь с таким логином уже существует.");
                 model.addAttribute("name", name);
                 model.addAttribute("login", login);
-                return "register";
+                return register(session);
             } else {
                 User user = new User();
                 user.setName(name);
                 user.setLogin(login);
                 user.setUserRole(UserRole.USER);
-                ZonedDateTime zdtNow = ZonedDateTime.now(ZoneOffset.UTC);
                 String generatedPassword = Crypter.crypt(password, user.getRegisterDate().toString());
                 user.setPassword(generatedPassword);
 
@@ -98,7 +96,7 @@ public class MainController extends com.example.reviewer.controller.Controller {
             model.addAttribute("error", "Введенные пароли не совпадают.");
             model.addAttribute("name", name);
             model.addAttribute("login", login);
-            return "register";
+            return register(session);
         }
         return "redirect:account";
     }
@@ -112,14 +110,18 @@ public class MainController extends com.example.reviewer.controller.Controller {
     public synchronized String doFeedback(@RequestParam("theme") String theme, @RequestParam("text") String text,
                                           HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
-        Feedback feedback = new Feedback();
-        feedback.setFeedbackType(FeedbackType.valueOf(theme.toUpperCase()));
-        feedback.setText(text);
-        if (user != null) {
-            feedback.setAuthor(user);
+        if (text.length() > MAX_FEEDBACK_LENGTH) {
+            Feedback feedback = new Feedback();
+            feedback.setFeedbackType(FeedbackType.valueOf(theme.toUpperCase()));
+            feedback.setText(text);
+            if (user != null) {
+                feedback.setAuthor(user);
+            }
+            feedbackRepository.save(feedback);
+            model.addAttribute("success", "Ваше сообщение успешно отправлено.");
+        } else {
+            model.addAttribute("error", "Сообщение не должно превышать 1024 символа.");
         }
-        feedbackRepository.save(feedback);
-        model.addAttribute("success", "Ваше сообщение успешно отправлено.");
         return feedback(session, model);
     }
 

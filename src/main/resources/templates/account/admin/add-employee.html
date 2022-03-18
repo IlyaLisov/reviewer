@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель администратора - Reviewer</title>
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div th:insert="blocks/header :: header"></div>
+    <div class="page">
+        <div class="body">
+            <div class="page-name">
+                Панель администратора
+            </div>
+            <div class="account">
+                <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
+                <div class="account-content">
+                    <p>В этом разделе Вы можете создать нового сотрудника.</p>
+                    <b>Важно:</b>
+                    <p>ФИО указывается полностью: Иванов Иван Иванович</p>
+                    <form method="post" th:action="@{/account/admin/add-employee}">
+                        <label for="name">ФИО сотрудника</label><br>
+                        <input id="name" name="name" placeholder="обязательное поле" required style="width: 300px"
+                               th:value="${name}" type="text">
+                        <br><br><label for="type">Тип сотрудника:</label><br>
+                        <select id="type" name="type">
+                            <option th:each="employeeType : ${employeeTypes}" th:selected="${employeeType eq type}"
+                                    th:text="${employeeType.name}" th:value="${employeeType}"></option>
+                        </select><br>
+                        <br><br><label for="entity">Учреждение образования, в котором работает этот
+                        сотрудник:</label><br>
+                        <select id="entity" name="entity">
+                            <option th:each="entity : ${entities}" th:selected="${entity.id eq entityId}"
+                                    th:text="${entity.name}" th:value="${entity.id}"></option>
+                        </select><br><br>
+                        <button type="submit">Создать</button>
+                    </form>
+                    <p class="success" th:text="${success}"></p>
+                    <p class="error" th:text="${error}"></p>
+                </div>
+            </div>
+        </div>
+        <div th:insert="blocks/sidebar :: sidebar"></div>
+    </div>
+    <div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>

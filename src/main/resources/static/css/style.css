@@ -326,6 +326,11 @@ img.entity-page {
     width: 300px;
 }
 
+img.verify-page {
+    height: 300px;
+    width: 300px;
+}
+
 .two-items {
     flex-direction: row;
     display: flex;

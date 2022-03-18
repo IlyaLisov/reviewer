@@ -84,9 +84,4 @@ public enum District {
     public Region getRegion() {
         return region;
     }
-
-    @Override
-    public String toString() {
-        return name + " район, " + region;
-    }
 }

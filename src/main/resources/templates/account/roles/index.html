@@ -27,7 +27,7 @@
                     </li>
                     <h4>Подтвержденные роли: </h4>
                     <div th:each="roleEntity : ${roles}">
-                        <li><p th:text="${roleEntity.entity.name} - ${roleEntity.role.name}"></p></li>
+                        <li><span th:text="${roleEntity.entity.name} + ' - ' + ${roleEntity.role.name}"></span></li>
                     </div>
                     <h4><a th:href="@{/account/roles/add}"> Добавить роль </a></h4>
                 </div>

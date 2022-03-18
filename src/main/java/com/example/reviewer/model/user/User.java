@@ -5,6 +5,7 @@ import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.role.RoleEntity;
 import com.sun.istack.NotNull;
 
+import javax.persistence.CascadeType;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -44,7 +45,7 @@ public class User implements Comparable<User> {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<RoleEntity> roles;
 
     public User() {
@@ -91,6 +92,10 @@ public class User implements Comparable<User> {
 
     public void setRating(Integer rating) {
         this.rating = rating;
+    }
+
+    public void upRating(Integer rating) {
+        this.rating += rating;
     }
 
     public LocalDate getRegisterDate() {
@@ -146,7 +151,7 @@ public class User implements Comparable<User> {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return id.equals(user.id);
+        return Objects.equals(id, user.id);
     }
 
     @Override

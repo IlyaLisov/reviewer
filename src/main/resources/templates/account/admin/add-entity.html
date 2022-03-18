@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель администратора - Reviewer</title>
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div th:insert="blocks/header :: header"></div>
+    <div class="page">
+        <div class="body">
+            <div class="page-name">
+                Панель администратора
+            </div>
+            <div class="account">
+                <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
+                <div class="account-content">
+                    <p>В этом разделе Вы можете создать новое учреждение образования.</p>
+                    <b>Важно:</b>
+                    <p>Название указывается полностью: Средняя школа №2 г. Минска или Краснопольская средняя школа</p>
+                    <p>Адрес в правильном порядке: 220030, проспект Независимости 4, г. Минск</p>
+                    <p>Сайт: bsu.by</p>
+                    <form method="post" th:action="@{/account/admin/add-entity}">
+                        <label for="name">Название учреждения образования</label><br>
+                        <input id="name" name="name" placeholder="обязательное поле" required style="width: 300px"
+                               th:value="${name}" type="text">
+                        <br><br><label for="type">Тип учреждения образования:</label><br>
+                        <select id="type" name="type">
+                            <option th:each="entityType : ${entityTypes}" th:text="${entityType.name}"
+                                    th:value="${entityType}"></option>
+                        </select><br>
+                        <br><br><label for="parentEntity">Университет (только для факультетов):</label><br>
+                        <select id="parentEntity" name="parentEntity">
+                            <option th:each="parentEntity : ${parentEntities}" th:text="${parentEntity.name}"
+                                    th:value="${parentEntity.id}"></option>
+                        </select><br><br>
+                        <label for="region">Область:</label><br>
+                        <select id="region" name="region">
+                            <option th:each="region : ${regions}" th:text="${region.name}"
+                                    th:value="${region}"></option>
+                        </select><br><br>
+                        <label for="district">Район:</label><br>
+                        <select id="district" name="district">
+                            <option th:each="district : ${districts}" th:text="${district.name}"
+                                    th:value="${district}"></option>
+                        </select><br><br>
+                        <br><br><label for="address">Адрес</label><br>
+                        <input id="address" name="address" placeholder="обязательное поле" required style="width: 300px"
+                               type="text">
+                        <br><br><label for="siteURL">Сайт:</label><br>
+                        <input id="siteURL" name="siteURL" style="width: 300px"
+                               type="text"><br><br>
+                        <button type="submit">Создать</button>
+                    </form>
+                    <p class="success" th:text="${success}"></p>
+                    <p class="error" th:text="${error}"></p>
+                </div>
+            </div>
+        </div>
+        <div th:insert="blocks/sidebar :: sidebar"></div>
+    </div>
+    <div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>

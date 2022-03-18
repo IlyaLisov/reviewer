@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/employee")
-public class EmployeeController {
+public class EmployeeController extends com.example.reviewer.controller.Controller {
     @Autowired
     private EmployeeRepository employeeRepository;
 
@@ -28,7 +28,7 @@ public class EmployeeController {
     public String id(@PathVariable("id") Long id, Model model) {
         Optional<Employee> employee = employeeRepository.findById(id);
         if (employee.isPresent()) {
-            List<EmployeeReview> reviews = (List<EmployeeReview>) employeeReviewRepository.findAll();
+            List<EmployeeReview> reviews = employeeReviewRepository.findAllByEmployeeId(id);
             model.addAttribute("employee", employee.get());
             model.addAttribute("imageURL", employee.get().getImageURL() == null ? "default.jpg" : employee.get().getImageURL());
             model.addAttribute("reviews", reviews.stream()
