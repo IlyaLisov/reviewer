@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/employee")
-public class EmployeeController {
+public class EmployeeController extends com.example.reviewer.controller.Controller {
     @Autowired
     private EmployeeRepository employeeRepository;
 

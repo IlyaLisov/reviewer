@@ -6,12 +6,16 @@ import com.example.reviewer.model.entity.EmployeeType;
 import com.example.reviewer.model.entity.Entity;
 import com.example.reviewer.model.entity.EntityType;
 import com.example.reviewer.model.entity.Region;
+import com.example.reviewer.model.feedback.Feedback;
+import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.role.RoleDocument;
+import com.example.reviewer.model.role.RoleEntity;
 import com.example.reviewer.model.user.Crypter;
 import com.example.reviewer.model.user.User;
 import com.example.reviewer.model.user.UserRole;
 import com.example.reviewer.repository.EmployeeRepository;
 import com.example.reviewer.repository.EntityRepository;
+import com.example.reviewer.repository.FeedbackRepository;
 import com.example.reviewer.repository.RoleDocumentRepository;
 import com.example.reviewer.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +36,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/account/admin")
-public class AdminController {
+public class AdminController extends com.example.reviewer.controller.Controller {
     private static final int RATING_FOR_CREATION_ENTITY = 10;
     private static final int RATING_FOR_CREATION_EMPLOYEE = 5;
     private static final String USER_DOCUMENTS_FOLDER = "data/users/";
@@ -47,6 +51,9 @@ public class AdminController {
 
     @Autowired
     private RoleDocumentRepository roleDocumentRepository;
+
+    @Autowired
+    private FeedbackRepository feedbackRepository;
 
     @GetMapping()
     public String index() {
@@ -279,5 +286,75 @@ public class AdminController {
             model.addAttribute("success", "Роль была отклонена.");
         }
         return verify(model);
+    }
+
+    @GetMapping("/add-role-to-user")
+    public String addRoleToUser(Model model) {
+        model.addAttribute("roles", Role.values());
+        return "account/admin/add-role-to-user";
+    }
+
+    @PostMapping("/add-role-to-user")
+    public String doAddRoleToUser(@RequestParam("login") String login, @RequestParam("entityId") Long entityId,
+                                  @RequestParam("role") String role, Model model) {
+        Optional<User> user = userRepository.getByLogin(login);
+        Optional<Entity> entity = entityRepository.findById(entityId);
+        model.addAttribute("login", login);
+        if (user.isPresent()) {
+            if (entity.isPresent()) {
+                RoleEntity roleEntity = new RoleEntity();
+                roleEntity.setEntity(entity.get());
+                roleEntity.setUser(user.get());
+                roleEntity.setRole(Role.valueOf(role));
+                if (user.get().getRoles().stream()
+                        .anyMatch(r -> r.getUser().equals(user.get()) && r.getEntity().equals(entity.get()))) {
+                    model.addAttribute("error", "У этого пользователя уже существует эта роль.");
+                } else {
+                    user.get().addRole(Role.valueOf(role), entity.get());
+                    userRepository.save(user.get());
+                    model.addAttribute("success", "Роль " + Role.valueOf(role).getName() + " в "
+                            + entity.get().getName() + " успешно добавлена.");
+                }
+            } else {
+                model.addAttribute("error", "Учреждение образования с таким id не найдено.");
+            }
+        } else {
+            model.addAttribute("error", "Пользователь с таким логином не найден.");
+        }
+        return addRoleToUser(model);
+    }
+
+    @GetMapping("/feedback")
+    public String feedback(Model model) {
+        List<Feedback> unreadFeedback = feedbackRepository.findAllByIsRead(false);
+        List<Feedback> readFeedback = feedbackRepository.findAllByIsRead(true);
+        model.addAttribute("unreadFeedback", unreadFeedback);
+        model.addAttribute("readFeedback", readFeedback);
+        return "account/admin/feedback";
+    }
+
+    @PostMapping("/feedback/read/{id}")
+    public String feedbackRead(@PathVariable("id") Long id, Model model) {
+        Optional<Feedback> feedback = feedbackRepository.findById(id);
+        if (feedback.isPresent()) {
+            feedback.get().setRead(true);
+            feedbackRepository.save(feedback.get());
+        }
+        return feedback(model);
+    }
+
+    @PostMapping("/feedback/unread/{id}")
+    public String feedbackUnread(@PathVariable("id") Long id, Model model) {
+        Optional<Feedback> feedback = feedbackRepository.findById(id);
+        if (feedback.isPresent()) {
+            feedback.get().setRead(false);
+            feedbackRepository.save(feedback.get());
+        }
+        return feedback(model);
+    }
+
+    @GetMapping("/statistics")
+    public String statistics(Model model) {
+        return "account/admin/statistics";
     }
 }

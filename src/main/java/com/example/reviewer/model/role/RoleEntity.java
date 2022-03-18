@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.util.Objects;
 
 @javax.persistence.Entity
 public class RoleEntity {
@@ -69,5 +70,21 @@ public class RoleEntity {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (user == null || entity == null) {
+            return false;
+        }
+        if (!(o instanceof RoleEntity)) return false;
+        RoleEntity that = (RoleEntity) o;
+        return user.equals(that.user) && entity.equals(that.entity);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(user, entity);
     }
 }

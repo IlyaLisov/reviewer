@@ -25,7 +25,7 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping(value = "/account")
-public class AccountController {
+public class AccountController extends com.example.reviewer.controller.Controller {
     private final String uploadPath = "data/users/";
     private final String[] contentTypes = {"image/jpg", "image/png", "image/jpeg"};
     private final Long MAX_UPLOAD_SIZE = 8 * 1024 * 1024L; //8MB

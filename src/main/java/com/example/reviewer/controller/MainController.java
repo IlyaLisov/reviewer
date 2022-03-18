@@ -20,6 +20,7 @@ import java.util.Optional;
 
 @Controller
 public class MainController extends com.example.reviewer.controller.Controller {
+    private final int MAX_FEEDBACK_LENGTH = 1024;
     @Autowired
     private UserRepository userRepository;
 
@@ -109,14 +110,18 @@ public class MainController extends com.example.reviewer.controller.Controller {
     public synchronized String doFeedback(@RequestParam("theme") String theme, @RequestParam("text") String text,
                                           HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
-        Feedback feedback = new Feedback();
-        feedback.setFeedbackType(FeedbackType.valueOf(theme.toUpperCase()));
-        feedback.setText(text);
-        if (user != null) {
-            feedback.setAuthor(user);
+        if (text.length() > MAX_FEEDBACK_LENGTH) {
+            Feedback feedback = new Feedback();
+            feedback.setFeedbackType(FeedbackType.valueOf(theme.toUpperCase()));
+            feedback.setText(text);
+            if (user != null) {
+                feedback.setAuthor(user);
+            }
+            feedbackRepository.save(feedback);
+            model.addAttribute("success", "Ваше сообщение успешно отправлено.");
+        } else {
+            model.addAttribute("error", "Сообщение не должно превышать 1024 символа.");
         }
-        feedbackRepository.save(feedback);
-        model.addAttribute("success", "Ваше сообщение успешно отправлено.");
         return feedback(session, model);
     }
 

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель администратора - Reviewer</title>
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div th:insert="blocks/header :: header"></div>
+    <div class="page">
+        <div class="body">
+            <div class="page-name">
+                Панель администратора
+            </div>
+            <div class="account">
+                <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
+                <div class="account-content">
+                    <p>На данной странице Вы можете увидеть все сообщения, которые прислали
+                        пользователи.</p>
+                    <p class="success" th:text="${success}"></p>
+                    <p class="error" th:text="${error}"></p>
+                    <h4>Непрочитанные сообщения:</h4>
+                    <table>
+                        <thead>
+                        <td>№</td>
+                        <td>Сообщение</td>
+                        <td>Действие</td>
+                        </thead>
+                        <tr th:each="message, iter : ${unreadFeedback}">
+                            <td><span th:text="${iter.count}"></span></td>
+                            <td>
+                                <div th:insert="blocks/feedback :: feedback(feedback = ${message})"></div>
+                            </td>
+                            <td>
+                                <form method="post"
+                                      th:action="@{/account/admin/feedback/read/{id}(id = ${message.id})}">
+                                    <button>Прочитано</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </table>
+                    <h4>Прочитанные сообщения:</h4>
+                    <table>
+                        <thead>
+                        <td>№</td>
+                        <td>Сообщение</td>
+                        <td>Действие</td>
+                        </thead>
+                        <tr th:each="message, iter : ${readFeedback}">
+                            <td><span th:text="${iter.count}"></span></td>
+                            <td>
+                                <div th:insert="blocks/feedback :: feedback(feedback = ${message})"></div>
+                            </td>
+                            <td>
+                                <form method="post"
+                                      th:action="@{/account/admin/feedback/unread/{id}(id = ${message.id})}">
+                                    <button>Не прочитано</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div th:insert="blocks/sidebar :: sidebar"></div>
+    </div>
+    <div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>

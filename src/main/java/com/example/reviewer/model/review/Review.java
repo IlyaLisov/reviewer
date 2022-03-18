@@ -4,6 +4,7 @@ import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.user.User;
 import com.sun.istack.NotNull;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -19,6 +20,7 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(length = 1024)
     private String text;
 
     @NotNull
