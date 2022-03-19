@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/rating")
@@ -24,12 +25,14 @@ public class RatingController extends com.example.reviewer.controller.Controller
     @GetMapping
     public String index(Model model) {
         List<Entity> entities = (List<Entity>) entityRepository.findAll();
-        entities.sort((e1, e2) -> (e2.getRating() != null && e1.getRating() != null) ? e2.getRating() - e1.getRating() : 0);
-        model.addAttribute("entities", entities);
+        model.addAttribute("entities", entities.stream()
+                .sorted((e1, e2) -> e2.getRating() - e1.getRating())
+                .collect(Collectors.toList()));
 
         List<Employee> employees = (List<Employee>) employeeRepository.findAll();
-        employees.sort((e1, e2) -> (e2.getRating() != null && e1.getRating() != null) ? e2.getRating() - e1.getRating() : 0);
-        model.addAttribute("employees", employees);
+        model.addAttribute("employees", employees.stream()
+                .sorted((e1, e2) -> e2.getRating() - e1.getRating())
+                .collect(Collectors.toList()));
 
         return "rating/index";
     }

@@ -114,7 +114,7 @@ public class Entity {
     }
 
     public Integer getRating() {
-        return rating;
+        return rating != null ? rating : 0;
     }
 
     public void setRating(Integer rating) {

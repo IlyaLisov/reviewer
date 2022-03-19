@@ -14,6 +14,7 @@
             <div class="two-items">
                 <div class="content">
                     <h4>Рейтинг учреждений образования:</h4>
+                    <div class="search" th:insert="blocks/search :: search-entity(value='')"></div>
                     <table>
                         <thead>
                         <tr>
@@ -27,7 +28,8 @@
                         <div th:each="entity, iter : ${entities}">
                             <tr>
                                 <td><span th:text="${iter.count}"></span></td>
-                                <td><span th:text="${entity.getAverageRating()}"></span></td>
+                                <td><span th:text="${entity.getAverageRating()}"></span>
+                                </td>
                                 <td><a th:href="@{/entity/{id}(id = ${entity.id})}" th:text="${entity.name}"></a></td>
                                 <td><span th:text="${entity.type.name}"></span></td>
                                 <td><span th:text="${entity.address}"></span></td>
@@ -37,6 +39,7 @@
                 </div>
                 <div class="content">
                     <h4>Рейтинг сотрудников:</h4>
+                    <div class="search" th:insert="blocks/search :: search-employee(value='')"></div>
                     <table>
                         <thead>
                         <tr>

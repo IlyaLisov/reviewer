@@ -1,13 +1,14 @@
-<div class="search" th:fragment="search">
-    <form method="get" name="searchEntity" th:action="@{/search/education}">
+<div class="search" th:fragment="search-entity(value)">
+    <form method="get" name="searchEntity" th:action="@{/search/entities}">
         <label for="entityQuery">Поиск учреждения образования:</label><br>
-        <input id="entityQuery" name="query" required type="text">
+        <input id="entityQuery" name="query" required type="text" th:value="${value}">
         <button type="submit">Найти</button>
     </form>
-    <form method="get" name="searchEmployee" style="margin-top: 10px; margin-bottom: 10px"
-          th:action="@{/search/employees}">
+</div>
+<div class="search" th:fragment="search-employee(value)">
+    <form method="get" name="searchEmployee" th:action="@{/search/employees}">
         <label for="employeeQuery">Поиск сотрудника:</label><br>
-        <input id="employeeQuery" name="query" required type="text">
+        <input id="employeeQuery" name="query" required type="text" th:value="${value}">
         <button type="submit">Найти</button>
     </form>
 </div>
