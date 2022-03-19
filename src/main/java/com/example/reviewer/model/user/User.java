@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @javax.persistence.Entity
 public class User implements Comparable<User> {
@@ -130,8 +131,20 @@ public class User implements Comparable<User> {
         this.roles = roles;
     }
 
+    public List<Role> getRolesInEntity(Long entityId) {
+        return roles.stream()
+                .filter(roleEntity -> roleEntity.getEntity().getId().equals(entityId))
+                .map(RoleEntity::getRole)
+                .collect(Collectors.toList());
+    }
+
     public void addRole(Role role, Entity entity) {
         roles.add(new RoleEntity(this, entity, role));
+    }
+
+    public boolean hasRole(int entityId) {
+        return roles.stream()
+                .anyMatch(roleEntity -> roleEntity.getEntity().getId() == entityId);
     }
 
     public boolean isAdmin() {

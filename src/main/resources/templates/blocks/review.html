@@ -1,4 +1,4 @@
-<div class="review" th:fragment="entity-review(r)">
+<div class="review" th:fragment="entity-review(r)" xmlns:th="http://www.w3.org/1999/html">
     <p>"<span th:text="${r.text}"></span>"</p>
     <div>
         <b>Отзыв оставлен: </b><span th:text="${r.reviewDate}"></span><br>
@@ -39,4 +39,24 @@
         <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
     </div>
     <p><a th:href="@{/employee/{id}(id=${r.employee.id})}" th:text="'Перейти к сотруднику'"></a></p>
+</div>
+
+<div class="review-form" th:fragment="left-entity-review(e, roles)">
+    <form method="post" th:action="@{/entity/left-review/{id}(id = ${e.id})}">
+        <label for="text">Ваш отзыв (не более 1024 символов):</label><br>
+        <textarea id="text" name="text" style="width: 90%; height: 150px; resize: none;"></textarea><br><br>
+        <label for="role">От лица кого Вы оставляете отзыв:</label><br>
+        <select id="role" name="role">
+            <option th:each="role : ${roles}" th:text="${role.name}" th:value="${role}"></option>
+        </select><br><br>
+        <label for="mark">Ваша оценка:</label><br>
+        <select id="mark" name="mark">
+            <option selected value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+        </select><br><br>
+        <button>Отправить</button>
+    </form>
 </div>

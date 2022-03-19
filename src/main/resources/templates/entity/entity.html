@@ -44,6 +44,24 @@
                     </div>
                 </div>
 
+                <p class="success" th:text="${success}"></p>
+                <p class="error" th:text="${error}"></p>
+
+                <div th:if="${user == null}">
+                    <h4><a th:href="@{/login}" th:text="'Войдите в аккаунт'"></a>, чтобы иметь возможность оставить свой
+                        отзыв, либо проголосовать за существующие.</h4>
+                </div>
+                <div th:if="${user != null}">
+                    <div th:if="${user.hasRole(entity.id)}">
+                        <div th:insert="blocks/review :: left-entity-review(e = ${entity}, roles = ${roles})"></div>
+                    </div>
+                    <div th:unless="${user.hasRole(entity.id)}">
+                        <h4>Отзывы могут оставлять только пользователи, которые <a th:href="@{/account/roles}"
+                                                                                   th:text="'подтвердили свою связь'"></a> с
+                            этим учреждением образования.</h4>
+                    </div>
+                </div>
+
                 <div th:unless="${reviews.isEmpty()}">
                     <h4>Отзывы:</h4>
                     <div class="reviews" th:each="review : ${reviews}">
