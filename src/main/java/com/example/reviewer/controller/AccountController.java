@@ -1,9 +1,13 @@
 package com.example.reviewer.controller;
 
+import com.example.reviewer.model.review.EmployeeReview;
+import com.example.reviewer.model.review.EntityReview;
 import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.role.RoleDocument;
 import com.example.reviewer.model.user.Crypter;
 import com.example.reviewer.model.user.User;
+import com.example.reviewer.repository.EmployeeReviewRepository;
+import com.example.reviewer.repository.EntityReviewRepository;
 import com.example.reviewer.repository.RoleDocumentRepository;
 import com.example.reviewer.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/account")
@@ -31,12 +36,19 @@ public class AccountController extends com.example.reviewer.controller.Controlle
     private final Long MAX_UPLOAD_SIZE = 8 * 1024 * 1024L; //8MB
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private RoleDocumentRepository roleDocumentRepository;
 
+    @Autowired
+    private EntityReviewRepository entityReviewRepository;
+
+    @Autowired
+    private EmployeeReviewRepository employeeReviewRepository;
+
     @GetMapping()
     public String index(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
+        User user = (User) model.getAttribute("user");
         List<User> users = (List<User>) userRepository.findAll();
         users.sort((u1, u2) -> u2.getRating() - u1.getRating());
         int positionInRating = users.indexOf(user);
@@ -46,14 +58,14 @@ public class AccountController extends com.example.reviewer.controller.Controlle
 
     @GetMapping("/roles")
     public String roles(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
+        User user = (User) model.getAttribute("user");
         model.addAttribute("roles", user.getRoles());
         return "account/roles/index";
     }
 
     @GetMapping("/roles/add")
     public String rolesAdd(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
+        User user = (User) model.getAttribute("user");
         int requestAmount = roleDocumentRepository.countAllByUserId(user.getId());
         model.addAttribute("requestAmount", requestAmount);
         return "account/roles/add";
@@ -62,7 +74,7 @@ public class AccountController extends com.example.reviewer.controller.Controlle
     @PostMapping("/roles/add")
     public String doRolesAdd(@RequestParam("name") String name, @RequestParam("role") String role, @RequestParam("file") MultipartFile file,
                              HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
+        User user = (User) model.getAttribute("user");
         if (!file.isEmpty()) {
             if (Arrays.asList(contentTypes).contains(file.getContentType())) {
                 try {
@@ -94,7 +106,18 @@ public class AccountController extends com.example.reviewer.controller.Controlle
     }
 
     @GetMapping("/reviews")
-    public String reviews() {
+    public String reviews(Model model) {
+        User user = (User) model.getAttribute("user");
+        List<EntityReview> entityReviews = entityReviewRepository.findAllByAuthorId(user.getId());
+        model.addAttribute("entityReviews", entityReviews.stream()
+                .sorted((e1, e2) -> e2.getReviewDate().compareTo(e1.getReviewDate()))
+                .collect(Collectors.toList()));
+
+        List<EmployeeReview> employeeReviews = employeeReviewRepository.findAllByAuthorId(user.getId());
+        model.addAttribute("employeeReviews", employeeReviews.stream()
+                .sorted((e1, e2) -> e2.getReviewDate().compareTo(e1.getReviewDate()))
+                .collect(Collectors.toList()));
+
         return "account/reviews";
     }
 
@@ -104,14 +127,14 @@ public class AccountController extends com.example.reviewer.controller.Controlle
     }
 
     @GetMapping("/settings")
-    public String settings(HttpSession session, Model model) {
+    public String settings(Model model) {
         return "account/settings";
     }
 
     @PostMapping("/settings")
     public String doSettings(@RequestParam(name = "password") String password, @RequestParam("passwordConfirmation") String passwordConfirmation,
-                             HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
+                             Model model) {
+        User user = (User) model.getAttribute("user");
         if (password.equals(passwordConfirmation)) {
             String cryptedPassword = Crypter.crypt(password, user.getRegisterDate().toString());
             if (cryptedPassword.equals(user.getPassword())) {
@@ -124,6 +147,6 @@ public class AccountController extends com.example.reviewer.controller.Controlle
         } else {
             model.addAttribute("error", "Пароли не совпадают.");
         }
-        return settings(session, model);
+        return settings(model);
     }
 }

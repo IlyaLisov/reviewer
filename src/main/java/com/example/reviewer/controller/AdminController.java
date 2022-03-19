@@ -185,7 +185,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
     public String doAddEntity(@RequestParam("name") String name, @RequestParam("type") String type,
                               @RequestParam(value = "parentEntity", required = false) Long entityId, @RequestParam("region") String region,
                               @RequestParam("district") String district, @RequestParam("address") String address,
-                              @RequestParam(value = "siteURL", required = false) String siteURL, HttpSession session, Model model) {
+                              @RequestParam(value = "siteURL", required = false) String siteURL, Model model) {
         Entity entity = new Entity();
         if (!entityRepository.findByName(name).isPresent()) {
             entity.setName(name);
@@ -201,7 +201,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
             if (siteURL != null && !siteURL.isEmpty()) {
                 entity.setSiteURL(siteURL);
             }
-            User user = (User) session.getAttribute("user");
+            User user = (User) model.getAttribute("user");
             user.upRating(RATING_FOR_CREATION_ENTITY);
             entity.setAuthor(user);
 
@@ -227,14 +227,14 @@ public class AdminController extends com.example.reviewer.controller.Controller 
 
     @PostMapping("/add-employee")
     public String doAddEmployee(@RequestParam("name") String name, @RequestParam("type") String type,
-                                @RequestParam(value = "entity", required = false) Long id, HttpSession session, Model model) {
+                                @RequestParam(value = "entity", required = false) Long id, Model model) {
         Employee employee = new Employee();
         Optional<Entity> entity = entityRepository.findById(id);
         if (!employeeRepository.findByNameAndEntity(name, entity.get()).isPresent()) {
             employee.setName(name);
             employee.setType(EmployeeType.valueOf(type));
             employee.setEntity(entity.get());
-            User user = (User) session.getAttribute("user");
+            User user = (User) model.getAttribute("user");
             user.upRating(RATING_FOR_CREATION_EMPLOYEE);
             employee.setAuthor(user);
 

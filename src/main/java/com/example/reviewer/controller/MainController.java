@@ -33,8 +33,8 @@ public class MainController extends com.example.reviewer.controller.Controller {
     }
 
     @GetMapping("/login")
-    public String login(HttpSession session) {
-        if (session.getAttribute("user") != null) {
+    public String login(Model model) {
+        if (model.getAttribute("user") != null) {
             return "redirect:account";
         }
         return "login";
@@ -52,19 +52,19 @@ public class MainController extends com.example.reviewer.controller.Controller {
             } else {
                 model.addAttribute("error", "Проверьте правильность введенных данных.");
                 model.addAttribute("login", login);
-                return login(session);
+                return login(model);
             }
         } else {
             model.addAttribute("error", "Проверьте правильность введенных данных.");
             model.addAttribute("login", login);
-            return login(session);
+            return login(model);
         }
         return "redirect:account";
     }
 
     @GetMapping("/register")
-    public String register(HttpSession session) {
-        if (session.getAttribute("user") != null) {
+    public String register(Model model) {
+        if (model.getAttribute("user") != null) {
             return "redirect:account";
         }
         return "register";
@@ -80,7 +80,7 @@ public class MainController extends com.example.reviewer.controller.Controller {
                 model.addAttribute("error", "Пользователь с таким логином уже существует.");
                 model.addAttribute("name", name);
                 model.addAttribute("login", login);
-                return register(session);
+                return register(model);
             } else {
                 User user = new User();
                 user.setName(name);
@@ -96,20 +96,20 @@ public class MainController extends com.example.reviewer.controller.Controller {
             model.addAttribute("error", "Введенные пароли не совпадают.");
             model.addAttribute("name", name);
             model.addAttribute("login", login);
-            return register(session);
+            return register(model);
         }
         return "redirect:account";
     }
 
     @GetMapping("/feedback")
-    public String feedback(HttpSession session, Model model) {
+    public String feedback(Model model) {
         return "feedback";
     }
 
     @PostMapping("/feedback")
     public synchronized String doFeedback(@RequestParam("theme") String theme, @RequestParam("text") String text,
-                                          HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
+                                          Model model) {
+        User user = (User) model.getAttribute("user");
         if (text.length() > MAX_FEEDBACK_LENGTH) {
             Feedback feedback = new Feedback();
             feedback.setFeedbackType(FeedbackType.valueOf(theme.toUpperCase()));
@@ -122,7 +122,7 @@ public class MainController extends com.example.reviewer.controller.Controller {
         } else {
             model.addAttribute("error", "Сообщение не должно превышать 1024 символа.");
         }
-        return feedback(session, model);
+        return feedback(model);
     }
 
     @GetMapping("/rules")

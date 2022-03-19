@@ -9,4 +9,6 @@ public interface EmployeeReviewRepository extends CrudRepository<EmployeeReview,
 
     List<EmployeeReview> findAllByEmployeeId(Long id);
 
+    List<EmployeeReview> findAllByAuthorId(Long id);
+
 }
