@@ -24,13 +24,15 @@
                            th:value="${entity.name}" type="text"><br><br>
                     <label for="type">Тип учреждения образования:</label><br>
                     <select id="type" name="type">
-                        <option th:each="type : ${types}" th:selected="${type.equals(entity.type)}" th:text="${type.name}"
+                        <option th:each="type : ${types}" th:selected="${type.equals(entity.type)}"
+                                th:text="${type.name}"
                                 th:value="${type}"></option>
                     </select><br><br>
                     <label for="parentEntity">Университет (только для факультетов):</label><br>
                     <select id="parentEntity" name="parentEntity">
                         <option th:selected="${entity.parentEntity == null}" th:value="0">Не выбрано</option>
-                        <option th:each="university : ${parentEntities}" th:selected="${entity.parentEntity != null && university.id == entity.parentEntity.id}"
+                        <option th:each="university : ${parentEntities}"
+                                th:selected="${entity.parentEntity != null && university.id eq entity.parentEntity.id}"
                                 th:text="${university.name}"
                                 th:value="${university.id}"></option>
                     </select><br><br>

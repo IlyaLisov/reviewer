@@ -17,6 +17,9 @@
                 <div class="two-items">
                     <div style="margin-right: 30px">
                         <img class="employee-page" th:src="@{/images/employee/{imageURL}(imageURL=${imageURL})}">
+                        <div th:if="${user != null && (user.isAdmin() || user.isModerator())}">
+                            <a th:href="@{/employee/edit/{id}(id=${employee.id})}" th:text="'Редактировать'"></a>
+                        </div>
                     </div>
                     <div>
                         <p th:text="${employee.type.name}"></p>

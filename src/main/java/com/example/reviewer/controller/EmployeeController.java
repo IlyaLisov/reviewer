@@ -1,11 +1,14 @@
 package com.example.reviewer.controller;
 
 import com.example.reviewer.model.entity.Employee;
+import com.example.reviewer.model.entity.EmployeeType;
+import com.example.reviewer.model.entity.Entity;
 import com.example.reviewer.model.review.EmployeeReview;
 import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.user.User;
 import com.example.reviewer.repository.EmployeeRepository;
 import com.example.reviewer.repository.EmployeeReviewRepository;
+import com.example.reviewer.repository.EntityRepository;
 import com.example.reviewer.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,6 +34,9 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EntityRepository entityRepository;
 
     @GetMapping("/{id}")
     public String id(@PathVariable("id") Long id, Model model) {
@@ -78,5 +84,35 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
             }
         }
         return id(id, model);
+    }
+
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable("id") Long id, Model model) {
+        Optional<Employee> employee = employeeRepository.findById(id);
+        if (employee.isPresent()) {
+            model.addAttribute("employee", employee.get());
+            model.addAttribute("types", EmployeeType.values());
+            model.addAttribute("imageURL", employee.get().getImageURL() == null ? "default.jpg" : employee.get().getImageURL());
+            List<Entity> entities = (List<Entity>) entityRepository.findAll();
+            model.addAttribute("entities", entities);
+        } else {
+            return "redirect:rating";
+        }
+        return "employee/edit";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String doEdit(@PathVariable("id") Long id, @RequestParam("name") String name, @RequestParam("type") String type,
+                         @RequestParam(value = "entity", required = false) Long entityId, Model model) {
+        Optional<Employee> employee = employeeRepository.findById(id);
+        if (employee.isPresent()) {
+            employee.get().setName(name);
+            employee.get().setType(EmployeeType.valueOf(type));
+            Optional<Entity> entity = entityRepository.findById(entityId);
+            employee.get().setEntity(entity.get());
+            employeeRepository.save(employee.get());
+            model.addAttribute("success", "Сотрудник успешно обновлен.");
+        }
+        return edit(id, model);
     }
 }

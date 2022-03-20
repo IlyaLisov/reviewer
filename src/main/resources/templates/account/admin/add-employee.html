@@ -20,7 +20,7 @@
                     <b>Важно:</b>
                     <p>ФИО указывается полностью: Иванов Иван Иванович</p>
                     <form method="post" th:action="@{/account/admin/add-employee}">
-                        <label for="name">ФИО сотрудника</label><br>
+                        <label for="name">ФИО сотрудника:</label><br>
                         <input id="name" name="name" placeholder="обязательное поле" required style="width: 300px"
                                th:value="${name}" type="text">
                         <br><br><label for="type">Тип сотрудника:</label><br>
