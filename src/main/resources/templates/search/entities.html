@@ -13,26 +13,7 @@
             <div class="page-name">Поиск по запросу "<span th:text="${param.query}"></span>"</div>
             <div class="content">
                 <div class="search" th:insert="blocks/search :: search-entity(value=${param.query})"></div>
-                <table>
-                    <thead>
-                    <tr>
-                        <td>№</td>
-                        <td>Рейтинг</td>
-                        <td>Название</td>
-                        <td>Тип</td>
-                        <td>Адрес</td>
-                    </tr>
-                    </thead>
-                    <div th:each="entity, iter : ${entities}">
-                        <tr>
-                            <td><span th:text="${iter.count}"></span></td>
-                            <td><span th:text="${entity.getAverageRating()}"></span></td>
-                            <td><a th:href="@{/entity/{id}(id = ${entity.id})}" th:text="${entity.name}"></a></td>
-                            <td><span th:text="${entity.type.name}"></span></td>
-                            <td><span th:text="${entity.address}"></span></td>
-                        </tr>
-                    </div>
-                </table>
+                <div th:insert="blocks/table :: entity-table(entities=${entities})"></div>
             </div>
         </div>
         <div th:insert="blocks/sidebar :: sidebar"></div>

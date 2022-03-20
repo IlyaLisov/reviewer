@@ -33,9 +33,20 @@
                     </div>
                 </div>
 
-                <div th:unless="${employees.isEmpty()}">
+                <div style="margin-bottom: 10px" th:unless="${childEntities.isEmpty()}">
                     <input class="hidden" id="hd-1" type="checkbox"/>
-                    <label for="hd-1">Нажмите здесь, чтобы увидеть список сотрудников</label>
+                    <label for="hd-1">Нажмите здесь, чтобы увидеть список факультетов</label>
+                    <div>
+                        <div th:each="entity : ${childEntities}">
+                            <a th:href="@{/entity/{id}(id=${entity.getId()})}"
+                               th:text="${entity.name}"></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 10px" th:unless="${employees.isEmpty()}">
+                    <input class="hidden" id="hd-2" type="checkbox"/>
+                    <label for="hd-2">Нажмите здесь, чтобы увидеть список сотрудников</label>
                     <div>
                         <div th:each="employee : ${employees}">
                             <a th:href="@{/employee/{id}(id=${employee.getId()})}"

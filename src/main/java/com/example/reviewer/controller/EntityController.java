@@ -57,6 +57,10 @@ public class EntityController extends com.example.reviewer.controller.Controller
             if (user != null) {
                 model.addAttribute("roles", user.getRolesInEntity(entity.get().getId()));
             }
+            List<Entity> childEntities = entityRepository.findByParentEntity(entity.get());
+            model.addAttribute("childEntities", childEntities.stream()
+                    .sorted(Comparator.comparing(Entity::getName))
+                    .collect(Collectors.toList()));
         } else {
             return "error/404";
         }

@@ -1,0 +1,52 @@
+<div th:fragment="employee-table(employees)">
+    <table>
+        <thead>
+        <tr>
+            <td>№</td>
+            <td>Фотография</td>
+            <td>Рейтинг</td>
+            <td>ФИО</td>
+            <td>Статус</td>
+            <td>Учреждение образования</td>
+        </tr>
+        </thead>
+        <div th:each="employee, iter : ${employees}">
+            <tr>
+                <td><span th:text="${iter.count}"></span></td>
+                <td><img class="employee-rating"
+                         th:src="@{/images/employee/{imageURL}(imageURL = ${employee.imageURL == null ? 'default.jpg' : employee.imageURL})}">
+                </td>
+                <td><span th:text="${employee.getAverageRating()}"></span></td>
+                <td><a th:href="@{/employee/{id}(id = ${employee.id})}" th:text="${employee.name}"></a>
+                </td>
+                <td><span th:text="${employee.type.name}"></span></td>
+                <td><a th:href="@{/entity/{id}(id = ${employee.entity.id})}"
+                       th:text="${employee.entity.name}"></a></td>
+            </tr>
+        </div>
+    </table>
+</div>
+
+<div th:fragment="entity-table(entities)">
+    <table>
+        <thead>
+        <tr>
+            <td>№</td>
+            <td>Рейтинг</td>
+            <td>Название</td>
+            <td>Тип</td>
+            <td>Адрес</td>
+        </tr>
+        </thead>
+        <div th:each="entity, iter : ${entities}">
+            <tr>
+                <td><span th:text="${iter.count}"></span></td>
+                <td><span th:text="${entity.getAverageRating()}"></span>
+                </td>
+                <td><a th:href="@{/entity/{id}(id = ${entity.id})}" th:text="${entity.name}"></a></td>
+                <td><span th:text="${entity.type.name}"></span></td>
+                <td><span th:text="${entity.address}"></span></td>
+            </tr>
+        </div>
+    </table>
+</div>
