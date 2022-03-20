@@ -11,6 +11,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import javax.servlet.http.HttpSession;
 
 public class Controller {
+    protected final String uploadPath = "data/users/";
+    protected final String[] contentTypes = {"image/jpg", "image/png", "image/jpeg"};
+    protected final Long MAX_UPLOAD_SIZE = 8 * 1024 * 1024L; //8MB
+    protected static final int RATING_FOR_CREATION_ENTITY = 10;
+    protected static final int RATING_FOR_CREATION_EMPLOYEE = 5;
+    protected final static int MAX_REVIEW_TEXT_LENGTH = 1024;
+    protected final static int RATING_FOR_LEFTING_REVIEW = 1;
+    protected final int MAX_FEEDBACK_LENGTH = 1024;
+
     @Autowired
     private EntityReviewRepository entityReviewRepository;
 

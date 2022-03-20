@@ -60,3 +60,23 @@
         <button>Отправить</button>
     </form>
 </div>
+
+<div class="review-form" th:fragment="left-employee-review(e, roles)">
+    <form method="post" th:action="@{/employee/left-review/{id}(id = ${e.id})}">
+        <label for="text2">Ваш отзыв (не более 1024 символов):</label><br>
+        <textarea id="text2" name="text" style="width: 90%; height: 150px; resize: none;"></textarea><br><br>
+        <label for="role2">От лица кого Вы оставляете отзыв:</label><br>
+        <select id="role2" name="role">
+            <option th:each="role : ${roles}" th:text="${role.name}" th:value="${role}"></option>
+        </select><br><br>
+        <label for="mark2">Ваша оценка:</label><br>
+        <select id="mark2" name="mark">
+            <option selected value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+        </select><br><br>
+        <button>Отправить</button>
+    </form>
+</div>

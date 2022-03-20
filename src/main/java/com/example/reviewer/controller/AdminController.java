@@ -36,9 +36,6 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping(value = "/account/admin")
 public class AdminController extends com.example.reviewer.controller.Controller {
-    private static final int RATING_FOR_CREATION_ENTITY = 10;
-    private static final int RATING_FOR_CREATION_EMPLOYEE = 5;
-    private static final String USER_DOCUMENTS_FOLDER = "data/users/";
     @Autowired
     private UserRepository userRepository;
 
@@ -267,7 +264,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
 
             user.addRole(roleDocument.get().getRole(), entity);
             userRepository.save(user);
-            File file = new File(USER_DOCUMENTS_FOLDER + "/" + roleDocument.get().getPhotoId());
+            File file = new File(uploadPath + "/" + roleDocument.get().getPhotoId());
             file.delete();
             roleDocumentRepository.delete(roleDocument.get());
             model.addAttribute("success", "Роль была подтверждена.");
@@ -279,7 +276,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
     public String verifyDiscard(@PathVariable("id") Long id, Model model) {
         Optional<RoleDocument> roleDocument = roleDocumentRepository.findById(id);
         if (roleDocument.isPresent()) {
-            File file = new File(USER_DOCUMENTS_FOLDER + "/" + roleDocument.get().getPhotoId());
+            File file = new File(uploadPath + "/" + roleDocument.get().getPhotoId());
             file.delete();
             roleDocumentRepository.delete(roleDocument.get());
             model.addAttribute("success", "Роль была отклонена.");

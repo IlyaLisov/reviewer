@@ -20,7 +20,6 @@ import java.util.Optional;
 
 @Controller
 public class MainController extends com.example.reviewer.controller.Controller {
-    private final int MAX_FEEDBACK_LENGTH = 1024;
     @Autowired
     private UserRepository userRepository;
 

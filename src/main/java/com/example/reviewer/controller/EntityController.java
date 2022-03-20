@@ -26,9 +26,6 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/entity")
 public class EntityController extends com.example.reviewer.controller.Controller {
-    private final static int MAX_REVIEW_TEXT_LENGTH = 1024;
-    private final static int RATING_FOR_LEFTING_REVIEW = 1;
-
     @Autowired
     private EntityRepository entityRepository;
 
