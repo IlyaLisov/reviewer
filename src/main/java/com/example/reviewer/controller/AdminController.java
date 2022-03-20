@@ -126,16 +126,12 @@ public class AdminController extends com.example.reviewer.controller.Controller 
         Optional<User> userToBeEdited = userRepository.getByLogin(path);
         if (userToBeEdited.isPresent()) {
             User user = userToBeEdited.get();
-            if (!user.getName().equals(name)) {
-                user.setName(name);
-            }
+            user.setName(name);
             if (password != null && passwordConfirmation != null && !password.isEmpty() && !passwordConfirmation.isEmpty() &&
                     password.equals(passwordConfirmation) && !user.getPassword().equals(Crypter.crypt(password, String.valueOf(user.getRegisterDate())))) {
                 user.setPassword(Crypter.crypt(password, String.valueOf(user.getRegisterDate())));
             }
-            if (!user.getUserRole().name().equals(userRole)) {
-                user.setUserRole(UserRole.valueOf(userRole));
-            }
+            user.setUserRole(UserRole.valueOf(userRole));
             userRepository.save(user);
             model.addAttribute("success", "Пользователь успешно обновлен.");
         }
@@ -179,7 +175,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
 
     @PostMapping("/add-entity")
     public String doAddEntity(@RequestParam("name") String name, @RequestParam("type") String type,
-                              @RequestParam(value = "parentEntity", required = false) Long entityId, @RequestParam("region") String region,
+                              @RequestParam(value = "parentEntity", required = false) Long parentEntity, @RequestParam("region") String region,
                               @RequestParam("district") String district, @RequestParam("address") String address,
                               @RequestParam(value = "siteURL", required = false) String siteURL, Model model) {
         Entity entity = new Entity();
@@ -187,7 +183,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
             entity.setName(name);
             entity.setType(EntityType.valueOf(type));
             if (type.equals("FACULTY")) {
-                entity.setParentEntity(entityRepository.findById(entityId).get());
+                entity.setParentEntity(entityRepository.findById(parentEntity).get());
             }
             entity.setRegion(Region.valueOf(region));
             entity.setDistrict(District.valueOf(district));

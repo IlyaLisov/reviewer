@@ -12,7 +12,8 @@
         <div class="body">
             <div class="page-name">Ошибка</div>
             <div class="content">
-                <p>Упс. Что-то пошло не так, но мы это исправим. Попробуйте заново :)</p>
+                <p>Упс. Что-то пошло не так, но мы это исправим. Попробуйте заново или <a
+                        th:href="@{/feedback}" th:text="'напишите в поддержку'"></a> :)</p>
             </div>
         </div>
         <div th:insert="blocks/sidebar :: sidebar"></div>

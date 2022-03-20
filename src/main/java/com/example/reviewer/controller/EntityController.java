@@ -1,7 +1,10 @@
 package com.example.reviewer.controller;
 
+import com.example.reviewer.model.entity.District;
 import com.example.reviewer.model.entity.Employee;
 import com.example.reviewer.model.entity.Entity;
+import com.example.reviewer.model.entity.EntityType;
+import com.example.reviewer.model.entity.Region;
 import com.example.reviewer.model.review.EntityReview;
 import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.user.User;
@@ -93,5 +96,49 @@ public class EntityController extends com.example.reviewer.controller.Controller
             }
         }
         return id(id, model);
+    }
+
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable("id") Long id, Model model) {
+        Optional<Entity> entity = entityRepository.findById(id);
+        if (entity.isPresent()) {
+            model.addAttribute("entity", entity.get());
+            model.addAttribute("types", EntityType.values());
+            model.addAttribute("imageURL", entity.get().getImageURL() == null ? "default.png" : entity.get().getImageURL());
+            model.addAttribute("regions", Region.values());
+            model.addAttribute("districts", District.values());
+            List<Entity> universities = (List<Entity>) entityRepository.findAll();
+            model.addAttribute("parentEntities", universities.stream()
+                    .filter(e -> e.getType().equals(EntityType.UNIVERSITY))
+                    .collect(Collectors.toList()));
+        } else {
+            return "redirect:rating";
+        }
+        return "entity/edit";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String doEdit(@PathVariable("id") Long id, @RequestParam("name") String name, @RequestParam("type") String type,
+                         @RequestParam(value = "parentEntity", required = false) Long parentEntityId, @RequestParam("region") String region,
+                         @RequestParam("district") String district, @RequestParam("address") String address,
+                         @RequestParam(value = "siteURL", required = false) String siteURL, Model model) {
+        Optional<Entity> entity = entityRepository.findById(id);
+        if (entity.isPresent()) {
+            entity.get().setName(name);
+            entity.get().setType(EntityType.valueOf(type));
+            if (parentEntityId == 0) {
+                entity.get().setParentEntity(null);
+            } else {
+                Optional<Entity> parentEntity = entityRepository.findById(parentEntityId);
+                entity.get().setParentEntity(parentEntity.get());
+            }
+            entity.get().setRegion(Region.valueOf(region));
+            entity.get().setDistrict(District.valueOf(district));
+            entity.get().setAddress(address);
+            entity.get().setSiteURL(siteURL);
+            entityRepository.save(entity.get());
+            model.addAttribute("success", "Учреждение образования успешно обновлено.");
+        }
+        return edit(id, model);
     }
 }

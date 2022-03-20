@@ -22,7 +22,7 @@
                     <p>Адрес в правильном порядке: 220030, проспект Независимости 4, г. Минск</p>
                     <p>Сайт: bsu.by</p>
                     <form method="post" th:action="@{/account/admin/add-entity}">
-                        <label for="name">Название учреждения образования</label><br>
+                        <label for="name">Название учреждения образования:</label><br>
                         <input id="name" name="name" placeholder="обязательное поле" required style="width: 300px"
                                th:value="${name}" type="text">
                         <br><br><label for="type">Тип учреждения образования:</label><br>
@@ -45,7 +45,7 @@
                             <option th:each="district : ${districts}" th:text="${district.name}"
                                     th:value="${district}"></option>
                         </select><br><br>
-                        <br><br><label for="address">Адрес</label><br>
+                        <br><br><label for="address">Адрес:</label><br>
                         <input id="address" name="address" placeholder="обязательное поле" required style="width: 300px"
                                type="text">
                         <br><br><label for="siteURL">Сайт:</label><br>

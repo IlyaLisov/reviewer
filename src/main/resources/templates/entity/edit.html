@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование учреждения образования - Reviewer</title>
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+</head>
+<body>
+<div class=container>
+    <div th:insert="blocks/header :: header"></div>
+    <div class="page">
+        <div class="body">
+            <div class="page-name">
+                <p th:text="${entity.name}"></p>
+            </div>
+            <div class="content">
+                <img class="entity-page" th:src="@{/images/entity/{imageURL}(imageURL=${imageURL})}">
+                <p class="success" th:text="${success}"></p>
+                <p><a th:href="@{/entity/{id}(id=${entity.id})}" th:text="'Перейти к учреждению образования'"></a></p>
+                <form method="post" th:action="@{/entity/edit/{id}(id=${entity.id})}">
+                    <label for="name">Название учреждения образования:</label><br>
+                    <input id="name" name="name" placeholder="обязательное поле" required style="width: 300px"
+                           th:value="${entity.name}" type="text"><br><br>
+                    <label for="type">Тип учреждения образования:</label><br>
+                    <select id="type" name="type">
+                        <option th:each="type : ${types}" th:selected="${type.equals(entity.type)}" th:text="${type.name}"
+                                th:value="${type}"></option>
+                    </select><br><br>
+                    <label for="parentEntity">Университет (только для факультетов):</label><br>
+                    <select id="parentEntity" name="parentEntity">
+                        <option th:selected="${entity.parentEntity == null}" th:value="0">Не выбрано</option>
+                        <option th:each="university : ${parentEntities}" th:selected="${entity.parentEntity != null && university.id == entity.parentEntity.id}"
+                                th:text="${university.name}"
+                                th:value="${university.id}"></option>
+                    </select><br><br>
+                    <label for="region">Область:</label><br>
+                    <select id="region" name="region">
+                        <option th:each="region : ${regions}" th:selected="${region.equals(entity.region)}"
+                                th:text="${region.name}" th:value="${region}"></option>
+                    </select><br><br>
+                    <label for="district">Район:</label><br>
+                    <select id="district" name="district">
+                        <option th:each="district : ${districts}" th:selected="${district.equals(entity.district)}"
+                                th:text="${district.name}" th:value="${district}"></option>
+                    </select><br><br>
+                    <label for="address">Адрес:</label><br>
+                    <input id="address" name="address" placeholder="обязательное поле" required style="width: 300px"
+                           th:value="${entity.address}" type="text">
+                    <br><br><label for="siteURL">Сайт:</label><br>
+                    <input id="siteURL" name="siteURL" style="width: 300px"
+                           th:value="${entity.siteURL}" type="text"><br><br>
+                    <button>Сохранить</button>
+                </form>
+            </div>
+        </div>
+        <div th:insert="blocks/sidebar :: sidebar"></div>
+    </div>
+    <div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>
