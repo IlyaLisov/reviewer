@@ -6,6 +6,7 @@ import com.example.reviewer.model.entity.Entity;
 import com.example.reviewer.model.entity.EntityType;
 import com.example.reviewer.model.entity.Region;
 import com.example.reviewer.model.review.EntityReview;
+import com.example.reviewer.model.review.SlangRemover;
 import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.user.User;
 import com.example.reviewer.repository.EmployeeRepository;
@@ -40,6 +41,8 @@ public class EntityController extends com.example.reviewer.controller.Controller
 
     @Autowired
     private UserRepository userRepository;
+
+    private SlangRemover slangRemover = SlangRemover.getInstance();
 
     @GetMapping("/{id}")
     public String id(@PathVariable("id") Long id, Model model) {
@@ -83,7 +86,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
             review.setAuthorRole(Role.valueOf(role));
             if (text != null) {
                 if (text.length() < MAX_REVIEW_TEXT_LENGTH) {
-                    review.setText(text);
+                    review.setText(slangRemover.removeSlang(text));
                 } else {
                     model.addAttribute("error", "Превышен максимальный размер отзыва.");
                 }
