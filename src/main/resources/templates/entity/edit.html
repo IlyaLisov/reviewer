@@ -22,6 +22,10 @@
                     <label for="name">Название учреждения образования:</label><br>
                     <input id="name" name="name" placeholder="обязательное поле" required style="width: 300px"
                            th:value="${entity.name}" type="text"><br><br>
+                    <label for="abbreviation">Аббревиатура:</label><br>
+                    <input id="abbreviation" name="abbreviation" style="width: 300px"
+                           th:value="${entity.abbreviation}" type="text">
+                    <br><br>
                     <label for="type">Тип учреждения образования:</label><br>
                     <select id="type" name="type">
                         <option th:each="type : ${types}" th:selected="${type.equals(entity.type)}"

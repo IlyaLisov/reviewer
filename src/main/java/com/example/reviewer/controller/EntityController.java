@@ -121,13 +121,15 @@ public class EntityController extends com.example.reviewer.controller.Controller
     }
 
     @PostMapping("/edit/{id}")
-    public String doEdit(@PathVariable("id") Long id, @RequestParam("name") String name, @RequestParam("type") String type,
-                         @RequestParam(value = "parentEntity", required = false) Long parentEntityId, @RequestParam("region") String region,
-                         @RequestParam("district") String district, @RequestParam("address") String address,
-                         @RequestParam(value = "siteURL", required = false) String siteURL, Model model) {
+    public String doEdit(@PathVariable("id") Long id, @RequestParam("name") String name, @RequestParam("abbreviation") String abbreviation,
+                         @RequestParam("type") String type, @RequestParam(value = "parentEntity", required = false) Long parentEntityId,
+                         @RequestParam("region") String region, @RequestParam("district") String district,
+                         @RequestParam("address") String address, @RequestParam(value = "siteURL", required = false) String siteURL,
+                         Model model) {
         Optional<Entity> entity = entityRepository.findById(id);
         if (entity.isPresent()) {
             entity.get().setName(name);
+            entity.get().setAbbreviation(abbreviation);
             entity.get().setType(EntityType.valueOf(type));
             if (parentEntityId == 0) {
                 entity.get().setParentEntity(null);

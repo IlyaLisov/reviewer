@@ -174,13 +174,15 @@ public class AdminController extends com.example.reviewer.controller.Controller 
     }
 
     @PostMapping("/add-entity")
-    public String doAddEntity(@RequestParam("name") String name, @RequestParam("type") String type,
-                              @RequestParam(value = "parentEntity", required = false) Long parentEntity, @RequestParam("region") String region,
-                              @RequestParam("district") String district, @RequestParam("address") String address,
-                              @RequestParam(value = "siteURL", required = false) String siteURL, Model model) {
+    public String doAddEntity(@RequestParam("name") String name, @RequestParam("abbreviation") String abbreviation,
+                              @RequestParam("type") String type, @RequestParam(value = "parentEntity", required = false) Long parentEntity,
+                              @RequestParam("region") String region, @RequestParam("district") String district,
+                              @RequestParam("address") String address, @RequestParam(value = "siteURL", required = false) String siteURL,
+                              Model model) {
         Entity entity = new Entity();
         if (!entityRepository.findByName(name).isPresent()) {
             entity.setName(name);
+            entity.setAbbreviation(abbreviation);
             entity.setType(EntityType.valueOf(type));
             if (type.equals("FACULTY")) {
                 entity.setParentEntity(entityRepository.findById(parentEntity).get());
@@ -203,6 +205,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
         } else {
             model.addAttribute("error", "Учреждение образования с таким названием уже существует.");
             model.addAttribute("name", name);
+            model.addAttribute("abbreviation", abbreviation);
         }
         return addEntity(model);
     }

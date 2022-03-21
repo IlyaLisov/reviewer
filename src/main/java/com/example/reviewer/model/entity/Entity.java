@@ -11,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @javax.persistence.Entity
@@ -26,6 +28,9 @@ public class Entity {
     @NotNull
     @Column(length = 1024)
     private String name;
+
+    @NotNull
+    private String abbreviation;
 
     @NotNull
     @Enumerated(value = EnumType.STRING)
@@ -79,6 +84,14 @@ public class Entity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
     }
 
     public Region getRegion() {

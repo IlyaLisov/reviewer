@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Controller
@@ -31,9 +32,11 @@ public class SearchController extends com.example.reviewer.controller.MainContro
             if (!query.isEmpty()) {
                 String[] wordsInQuery = query.split(" ");
                 return (int) (Arrays.stream(wordsInQuery).filter(word -> entity2.getName().toLowerCase().contains(word.toLowerCase())).count()
-                        - Arrays.stream(wordsInQuery).filter(word -> entity1.getName().toLowerCase().contains(word.toLowerCase())).count());
+                        + (query.toLowerCase().contains(entity2.getAbbreviation().toLowerCase()) ? 1 : 0)
+                        - Arrays.stream(wordsInQuery).filter(word -> entity1.getName().toLowerCase().contains(word.toLowerCase())).count())
+                        - (query.toLowerCase().contains(entity1.getAbbreviation().toLowerCase()) ? 1 : 0);
             } else {
-                return entity1.getId().compareTo(entity2.getId());
+                return entity1.getRating().compareTo(entity2.getRating());
             }
         };
 
@@ -41,7 +44,8 @@ public class SearchController extends com.example.reviewer.controller.MainContro
         List<Entity> entities = (List<Entity>) entityRepository.findAll();
         model.addAttribute("entities", entities.stream()
                 .filter(entity -> Arrays.stream(wordsInQuery)
-                        .anyMatch(word -> entity.getName().toLowerCase().contains(word.toLowerCase())))
+                        .anyMatch(word -> entity.getName().toLowerCase().contains(word.toLowerCase()))
+                        || (entity.getAbbreviation() != null && query.toLowerCase().contains(entity.getAbbreviation().toLowerCase())))
                 .sorted(comparator)
                 .collect(Collectors.toList()));
 
@@ -56,7 +60,7 @@ public class SearchController extends com.example.reviewer.controller.MainContro
                 return (int) (Arrays.stream(wordsInQuery).filter(word -> employee2.getName().toLowerCase().contains(word.toLowerCase())).count()
                         - Arrays.stream(wordsInQuery).filter(word -> employee1.getName().toLowerCase().contains(word.toLowerCase())).count());
             } else {
-                return employee1.getId().compareTo(employee2.getId());
+                return employee1.getRating().compareTo(employee2.getRating());
             }
         };
 

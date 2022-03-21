@@ -19,12 +19,17 @@
                     <p>В этом разделе Вы можете создать новое учреждение образования.</p>
                     <b>Важно:</b>
                     <p>Название указывается полностью: Средняя школа №2 г. Минска или Краснопольская средняя школа</p>
+                    <p>Аббревиатура: общепринятое сокращение названия (например, БГУ, Ксис, БНТУ)</p>
                     <p>Адрес в правильном порядке: 220030, проспект Независимости 4, г. Минск</p>
                     <p>Сайт: bsu.by</p>
                     <form method="post" th:action="@{/account/admin/add-entity}">
                         <label for="name">Название учреждения образования:</label><br>
                         <input id="name" name="name" placeholder="обязательное поле" required style="width: 300px"
                                th:value="${name}" type="text">
+                        <br><br>
+                        <label for="abbreviation">Аббревиатура:</label><br>
+                        <input id="abbreviation" name="abbreviation" style="width: 300px"
+                               th:value="${abbreviation}" type="text">
                         <br><br><label for="type">Тип учреждения образования:</label><br>
                         <select id="type" name="type">
                             <option th:each="entityType : ${entityTypes}" th:text="${entityType.name}"

@@ -17,9 +17,9 @@
                 <div class="two-items">
                     <div style="margin-right: 30px">
                         <img class="entity-page" th:src="@{/images/entity/{imageURL}(imageURL=${imageURL})}">
-                        <div th:if="${user != null && (user.isAdmin() || user.isModerator())}">
+                        <p th:if="${user != null && (user.isAdmin() || user.isModerator())}">
                             <a th:href="@{/entity/edit/{id}(id=${entity.id})}" th:text="'Редактировать'"></a>
-                        </div>
+                        </p>
                     </div>
                     <div>
                         <p th:text="${entity.type.name}"></p>
