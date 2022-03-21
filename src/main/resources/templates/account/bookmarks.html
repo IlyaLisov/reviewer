@@ -18,6 +18,14 @@
                 <div class="account-content">
                     <p>В этом разделе расположены все Ваши оценки учреждений образования и отзывов других пользователей.
                         Они полностью анонимны и информация об их авторстве доступна только Вам.</p>
+                    <h4>Отзывы на учреждения образования, которые Вам понравились:</h4>
+                    <div th:each="entityReview : ${likedEntityReviews}">
+                        <div th:insert="blocks/review :: entity-review-with-anchor(r = ${entityReview})"></div>
+                    </div>
+                    <h4>Отзывы на сотрудников, которые Вам понравились:</h4>
+                    <div th:each="employeeReview : ${likedEmployeeReviews}">
+                        <div th:insert="blocks/review :: employee-review-with-anchor(r = ${employeeReview})"></div>
+                    </div>
                 </div>
             </div>
         </div>

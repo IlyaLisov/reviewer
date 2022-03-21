@@ -1,10 +1,16 @@
-<div class="review" th:fragment="entity-review(r)" xmlns:th="http://www.w3.org/1999/html">
+<div class="review" th:fragment="entity-review(r, u)">
     <p>"<span th:text="${r.text}"></span>"</p>
     <div>
         <b>Отзыв оставлен: </b><span th:text="${r.reviewDate}"></span><br>
         <b>Отзыв оставил: </b><span th:text="${r.authorRole.name}"></span><br>
         <b>Оценка: </b><span th:text="${r.mark}"></span><br>
         <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
+    </div>
+    <div th:if="${u != null}">
+        <form method="post" th:action="@{/entity/{id}/like/{reviewId}(id=${r.entity.id}, reviewId=${r.id})}">
+            <button th:if="${u.likedEntityReviews.contains(r)}" th:text="'Не нравится'"></button>
+            <button th:text="'Нравится'" th:unless="${u.likedEntityReviews.contains(r)}"></button>
+        </form>
     </div>
 </div>
 
@@ -20,13 +26,19 @@
     <p><a th:href="@{/entity/{id}(id=${r.entity.id})}" th:text="'Перейти к учреждению образования'"></a></p>
 </div>
 
-<div class="review" th:fragment="employee-review(r)">
+<div class="review" th:fragment="employee-review(r, u)">
     <p>"<span th:text="${r.text}"></span>"</p>
     <div>
         <b>Отзыв оставлен: </b><span th:text="${r.reviewDate}"></span><br>
         <b>Отзыв оставил: </b><span th:text="${r.authorRole.name}"></span><br>
         <b>Оценка: </b><span th:text="${r.mark}"></span><br>
         <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
+    </div>
+    <div th:if="${u != null}">
+        <form method="post" th:action="@{/employee/{id}/like/{reviewId}(id=${r.employee.entity.id}, reviewId=${r.id})}">
+            <button th:if="${u.likedEmployeeReviews.contains(r)}" th:text="'Не нравится'"></button>
+            <button th:text="'Нравится'" th:unless="${u.likedEmployeeReviews.contains(r)}"></button>
+        </form>
     </div>
 </div>
 

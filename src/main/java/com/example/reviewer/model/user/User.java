@@ -1,9 +1,13 @@
 package com.example.reviewer.model.user;
 
 import com.example.reviewer.model.entity.Entity;
+import com.example.reviewer.model.review.EmployeeReview;
+import com.example.reviewer.model.review.EntityReview;
 import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.role.RoleEntity;
 import com.sun.istack.NotNull;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.CascadeType;
 import javax.persistence.EnumType;
@@ -12,8 +16,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -49,10 +55,20 @@ public class User implements Comparable<User> {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<RoleEntity> roles;
 
+    @ManyToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<EntityReview> likedEntityReviews;
+
+    @ManyToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<EmployeeReview> likedEmployeeReviews;
+
     public User() {
         this.rating = 0;
         this.registerDate = LocalDate.now();
         this.lastSeenDate = LocalDate.now();
+        this.likedEntityReviews = new ArrayList<>();
+        this.likedEmployeeReviews = new ArrayList<>();
     }
 
     public Long getId() {
@@ -142,9 +158,9 @@ public class User implements Comparable<User> {
         roles.add(new RoleEntity(this, entity, role));
     }
 
-    public boolean hasRole(int entityId) {
+    public boolean hasRole(Long entityId) {
         return roles.stream()
-                .anyMatch(roleEntity -> roleEntity.getEntity().getId() == entityId);
+                .anyMatch(roleEntity -> Objects.equals(roleEntity.getEntity().getId(), entityId));
     }
 
     public boolean isAdmin() {
@@ -157,6 +173,38 @@ public class User implements Comparable<User> {
 
     public boolean isUser() {
         return userRole.equals(UserRole.USER);
+    }
+
+    public List<EntityReview> getLikedEntityReviews() {
+        return likedEntityReviews;
+    }
+
+    public void setLikedEntityReviews(List<EntityReview> likedEntityReviews) {
+        this.likedEntityReviews = likedEntityReviews;
+    }
+
+    public void addLikedEntityReview(EntityReview review) {
+        likedEntityReviews.add(review);
+    }
+
+    public void removeLikedEntityReview(EntityReview review) {
+        likedEntityReviews.remove(review);
+    }
+
+    public List<EmployeeReview> getLikedEmployeeReviews() {
+        return likedEmployeeReviews;
+    }
+
+    public void setLikedEmployeeReviews(List<EmployeeReview> likedEmployeeReviews) {
+        this.likedEmployeeReviews = likedEmployeeReviews;
+    }
+
+    public void addLikedEmployeeReview(EmployeeReview review) {
+        likedEmployeeReviews.add(review);
+    }
+
+    public void removeLikedEmployeeReview(EmployeeReview review) {
+        likedEmployeeReviews.remove(review);
     }
 
     @Override

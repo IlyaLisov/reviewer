@@ -119,7 +119,12 @@ public class AccountController extends com.example.reviewer.controller.Controlle
     }
 
     @GetMapping("/bookmarks")
-    public String bookmarks() {
+    public String bookmarks(Model model) {
+        User user = (User) model.getAttribute("user");
+        if (user != null) {
+            model.addAttribute("likedEntityReviews", user.getLikedEntityReviews());
+            model.addAttribute("likedEmployeeReviews", user.getLikedEmployeeReviews());
+        }
         return "account/bookmarks";
     }
 

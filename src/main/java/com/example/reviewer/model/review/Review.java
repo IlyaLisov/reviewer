@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 public class Review {
@@ -32,16 +33,12 @@ public class Review {
     private Role authorRole;
 
     @NotNull
-    private Integer rating;
-
-    @NotNull
     private Integer mark;
 
     @NotNull
     private LocalDate reviewDate;
 
     public Review() {
-        this.rating = 0;
         this.reviewDate = LocalDate.now();
     }
 
@@ -77,14 +74,6 @@ public class Review {
         this.authorRole = authorRole;
     }
 
-    public Integer getRating() {
-        return rating;
-    }
-
-    public void setRating(Integer rating) {
-        this.rating = rating;
-    }
-
     public Integer getMark() {
         return mark;
     }
@@ -99,5 +88,18 @@ public class Review {
 
     public void setReviewDate(LocalDate reviewDate) {
         this.reviewDate = reviewDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Review)) return false;
+        Review review = (Review) o;
+        return id.equals(review.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

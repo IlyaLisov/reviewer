@@ -67,7 +67,7 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
         EmployeeReview review = new EmployeeReview();
         Optional<Employee> employee = employeeRepository.findById(id);
         User author = (User) model.getAttribute("user");
-        if (employee.isPresent() && author != null) {
+        if (employee.isPresent() && author != null && author.hasRole(employee.get().getEntity().getId())) {
             review.setEmployee(employee.get());
             review.setAuthor(author);
             review.setMark(mark);
@@ -117,5 +117,20 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
             model.addAttribute("success", "Сотрудник успешно обновлен.");
         }
         return edit(id, model);
+    }
+
+    @PostMapping("/{id}/like/{reviewId}")
+    public String likeReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId, Model model) {
+        Optional<EmployeeReview> review = employeeReviewRepository.findById(reviewId);
+        User user = (User) model.getAttribute("user");
+        if (review.isPresent() && user != null) {
+            if (!user.getLikedEmployeeReviews().contains(review.get())) {
+                user.addLikedEmployeeReview(review.get());
+            } else {
+                user.removeLikedEmployeeReview(review.get());
+            }
+            userRepository.save(user);
+        }
+        return "redirect:/employee/" + id;
     }
 }

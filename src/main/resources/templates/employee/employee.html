@@ -54,7 +54,7 @@
                 <div th:unless="${reviews.isEmpty()}">
                     <h4>Отзывы:</h4>
                     <div class="reviews" th:each="review : ${reviews}">
-                        <div th:insert="blocks/review :: employee-review(r = ${review})"></div>
+                        <div th:insert="blocks/review :: employee-review(r = ${review}, u = ${user})"></div>
                     </div>
                 </div>
                 <div th:if="${reviews.isEmpty()}">

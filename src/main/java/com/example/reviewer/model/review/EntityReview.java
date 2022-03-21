@@ -2,14 +2,31 @@ package com.example.reviewer.model.review;
 
 import com.example.reviewer.model.entity.Entity;
 import com.sun.istack.NotNull;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.ManyToOne;
 
 @javax.persistence.Entity
 public class EntityReview extends Review {
     @NotNull
+    @Formula("(SELECT COUNT(*) FROM rdb.user_liked_entity_reviews r WHERE r.liked_entity_reviews_id = id)")
+    private Integer rating;
+
+    @NotNull
     @ManyToOne
     private Entity entity;
+
+    public EntityReview() {
+        this.rating = 0;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
 
     public Entity getEntity() {
         return entity;

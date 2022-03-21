@@ -54,6 +54,6 @@ public class Controller {
 
     @ModelAttribute("employeeReviewAmount")
     public long getEmployeeReviewAmount() {
-        return entityReviewRepository.count();
+        return employeeReviewRepository.count();
     }
 }

@@ -79,7 +79,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
         EntityReview review = new EntityReview();
         Optional<Entity> entity = entityRepository.findById(id);
         User author = (User) model.getAttribute("user");
-        if (entity.isPresent() && author != null) {
+        if (entity.isPresent() && author != null && author.hasRole(entity.get().getId())) {
             review.setEntity(entity.get());
             review.setAuthor(author);
             review.setMark(mark);
@@ -145,5 +145,20 @@ public class EntityController extends com.example.reviewer.controller.Controller
             model.addAttribute("success", "Учреждение образования успешно обновлено.");
         }
         return edit(id, model);
+    }
+
+    @PostMapping("/{id}/like/{reviewId}")
+    public String likeReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId, Model model) {
+        Optional<EntityReview> review = entityReviewRepository.findById(reviewId);
+        User user = (User) model.getAttribute("user");
+        if (review.isPresent() && user != null) {
+            if (!user.getLikedEntityReviews().contains(review.get())) {
+                user.addLikedEntityReview(review.get());
+            } else {
+                user.removeLikedEntityReview(review.get());
+            }
+            userRepository.save(user);
+        }
+        return "redirect:/entity/" + id;
     }
 }
