@@ -19,7 +19,8 @@
                 <td><span th:text="${employee.getAverageRating()}"></span></td>
                 <td><a th:href="@{/employee/{id}(id = ${employee.id})}" th:text="${employee.name}"></a>
                 </td>
-                <td><span th:text="${employee.type.name}"></span></td>
+                <td><a th:href="@{/rating?employeeType={type}(type = ${employee.type})}"
+                       th:text="${employee.type.name}"></a></td>
                 <td><a th:href="@{/entity/{id}(id = ${employee.entity.id})}"
                        th:text="${employee.entity.name}"></a></td>
             </tr>
@@ -44,7 +45,8 @@
                 <td><span th:text="${entity.getAverageRating()}"></span>
                 </td>
                 <td><a th:href="@{/entity/{id}(id = ${entity.id})}" th:text="${entity.name}"></a></td>
-                <td><span th:text="${entity.type.name}"></span></td>
+                <td><a th:href="@{/rating?entityType={type}(type = ${entity.type})}" th:text="${entity.type.name}"></a>
+                </td>
                 <td><span th:text="${entity.address}"></span></td>
             </tr>
         </div>

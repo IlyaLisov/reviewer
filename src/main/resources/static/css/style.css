@@ -337,6 +337,27 @@ img.verify-page {
     flex-wrap: wrap;
 }
 
+.two-items-content {
+    display: block;
+    margin: 10px;
+    size: 16pt;
+    width: 45%;
+}
+
+.any-items {
+    flex-direction: row;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.any-items-content {
+    display: block;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    size: 16pt;
+}
+
 .review-form {
     margin-top: 10px;
     margin-bottom: 10px;

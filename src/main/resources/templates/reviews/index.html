@@ -12,13 +12,13 @@
         <div class="body">
             <div class="page-name">Отзывы</div>
             <div class="two-items">
-                <div class="content">
+                <div class="two-items-content">
                     <h4>Отзывы на учреждения образования:</h4>
                     <div class="reviews" th:each="review : ${entityReviews}">
                         <div th:insert="blocks/review :: entity-review-with-anchor(r = ${review})"></div>
                     </div>
                 </div>
-                <div class="content">
+                <div class="two-items-content">
                     <h4>Отзывы на сотрудников:</h4>
                     <div class="reviews" th:each="review : ${employeeReviews}">
                         <div th:insert="blocks/review :: employee-review-with-anchor(r = ${review})"></div>

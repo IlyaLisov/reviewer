@@ -26,11 +26,13 @@ public class ReviewsController extends com.example.reviewer.controller.Controlle
     public String index(Model model) {
         List<EntityReview> entityReviews = (List<EntityReview>) entityReviewRepository.findAll();
         model.addAttribute("entityReviews", entityReviews.stream()
+                .filter(review -> !review.getText().isEmpty())
                 .sorted((e1, e2) -> e2.getReviewDate().compareTo(e1.getReviewDate()))
                 .collect(Collectors.toList()));
 
         List<EmployeeReview> employeeReviews = (List<EmployeeReview>) employeeReviewRepository.findAll();
         model.addAttribute("employeeReviews", employeeReviews.stream()
+                .filter(review -> !review.getText().isEmpty())
                 .sorted((e1, e2) -> e2.getReviewDate().compareTo(e1.getReviewDate()))
                 .collect(Collectors.toList()));
 

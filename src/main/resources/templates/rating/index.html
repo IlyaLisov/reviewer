@@ -12,14 +12,54 @@
         <div class="body">
             <div class="page-name">Рейтинг</div>
             <div class="two-items">
-                <div class="content">
+                <div class="two-items-content">
                     <h4>Рейтинг учреждений образования:</h4>
                     <div class="search" th:insert="blocks/search :: search-entity(value='')"></div>
+                    <div class="any-items">
+                        <form class="any-items-content" method="get">
+                            <label for="entityType">Тип учреждения образования: </label>
+                            <select id="entityType" name="entityType">
+                                <option th:text="'Не выбрано'" th:value="'ANY'"></option>
+                                <option th:each="type : ${entityTypes}" th:selected="${type.name() eq entityType}" th:text="${type.name}"
+                                        th:value="${type}"></option>
+                            </select><br><br>
+                            <label for="region">Область: </label>
+                            <select id="region" name="region">
+                                <option th:text="'Не выбрано'" th:value="'ANY'"></option>
+                                <option th:each="r : ${regions}" th:selected="${r.name() eq region}" th:text="${r.name}"
+                                        th:value="${r}"></option>
+                            </select><br><br>
+                            <label for="district">Район: </label>
+                            <select id="district" name="district">
+                                <option th:text="'Не выбрано'" th:value="'ANY'"></option>
+                                <option th:each="d : ${districts}" th:selected="${d.name() eq district}" th:text="${d.name}"
+                                        th:value="${d}"></option>
+                            </select><br><br>
+                            <button th:text="'Найти'"></button>
+                        </form>
+                    </div>
                     <div th:insert="blocks/table :: entity-table(entities=${entities})"></div>
                 </div>
-                <div class="content">
+                <div class="two-items-content">
                     <h4>Рейтинг сотрудников:</h4>
                     <div class="search" th:insert="blocks/search :: search-employee(value='')"></div>
+                    <div class="any-items">
+                        <form class="any-items-content" method="get">
+                            <label for="employeeType">Тип сотрудника: </label>
+                            <select id="employeeType" name="employeeType">
+                                <option th:text="'Не выбрано'" th:value="'ANY'"></option>
+                                <option th:each="type : ${employeeTypes}" th:selected="${type.name() eq employeeType}" th:text="${type.name}"
+                                        th:value="${type}"></option>
+                            </select><br><br>
+                            <label for="entity">Учреждение образования: </label>
+                            <select id="entity" name="entity">
+                                <option th:text="'Не выбрано'" th:value="0"></option>
+                                <option th:each="e : ${employeeEntities}" th:selected="${e.id eq entity}" th:text="${e.name}"
+                                        th:value="${e.id}"></option>
+                            </select><br><br>
+                            <button th:text="'Найти'"></button>
+                        </form>
+                    </div>
                     <div th:insert="blocks/table :: employee-table(employees=${employees})"></div>
                 </div>
             </div>

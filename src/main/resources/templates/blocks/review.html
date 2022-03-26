@@ -2,15 +2,26 @@
     <p>"<span th:text="${r.text}"></span>"</p>
     <div>
         <b>Отзыв оставлен: </b><span th:text="${r.reviewDate}"></span><br>
-        <b>Отзыв оставил: </b><span th:text="${r.authorRole.name}"></span><br>
+        <b>Отзыв оставил: </b><span th:text="${r.authorRole.name}"></span> <a th:href="@{/account/admin/edit-user/{login}(login = ${r.author.login})}"
+                                                                              th:if="${u.isAdmin() || u.isModerator()}"
+                                                                              th:text="${r.author.login}"></a><br>
         <b>Оценка: </b><span th:text="${r.mark}"></span><br>
         <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
     </div>
     <div th:if="${u != null}">
-        <form method="post" th:action="@{/entity/{id}/like/{reviewId}(id=${r.entity.id}, reviewId=${r.id})}">
-            <button th:if="${u.likedEntityReviews.contains(r)}" th:text="'Не нравится'"></button>
-            <button th:text="'Нравится'" th:unless="${u.likedEntityReviews.contains(r)}"></button>
-        </form>
+        <div class="any-items">
+            <form class="any-items-content" method="post"
+                  th:action="@{/entity/{id}/like/{reviewId}(id=${r.entity.id}, reviewId=${r.id})}">
+                <button th:if="${u.likedEntityReviews.contains(r)}" th:text="'Не нравится'"></button>
+                <button th:text="'Нравится'" th:unless="${u.likedEntityReviews.contains(r)}"></button>
+            </form>
+            <div th:if="${r.author.equals(u) || u.isAdmin() || u.isModerator()}">
+                <form class="any-items-content" method="post"
+                      th:action="@{/entity/{id}/delete/{reviewId}(id=${r.entity.id}, reviewId=${r.id})}">
+                    <button th:text="'Удалить отзыв'"></button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -23,7 +34,7 @@
         <b>Оценка: </b><span th:text="${r.mark}"></span><br>
         <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
     </div>
-    <p><a th:href="@{/entity/{id}(id=${r.entity.id})}" th:text="'Перейти к учреждению образования'"></a></p>
+    <p><a th:href="@{/entity/{id}(id=${r.entity.id})}" th:text="${r.entity.name}"></a></p>
 </div>
 
 <div class="review" th:fragment="employee-review(r, u)">
@@ -50,7 +61,7 @@
         <b>Оценка: </b><span th:text="${r.mark}"></span><br>
         <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
     </div>
-    <p><a th:href="@{/employee/{id}(id=${r.employee.id})}" th:text="'Перейти к сотруднику'"></a></p>
+    <p><a th:href="@{/employee/{id}(id=${r.employee.id})}" th:text="${r.employee.name}"></a></p>
 </div>
 
 <div class="review-form" th:fragment="left-entity-review(e, roles)">

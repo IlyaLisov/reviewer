@@ -68,22 +68,27 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
         Optional<Employee> employee = employeeRepository.findById(id);
         User author = (User) model.getAttribute("user");
         if (employee.isPresent() && author != null && author.hasRole(employee.get().getEntity().getId())) {
-            review.setEmployee(employee.get());
-            review.setAuthor(author);
-            review.setMark(mark);
-            review.setAuthorRole(Role.valueOf(role));
-            if (text != null) {
-                if (text.length() < MAX_REVIEW_TEXT_LENGTH) {
-                    review.setText(slangRemover.removeSlang(text));
-                } else {
-                    model.addAttribute("error", "Превышен максимальный размер отзыва.");
+            Long reviewsFromUser = employeeReviewRepository.countAllByAuthorAndEmployee(author, employee.get());
+            if (reviewsFromUser < MAX_REVIEW_PER_ENTITY) {
+                review.setEmployee(employee.get());
+                review.setAuthor(author);
+                review.setMark(mark);
+                review.setAuthorRole(Role.valueOf(role));
+                if (text != null) {
+                    if (text.length() < MAX_REVIEW_TEXT_LENGTH) {
+                        review.setText(slangRemover.removeSlang(text));
+                    } else {
+                        model.addAttribute("error", "Превышен максимальный размер отзыва.");
+                    }
                 }
-            }
-            if (model.getAttribute("error") == null) {
-                author.upRating(RATING_FOR_LEFTING_REVIEW);
-                userRepository.save(author);
-                employeeReviewRepository.save(review);
-                model.addAttribute("success", "Ваш отзыв был опубликован.");
+                if (model.getAttribute("error") == null) {
+                    author.upRating(RATING_FOR_LEFTING_REVIEW);
+                    userRepository.save(author);
+                    employeeReviewRepository.save(review);
+                    model.addAttribute("success", "Ваш отзыв был опубликован.");
+                }
+            } else {
+                model.addAttribute("error", "Вы можете оставить максимум " + MAX_REVIEW_PER_ENTITY + " отзывов на одного сотрудника.");
             }
         }
         return id(id, model);

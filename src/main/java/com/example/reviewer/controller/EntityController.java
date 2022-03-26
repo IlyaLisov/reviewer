@@ -76,26 +76,32 @@ public class EntityController extends com.example.reviewer.controller.Controller
     @PostMapping("/left-review/{id}")
     public String leftReview(@PathVariable("id") Long id, @RequestParam(value = "text", required = false) String text,
                              @RequestParam("role") String role, @RequestParam("mark") int mark, Model model) {
+        ;
         EntityReview review = new EntityReview();
         Optional<Entity> entity = entityRepository.findById(id);
         User author = (User) model.getAttribute("user");
         if (entity.isPresent() && author != null && author.hasRole(entity.get().getId())) {
-            review.setEntity(entity.get());
-            review.setAuthor(author);
-            review.setMark(mark);
-            review.setAuthorRole(Role.valueOf(role));
-            if (text != null) {
-                if (text.length() < MAX_REVIEW_TEXT_LENGTH) {
-                    review.setText(slangRemover.removeSlang(text));
-                } else {
-                    model.addAttribute("error", "Превышен максимальный размер отзыва.");
+            Long reviewsFromUser = entityReviewRepository.countAllByAuthorAndEntity(author, entity.get());
+            if (reviewsFromUser < MAX_REVIEW_PER_ENTITY) {
+                review.setEntity(entity.get());
+                review.setAuthor(author);
+                review.setMark(mark);
+                review.setAuthorRole(Role.valueOf(role));
+                if (text != null) {
+                    if (text.length() < MAX_REVIEW_TEXT_LENGTH) {
+                        review.setText(slangRemover.removeSlang(text));
+                    } else {
+                        model.addAttribute("error", "Превышен максимальный размер отзыва.");
+                    }
                 }
-            }
-            if (model.getAttribute("error") == null) {
-                author.upRating(RATING_FOR_LEFTING_REVIEW);
-                userRepository.save(author);
-                entityReviewRepository.save(review);
-                model.addAttribute("success", "Ваш отзыв был опубликован.");
+                if (model.getAttribute("error") == null) {
+                    author.upRating(RATING_FOR_LEFTING_REVIEW);
+                    userRepository.save(author);
+                    entityReviewRepository.save(review);
+                    model.addAttribute("success", "Ваш отзыв был опубликован.");
+                }
+            } else {
+                model.addAttribute("error", "Вы можете оставить максимум " + MAX_REVIEW_PER_ENTITY + " отзывов на одно учреждение образования.");
             }
         }
         return id(id, model);
@@ -158,6 +164,23 @@ public class EntityController extends com.example.reviewer.controller.Controller
                 user.removeLikedEntityReview(review.get());
             }
             userRepository.save(user);
+        }
+        return "redirect:/entity/" + id;
+    }
+
+    @PostMapping("/{id}/delete/{reviewId}")
+    public String deleteReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId, Model model) {
+        Optional<EntityReview> review = entityReviewRepository.findById(reviewId);
+        User user = (User) model.getAttribute("user");
+        if (review.isPresent() && user != null) {
+            if (user.isAdmin() || user.isModerator() || (review.get().getAuthor() != null && review.get().getAuthor().equals(user))) {
+                if (review.get().getAuthor() != null) {
+                    Optional<User> author = userRepository.findById(review.get().getAuthor().getId());
+                    author.get().upRating(-RATING_FOR_LEFTING_REVIEW);
+                    userRepository.save(author.get());
+                }
+                entityReviewRepository.delete(review.get());
+            }
         }
         return "redirect:/entity/" + id;
     }

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Controller
@@ -44,12 +43,22 @@ public class SearchController extends com.example.reviewer.controller.MainContro
         List<Entity> entities = (List<Entity>) entityRepository.findAll();
         model.addAttribute("entities", entities.stream()
                 .filter(entity -> Arrays.stream(wordsInQuery)
-                        .anyMatch(word -> entity.getName().toLowerCase().contains(word.toLowerCase()))
+                        .anyMatch(word -> entity.getName().toLowerCase().contains(word.toLowerCase())
+                                || firstLettersFromName(entity.getName().toLowerCase()).contains(word.toLowerCase()))
                         || (entity.getAbbreviation() != null && query.toLowerCase().contains(entity.getAbbreviation().toLowerCase())))
                 .sorted(comparator)
                 .collect(Collectors.toList()));
 
         return "search/entities";
+    }
+
+    private String firstLettersFromName(String name) {
+        String[] words = name.split(" ");
+        StringBuilder result = new StringBuilder();
+        for (String s : words) {
+            result.append(s.charAt(0));
+        }
+        return result.toString();
     }
 
     @GetMapping("/employees")
