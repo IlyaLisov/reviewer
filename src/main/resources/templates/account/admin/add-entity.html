@@ -35,7 +35,7 @@
                             <option th:each="entityType : ${entityTypes}" th:text="${entityType.name}"
                                     th:value="${entityType}"></option>
                         </select><br>
-                        <br><br><label for="parentEntity">Университет (только для факультетов):</label><br>
+                        <br><br><label for="parentEntity">Университет (только для факультетов, общежитий и структурных подразделений):</label><br>
                         <select id="parentEntity" name="parentEntity">
                             <option th:each="parentEntity : ${parentEntities}" th:text="${parentEntity.name}"
                                     th:value="${parentEntity.id}"></option>

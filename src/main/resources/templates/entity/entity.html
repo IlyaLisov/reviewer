@@ -76,11 +76,20 @@
                             этим учреждением образования.</h4>
                     </div>
                 </div>
-
+                <div>
+                    <form method="get" th:href="@{/entity/{id}(id=${entity.id})}">
+                        <label for="mark">Оценки: </label>
+                        <select name="mark" id="mark">
+                            <option th:text="'Не выбрано'" th:value="0"></option>
+                            <option th:each="i : ${#numbers.sequence(1, 5)}" th:text="${i}" th:value="${i}" th:selected="${i eq mark}"></option>
+                        </select><br><br>
+                        <button>Показать</button>
+                    </form>
+                </div>
                 <div th:unless="${reviews.isEmpty()}">
                     <h4>Отзывы:</h4>
                     <div class="reviews" th:each="review : ${reviews}">
-                        <div th:insert="blocks/review :: entity-review(r = ${review}, u = ${user})"></div>
+                        <div th:insert="blocks/review :: entity-review(r = ${review})"></div>
                     </div>
                 </div>
                 <div th:if="${reviews.isEmpty()}">

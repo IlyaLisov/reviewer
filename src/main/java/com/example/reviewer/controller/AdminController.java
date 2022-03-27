@@ -184,7 +184,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
             entity.setName(name);
             entity.setAbbreviation(abbreviation);
             entity.setType(EntityType.valueOf(type));
-            if (type.equals("FACULTY")) {
+            if (type.equals("FACULTY") || type.equals("STRUCTURE_UNIT") || type.equals("HOSTEL")) {
                 entity.setParentEntity(entityRepository.findById(parentEntity).get());
             }
             entity.setRegion(Region.valueOf(region));
@@ -238,10 +238,10 @@ public class AdminController extends com.example.reviewer.controller.Controller 
             model.addAttribute("success", "Сотрудник успешно создан.");
         } else {
             model.addAttribute("error", "Сотрудник с таким именем в этом учреждении образования уже существует.");
-            model.addAttribute("name", name);
-            model.addAttribute("type", type);
-            model.addAttribute("entityId", id);
         }
+        model.addAttribute("name", name);
+        model.addAttribute("type", type);
+        model.addAttribute("entityId", id);
         return addEmployee(model);
     }
 

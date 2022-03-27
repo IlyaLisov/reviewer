@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Controller
@@ -42,7 +44,15 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
     private SlangRemover slangRemover = SlangRemover.getInstance();
 
     @GetMapping("/{id}")
-    public String id(@PathVariable("id") Long id, Model model) {
+    public String id(@PathVariable("id") Long id, @RequestParam(value = "mark", required = false) Integer mark, Model model) {
+        Predicate<EmployeeReview> markFilter = review -> {
+            if (mark != null && mark != 0) {
+                return review.getMark().equals(mark);
+            } else {
+                return true;
+            }
+        };
+
         Optional<Employee> employee = employeeRepository.findById(id);
         User user = (User) model.getAttribute("user");
         if (employee.isPresent()) {
@@ -50,6 +60,7 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
             model.addAttribute("employee", employee.get());
             model.addAttribute("imageURL", employee.get().getImageURL() == null ? "default.jpg" : employee.get().getImageURL());
             model.addAttribute("reviews", reviews.stream()
+                    .filter(markFilter)
                     .filter(review -> review.getText() != null && !review.getText().isEmpty())
                     .collect(Collectors.toList()));
             if (user != null) {
@@ -58,6 +69,7 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
         } else {
             return "error/404";
         }
+        model.addAttribute("mark", mark);
         return "employee/employee";
     }
 
@@ -91,7 +103,7 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
                 model.addAttribute("error", "Вы можете оставить максимум " + MAX_REVIEW_PER_ENTITY + " отзывов на одного сотрудника.");
             }
         }
-        return id(id, model);
+        return "redirect:/employee/" + id;
     }
 
     @GetMapping("/edit/{id}")
@@ -125,7 +137,8 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
     }
 
     @PostMapping("/{id}/like/{reviewId}")
-    public String likeReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId, Model model) {
+    public String likeReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId,
+                             HttpServletRequest request, Model model) {
         Optional<EmployeeReview> review = employeeReviewRepository.findById(reviewId);
         User user = (User) model.getAttribute("user");
         if (review.isPresent() && user != null) {
@@ -136,6 +149,24 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
             }
             userRepository.save(user);
         }
-        return "redirect:/employee/" + id;
+        return "redirect:" + request.getHeader("referer");
+    }
+
+    @PostMapping("/{id}/delete/{reviewId}")
+    public String deleteReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId,
+                               HttpServletRequest request, Model model) {
+        Optional<EmployeeReview> review = employeeReviewRepository.findById(reviewId);
+        User user = (User) model.getAttribute("user");
+        if (review.isPresent() && user != null) {
+            if (user.isAdmin() || user.isModerator() || (review.get().getAuthor() != null && review.get().getAuthor().equals(user))) {
+                if (review.get().getAuthor() != null) {
+                    Optional<User> author = userRepository.findById(review.get().getAuthor().getId());
+                    author.get().upRating(-RATING_FOR_LEFTING_REVIEW);
+                    userRepository.save(author.get());
+                }
+                employeeReviewRepository.delete(review.get());
+            }
+        }
+        return "redirect:" + request.getHeader("referer");
     }
 }

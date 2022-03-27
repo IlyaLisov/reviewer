@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Controller
@@ -45,7 +47,15 @@ public class EntityController extends com.example.reviewer.controller.Controller
     private SlangRemover slangRemover = SlangRemover.getInstance();
 
     @GetMapping("/{id}")
-    public String id(@PathVariable("id") Long id, Model model) {
+    public String id(@PathVariable("id") Long id, @RequestParam(value = "mark", required = false) Integer mark, Model model) {
+        Predicate<EntityReview> markFilter = review -> {
+            if (mark != null && mark != 0) {
+                return review.getMark().equals(mark);
+            } else {
+                return true;
+            }
+        };
+
         Optional<Entity> entity = entityRepository.findById(id);
         User user = (User) model.getAttribute("user");
         if (entity.isPresent()) {
@@ -54,6 +64,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
             model.addAttribute("entity", entity.get());
             model.addAttribute("imageURL", entity.get().getImageURL() == null ? "default.png" : entity.get().getImageURL());
             model.addAttribute("reviews", reviews.stream()
+                    .filter(markFilter)
                     .filter(review -> review.getText() != null && !review.getText().isEmpty())
                     .sorted((review1, review2) -> review2.getReviewDate().compareTo(review1.getReviewDate()))
                     .collect(Collectors.toList()));
@@ -70,6 +81,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
         } else {
             return "error/404";
         }
+        model.addAttribute("mark", mark);
         return "entity/entity";
     }
 
@@ -104,7 +116,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
                 model.addAttribute("error", "Вы можете оставить максимум " + MAX_REVIEW_PER_ENTITY + " отзывов на одно учреждение образования.");
             }
         }
-        return id(id, model);
+        return "redirect:/entity/" + id;
     }
 
     @GetMapping("/edit/{id}")
@@ -154,7 +166,8 @@ public class EntityController extends com.example.reviewer.controller.Controller
     }
 
     @PostMapping("/{id}/like/{reviewId}")
-    public String likeReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId, Model model) {
+    public String likeReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId,
+                             HttpServletRequest request, Model model) {
         Optional<EntityReview> review = entityReviewRepository.findById(reviewId);
         User user = (User) model.getAttribute("user");
         if (review.isPresent() && user != null) {
@@ -165,11 +178,12 @@ public class EntityController extends com.example.reviewer.controller.Controller
             }
             userRepository.save(user);
         }
-        return "redirect:/entity/" + id;
+        return "redirect:" + request.getHeader("referer");
     }
 
     @PostMapping("/{id}/delete/{reviewId}")
-    public String deleteReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId, Model model) {
+    public String deleteReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId,
+                               HttpServletRequest request, Model model) {
         Optional<EntityReview> review = entityReviewRepository.findById(reviewId);
         User user = (User) model.getAttribute("user");
         if (review.isPresent() && user != null) {
@@ -182,6 +196,6 @@ public class EntityController extends com.example.reviewer.controller.Controller
                 entityReviewRepository.delete(review.get());
             }
         }
-        return "redirect:/entity/" + id;
+        return "redirect:" + request.getHeader("referer");
     }
 }

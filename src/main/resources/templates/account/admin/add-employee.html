@@ -25,7 +25,7 @@
                                th:value="${name}" type="text">
                         <br><br><label for="type">Тип сотрудника:</label><br>
                         <select id="type" name="type">
-                            <option th:each="employeeType : ${employeeTypes}" th:selected="${employeeType eq type}"
+                            <option th:each="employeeType : ${employeeTypes}" th:selected="${employeeType.name().equals(type)}"
                                     th:text="${employeeType.name}" th:value="${employeeType}"></option>
                         </select><br>
                         <br><br><label for="entity">Учреждение образования, в котором работает этот

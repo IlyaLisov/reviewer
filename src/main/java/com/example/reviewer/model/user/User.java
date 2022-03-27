@@ -6,6 +6,7 @@ import com.example.reviewer.model.review.EntityReview;
 import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.role.RoleEntity;
 import com.sun.istack.NotNull;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -55,11 +56,11 @@ public class User implements Comparable<User> {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<RoleEntity> roles;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<EntityReview> likedEntityReviews;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<EmployeeReview> likedEmployeeReviews;
 

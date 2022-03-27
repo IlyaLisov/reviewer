@@ -1,7 +1,9 @@
 package com.example.reviewer.model.entity;
 
 public enum EntityType {
-    KINDER_GARTEN("Детский сад"), SCHOOL("Школа"), GYMNASIUM("Гимназия"), COLLEGE("Колледж"), LYCEUM("Лицей"), UNIVERSITY("Университет"), FACULTY("Факультет");
+    KINDER_GARTEN("Детский сад"), SCHOOL("Школа"), GYMNASIUM("Гимназия"), COLLEGE("Колледж"),
+    LYCEUM("Лицей"), UNIVERSITY("Университет"), FACULTY("Факультет"), STRUCTURE_UNIT("Структурное подразделение"),
+    HOSTEL("Общежитие");
 
     private String name;
 
