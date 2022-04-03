@@ -16,8 +16,8 @@
             <div class="account">
                 <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
                 <div class="account-content">
-                    <p>В этом разделе Вы можете заблокировать пользователя.</p>
-                    <b>Это действие невозможно отменить!</b>
+                    <p>В этом разделе Вы можете заблокировать и разблокировать пользователя.</p>
+                    <b>Если пользователь был заблокирован, тогда он станет разблокированным.</b>
                     <form method="post" th:action="@{/account/admin/block-user}">
                         <br><br><label for="login">Логин</label><br>
                         <input id="login" name="login" placeholder="обязательное поле" required th:value="${login}"

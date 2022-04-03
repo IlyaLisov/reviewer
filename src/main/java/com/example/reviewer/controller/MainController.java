@@ -5,9 +5,6 @@ import com.example.reviewer.model.feedback.FeedbackType;
 import com.example.reviewer.model.user.Crypter;
 import com.example.reviewer.model.user.User;
 import com.example.reviewer.model.user.UserRole;
-import com.example.reviewer.repository.FeedbackRepository;
-import com.example.reviewer.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,12 +17,6 @@ import java.util.Optional;
 
 @Controller
 public class MainController extends com.example.reviewer.controller.Controller {
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private FeedbackRepository feedbackRepository;
-
     @GetMapping("/")
     public String index() {
         return "index";
@@ -43,6 +34,10 @@ public class MainController extends com.example.reviewer.controller.Controller {
     public synchronized String doLogin(@RequestParam("login") String login, @RequestParam("password") String password, HttpSession session, Model model) {
         Optional<User> userFromDataBase = userRepository.getByLogin(login);
         if (userFromDataBase.isPresent()) {
+            if (userFromDataBase.get().getBlocked()) {
+                model.addAttribute("error", "Пользователь с таким логином заблокирован.");
+                return login(model);
+            }
             String generatedPassword = Crypter.crypt(password, userFromDataBase.get().getRegisterDate().toString());
             if (generatedPassword.equals(userFromDataBase.get().getPassword())) {
                 userFromDataBase.get().setLastSeenDate(LocalDate.now());

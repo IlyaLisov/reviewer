@@ -13,12 +13,6 @@ import com.example.reviewer.model.role.RoleEntity;
 import com.example.reviewer.model.user.Crypter;
 import com.example.reviewer.model.user.User;
 import com.example.reviewer.model.user.UserRole;
-import com.example.reviewer.repository.EmployeeRepository;
-import com.example.reviewer.repository.EntityRepository;
-import com.example.reviewer.repository.FeedbackRepository;
-import com.example.reviewer.repository.RoleDocumentRepository;
-import com.example.reviewer.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,21 +30,6 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping(value = "/account/admin")
 public class AdminController extends com.example.reviewer.controller.Controller {
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private EntityRepository entityRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private RoleDocumentRepository roleDocumentRepository;
-
-    @Autowired
-    private FeedbackRepository feedbackRepository;
-
     @GetMapping()
     public String index() {
         return "account/admin/index";
@@ -152,8 +131,14 @@ public class AdminController extends com.example.reviewer.controller.Controller 
             return blockUser(model);
         }
         if (userToBeBlocked.isPresent()) {
-            userRepository.delete(userToBeBlocked.get());
-            model.addAttribute("success", "Пользователь " + userToBeBlocked.get().getName() + " заблокирован.");
+            if (userToBeBlocked.get().getBlocked() != null && !userToBeBlocked.get().getBlocked()) {
+                userToBeBlocked.get().setBlocked(true);
+                model.addAttribute("success", "Пользователь " + userToBeBlocked.get().getName() + " заблокирован.");
+            } else {
+                userToBeBlocked.get().setBlocked(false);
+                model.addAttribute("success", "Пользователь " + userToBeBlocked.get().getName() + " разблокирован.");
+            }
+            userRepository.save(userToBeBlocked.get());
         } else {
             model.addAttribute("login", login);
             model.addAttribute("error", "Пользователя с таким логином не существует.");
@@ -168,7 +153,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
         model.addAttribute("regions", Region.values());
         model.addAttribute("districts", District.values());
         model.addAttribute("parentEntities", universities.stream()
-                .filter(e -> e.getType().equals(EntityType.UNIVERSITY))
+                .filter(e -> e.getType().equals(EntityType.UNIVERSITY) || e.getType().equals(EntityType.COLLEGE))
                 .collect(Collectors.toList()));
         return "account/admin/add-entity";
     }
@@ -262,6 +247,9 @@ public class AdminController extends com.example.reviewer.controller.Controller 
             Entity entity = entityRepository.findById(entityId).get();
 
             user.addRole(roleDocument.get().getRole(), entity);
+            if (entity.getParentEntity() != null) {
+                user.addRole(roleDocument.get().getRole(), entity.getParentEntity());
+            }
             userRepository.save(user);
             File file = new File(uploadPath + "/" + roleDocument.get().getPhotoId());
             file.delete();

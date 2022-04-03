@@ -15,10 +15,13 @@
                 <p th:text="${employee.name}"></p>
             </div>
             <div class="content">
-                <img class="entity-page" th:src="@{/images/employee/{imageURL}(imageURL=${imageURL})}">
+                <img class="employee-page" th:src="@{/images/employee/{imageURL}(imageURL=${imageURL})}">
                 <p class="success" th:text="${success}"></p>
+                <p class="error" th:text="${error}"></p>
                 <p><a th:href="@{/employee/{id}(id=${employee.id})}" th:text="'Перейти к сотруднику'"></a></p>
-                <form method="post" th:action="@{/employee/edit/{id}(id=${employee.id})}">
+                <form enctype="multipart/form-data" method="post" th:action="@{/employee/edit/{id}(id=${employee.id})}">
+                    <label for="file">Фотография сотрудника (не более 8МБ, .png, .jpeg, .jpg)</label><br>
+                    <input type="file" name="file" id="file"><br><br>
                     <label for="name">ФИО сотрудника:</label><br>
                     <input id="name" name="name" placeholder="обязательное поле" required style="width: 300px"
                            th:value="${employee.name}" type="text">

@@ -17,6 +17,7 @@
                 <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
                 <div class="account-content">
                     <p>В этом разделе Вы можете редактировать существующего пользователя.</p>
+                    <b th:if="${user.getBlocked()}" th:text="'Данный пользователь заблоикрован.'"></b>
                     <form method="post" th:action="@{/account/admin/edit-user/{login}(login=${user.login})}">
                         <label for="name">Имя (используйте настоящее, необходимо для подтверждения
                             документов)</label><br>

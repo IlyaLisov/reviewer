@@ -19,6 +19,7 @@
                         <img class="entity-page" th:src="@{/images/entity/{imageURL}(imageURL=${imageURL})}">
                         <p th:if="${user != null && (user.isAdmin() || user.isModerator())}">
                             <a th:href="@{/entity/edit/{id}(id=${entity.id})}" th:text="'Редактировать'"></a>
+                            <a th:href="@{/entity/delete/{id}(id=${entity.id})}" th:text="'Удалить'"></a>
                         </p>
                     </div>
                     <div>

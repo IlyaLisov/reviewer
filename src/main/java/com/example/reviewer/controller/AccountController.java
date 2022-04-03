@@ -6,11 +6,6 @@ import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.role.RoleDocument;
 import com.example.reviewer.model.user.Crypter;
 import com.example.reviewer.model.user.User;
-import com.example.reviewer.repository.EmployeeReviewRepository;
-import com.example.reviewer.repository.EntityReviewRepository;
-import com.example.reviewer.repository.RoleDocumentRepository;
-import com.example.reviewer.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,18 +26,6 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping(value = "/account")
 public class AccountController extends com.example.reviewer.controller.Controller {
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleDocumentRepository roleDocumentRepository;
-
-    @Autowired
-    private EntityReviewRepository entityReviewRepository;
-
-    @Autowired
-    private EmployeeReviewRepository employeeReviewRepository;
-
     @GetMapping()
     public String index(HttpSession session, Model model) {
         User user = (User) model.getAttribute("user");

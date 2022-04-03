@@ -13,7 +13,7 @@
             <div class="page-name">Поиск по запросу "<span th:text="${param.query}"></span>"</div>
             <div class="content">
                 <div class="search" th:insert="blocks/search :: search-entity(value=${param.query})"></div>
-                <div th:insert="blocks/table :: entity-table(entities=${entities})"></div>
+                <div th:insert="blocks/table :: entity-table(entities=${entities}, page=${page})"></div>
             </div>
         </div>
         <div th:insert="blocks/sidebar :: sidebar"></div>

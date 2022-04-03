@@ -38,7 +38,10 @@
                             <button th:text="'Найти'"></button>
                         </form>
                     </div>
-                    <div th:insert="blocks/table :: entity-table(entities=${entities})"></div>
+                    <div th:insert="blocks/table :: entity-table(entities=${entities}, page=${entityPage})"></div>
+                    <div class="pagination" th:each="page : ${#numbers.sequence(1, entityPageAmount)}">
+                        <a th:text="${page}" th:href="@{'/rating?entityPage=' + ${page}}"></a>
+                    </div>
                 </div>
                 <div class="two-items-content">
                     <h4>Рейтинг сотрудников:</h4>
@@ -60,7 +63,10 @@
                             <button th:text="'Найти'"></button>
                         </form>
                     </div>
-                    <div th:insert="blocks/table :: employee-table(employees=${employees})"></div>
+                    <div th:insert="blocks/table :: employee-table(employees=${employees}, page=${employeePage})"></div>
+                    <div class="pagination" th:each="page : ${#numbers.sequence(1, employeePageAmount)}">
+                        <a th:text="${page}" th:href="@{'/rating?employeePage=' + ${page}}"></a>
+                    </div>
                 </div>
             </div>
         </div>

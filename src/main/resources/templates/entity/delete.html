@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Удаление учреждения образования - Reviewer</title>
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+</head>
+<body>
+<div class=container>
+    <div th:insert="blocks/header :: header"></div>
+    <div class="page">
+        <div class="body">
+            <div class="page-name">
+                <p th:text="${entity.name}"></p>
+            </div>
+            <div class="content">
+                <p><a th:href="@{/entity/{id}(id=${entity.id})}"
+                      th:text="'Перейти к учреждению образования'"></a></p>
+                <p><b>Вы действительно хотите удалить это учреждение образования?</b></p>
+                <form method="post" th:action="@{/entity/delete/{id}(id=${entity.id})}">
+                    <button>Удалить</button>
+                </form>
+            </div>
+        </div>
+        <div th:insert="blocks/sidebar :: sidebar"></div>
+    </div>
+    <div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>

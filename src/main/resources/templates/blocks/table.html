@@ -1,4 +1,4 @@
-<div th:fragment="employee-table(employees)">
+<div th:fragment="employee-table(employees, page)">
     <table>
         <thead>
         <tr>
@@ -12,7 +12,7 @@
         </thead>
         <div th:each="employee, iter : ${employees}">
             <tr>
-                <td><span th:text="${iter.count}"></span></td>
+                <td><span th:text="${iter.count + 10 * (page - 1)}"></span></td>
                 <td><img class="employee-rating"
                          th:src="@{/images/employee/{imageURL}(imageURL = ${employee.imageURL == null ? 'default.jpg' : employee.imageURL})}">
                 </td>
@@ -28,7 +28,7 @@
     </table>
 </div>
 
-<div th:fragment="entity-table(entities)">
+<div th:fragment="entity-table(entities, page)">
     <table>
         <thead>
         <tr>
@@ -41,7 +41,7 @@
         </thead>
         <div th:each="entity, iter : ${entities}">
             <tr>
-                <td><span th:text="${iter.count}"></span></td>
+                <td><span th:text="${iter.count + 10 * (page - 1)}"></span></td>
                 <td><span th:text="${entity.getAverageRating()}"></span>
                 </td>
                 <td><a th:href="@{/entity/{id}(id = ${entity.id})}" th:text="${entity.name}"></a></td>

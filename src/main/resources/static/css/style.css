@@ -312,13 +312,13 @@ td {
 }
 
 img.employee-page {
-    height: 300px;
+    height: 400px;
     width: 300px;
 }
 
 img.employee-rating {
     height: 80px;
-    width: 80px;
+    width: 60px;
 }
 
 img.entity-page {

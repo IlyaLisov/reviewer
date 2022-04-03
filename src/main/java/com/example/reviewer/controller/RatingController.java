@@ -6,9 +6,6 @@ import com.example.reviewer.model.entity.EmployeeType;
 import com.example.reviewer.model.entity.Entity;
 import com.example.reviewer.model.entity.EntityType;
 import com.example.reviewer.model.entity.Region;
-import com.example.reviewer.repository.EmployeeRepository;
-import com.example.reviewer.repository.EntityRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,18 +19,14 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/rating")
 public class RatingController extends com.example.reviewer.controller.Controller {
-    @Autowired
-    private EntityRepository entityRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
     @GetMapping
     public String index(@RequestParam(value = "entityType", required = false) String entityType,
                         @RequestParam(value = "region", required = false) String region,
                         @RequestParam(value = "district", required = false) String district,
                         @RequestParam(value = "employeeType", required = false) String employeeType,
                         @RequestParam(value = "entity", required = false) Long entityId,
+                        @RequestParam(value = "entityPage", required = false) Integer entityPage,
+                        @RequestParam(value = "employeePage", required = false) Integer employeePage,
                         Model model) {
         Predicate<Entity> entityTypeFilter = entity -> {
             if (entityType != null && !entityType.isEmpty() && !entityType.equals("ANY")) {
@@ -56,7 +49,7 @@ public class RatingController extends com.example.reviewer.controller.Controller
         };
 
         Predicate<Entity> districtFilter = entity -> {
-            if (district != null && !district.isEmpty() && !region.equals("ANY")) {
+            if (district != null && !district.isEmpty() && !district.equals("ANY")) {
                 try {
                     return entity.getDistrict().equals(District.valueOf(district));
                 } catch (IllegalArgumentException ignored) {
@@ -85,12 +78,22 @@ public class RatingController extends com.example.reviewer.controller.Controller
             return true;
         };
 
+        if (entityPage == null) {
+            entityPage = 1;
+        }
+
+        if (employeePage == null) {
+            employeePage = 1;
+        }
+
         List<Entity> entities = (List<Entity>) entityRepository.findAll();
         model.addAttribute("entities", entities.stream()
                 .filter(entityTypeFilter)
                 .filter(regionFilter)
                 .filter(districtFilter)
                 .sorted((e1, e2) -> e2.getRating() - e1.getRating())
+                .skip((entityPage - 1) * AMOUNT_OF_ENTITIES_PER_PAGE)
+                .limit(AMOUNT_OF_ENTITIES_PER_PAGE)
                 .collect(Collectors.toList()));
 
         List<Employee> employees = (List<Employee>) employeeRepository.findAll();
@@ -98,6 +101,8 @@ public class RatingController extends com.example.reviewer.controller.Controller
                 .filter(employeeTypeFilter)
                 .filter(entityFilter)
                 .sorted((e1, e2) -> e2.getRating() - e1.getRating())
+                .skip((employeePage - 1) * AMOUNT_OF_ENTITIES_PER_PAGE)
+                .limit(AMOUNT_OF_ENTITIES_PER_PAGE)
                 .collect(Collectors.toList()));
 
         model.addAttribute("employeeEntities", entityRepository.findAll());
@@ -110,6 +115,10 @@ public class RatingController extends com.example.reviewer.controller.Controller
         model.addAttribute("district", district);
         model.addAttribute("employeeType", employeeType);
         model.addAttribute("entity", entityId);
+        model.addAttribute("entityPageAmount", entities.size() / AMOUNT_OF_ENTITIES_PER_PAGE + 1);
+        model.addAttribute("employeePageAmount", employees.size() / AMOUNT_OF_ENTITIES_PER_PAGE + 1);
+        model.addAttribute("entityPage", entityPage);
+        model.addAttribute("employeePage", employeePage);
         return "rating/index";
     }
 }

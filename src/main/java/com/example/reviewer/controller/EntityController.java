@@ -9,11 +9,6 @@ import com.example.reviewer.model.review.EntityReview;
 import com.example.reviewer.model.review.SlangRemover;
 import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.user.User;
-import com.example.reviewer.repository.EmployeeRepository;
-import com.example.reviewer.repository.EntityRepository;
-import com.example.reviewer.repository.EntityReviewRepository;
-import com.example.reviewer.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,18 +27,6 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/entity")
 public class EntityController extends com.example.reviewer.controller.Controller {
-    @Autowired
-    private EntityRepository entityRepository;
-
-    @Autowired
-    private EntityReviewRepository entityReviewRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
     private SlangRemover slangRemover = SlangRemover.getInstance();
 
     @GetMapping("/{id}")
@@ -130,10 +113,10 @@ public class EntityController extends com.example.reviewer.controller.Controller
             model.addAttribute("districts", District.values());
             List<Entity> universities = (List<Entity>) entityRepository.findAll();
             model.addAttribute("parentEntities", universities.stream()
-                    .filter(e -> e.getType().equals(EntityType.UNIVERSITY))
+                    .filter(e -> e.getType().equals(EntityType.UNIVERSITY) || e.getType().equals(EntityType.COLLEGE))
                     .collect(Collectors.toList()));
         } else {
-            return "redirect:rating";
+            return "redirect:/rating";
         }
         return "entity/edit";
     }
@@ -163,6 +146,31 @@ public class EntityController extends com.example.reviewer.controller.Controller
             model.addAttribute("success", "Учреждение образования успешно обновлено.");
         }
         return edit(id, model);
+    }
+
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable("id") Long id, Model model) {
+        Optional<Entity> entity = entityRepository.findById(id);
+        if (entity.isPresent()) {
+            model.addAttribute("entity", entity.get());
+        } else {
+            return "redirect:/rating";
+        }
+        return "entity/delete";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String doDelete(@PathVariable("id") Long id) {
+        Optional<Entity> entity = entityRepository.findById(id);
+        if(entity.isPresent()) {
+            User author = entity.get().getAuthor();
+            if(author != null) {
+                author.upRating(-RATING_FOR_CREATION_ENTITY);
+                userRepository.save(author);
+            }
+            entityRepository.delete(entity.get());
+        }
+        return "redirect:/rating";
     }
 
     @PostMapping("/{id}/like/{reviewId}")

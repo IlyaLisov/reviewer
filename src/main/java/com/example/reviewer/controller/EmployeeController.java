@@ -6,12 +6,8 @@ import com.example.reviewer.model.entity.Entity;
 import com.example.reviewer.model.review.EmployeeReview;
 import com.example.reviewer.model.review.SlangRemover;
 import com.example.reviewer.model.role.Role;
+import com.example.reviewer.model.role.RoleDocument;
 import com.example.reviewer.model.user.User;
-import com.example.reviewer.repository.EmployeeRepository;
-import com.example.reviewer.repository.EmployeeReviewRepository;
-import com.example.reviewer.repository.EntityRepository;
-import com.example.reviewer.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,28 +15,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/employee")
 public class EmployeeController extends com.example.reviewer.controller.Controller {
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private EmployeeReviewRepository employeeReviewRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private EntityRepository entityRepository;
-
     private SlangRemover slangRemover = SlangRemover.getInstance();
 
     @GetMapping("/{id}")
@@ -116,16 +106,38 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
             List<Entity> entities = (List<Entity>) entityRepository.findAll();
             model.addAttribute("entities", entities);
         } else {
-            return "redirect:rating";
+            return "redirect:/rating";
         }
         return "employee/edit";
     }
 
     @PostMapping("/edit/{id}")
     public String doEdit(@PathVariable("id") Long id, @RequestParam("name") String name, @RequestParam("type") String type,
-                         @RequestParam(value = "entity", required = false) Long entityId, Model model) {
+                         @RequestParam(value = "entity", required = false) Long entityId,
+                         @RequestParam(value = "file", required = false) MultipartFile file, Model model) {
         Optional<Employee> employee = employeeRepository.findById(id);
         if (employee.isPresent()) {
+            if (file != null && !file.isEmpty()) {
+                if (Arrays.asList(contentTypes).contains(file.getContentType())) {
+                    try {
+                        if (file.getSize() > MAX_UPLOAD_SIZE) {
+                            model.addAttribute("error", "Превышен допустимый размер файла.");
+                        } else {
+                            String uuid = String.valueOf(UUID.randomUUID());
+                            File convertFile = new File(employeesPath + "/" + uuid + "." + file.getContentType().replace("image/", ""));
+                            convertFile.createNewFile();
+                            FileOutputStream fout = new FileOutputStream(convertFile);
+                            fout.write(file.getBytes());
+                            fout.close();
+                            employee.get().setImageURL(uuid + "." + file.getContentType().replace("image/", ""));
+                        }
+                    } catch (IOException e) {
+                        model.addAttribute("error", "Произошла ошибка при загрузке документа.");
+                    }
+                } else {
+                    model.addAttribute("error", "Вы пытаетесь загрузить файл с неподходящим расширением." + file.getContentType());
+                }
+            }
             employee.get().setName(name);
             employee.get().setType(EmployeeType.valueOf(type));
             Optional<Entity> entity = entityRepository.findById(entityId);
@@ -134,6 +146,31 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
             model.addAttribute("success", "Сотрудник успешно обновлен.");
         }
         return edit(id, model);
+    }
+
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable("id") Long id, Model model) {
+        Optional<Employee> employee = employeeRepository.findById(id);
+        if (employee.isPresent()) {
+            model.addAttribute("employee", employee.get());
+        } else {
+            return "redirect:/rating";
+        }
+        return "employee/delete";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String doDelete(@PathVariable("id") Long id) {
+        Optional<Employee> employee = employeeRepository.findById(id);
+        if(employee.isPresent()) {
+            User author = employee.get().getAuthor();
+            if(author != null) {
+                author.upRating(RATING_FOR_CREATION_EMPLOYEE);
+                userRepository.save(author);
+            }
+            employeeRepository.delete(employee.get());
+        }
+        return "redirect:/rating";
     }
 
     @PostMapping("/{id}/like/{reviewId}")

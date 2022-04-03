@@ -56,6 +56,8 @@ public class User implements Comparable<User> {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<RoleEntity> roles;
 
+    private Boolean isBlocked;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<EntityReview> likedEntityReviews;
@@ -70,6 +72,7 @@ public class User implements Comparable<User> {
         this.lastSeenDate = LocalDate.now();
         this.likedEntityReviews = new ArrayList<>();
         this.likedEmployeeReviews = new ArrayList<>();
+        this.isBlocked = false;
     }
 
     public Long getId() {
@@ -206,6 +209,14 @@ public class User implements Comparable<User> {
 
     public void removeLikedEmployeeReview(EmployeeReview review) {
         likedEmployeeReviews.remove(review);
+    }
+
+    public Boolean getBlocked() {
+        return isBlocked;
+    }
+
+    public void setBlocked(Boolean blocked) {
+        isBlocked = blocked;
     }
 
     @Override
