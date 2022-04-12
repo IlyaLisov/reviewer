@@ -38,8 +38,12 @@ public class Review {
     @NotNull
     private LocalDate reviewDate;
 
+    @NotNull
+    private Boolean isVisible;
+
     public Review() {
         this.reviewDate = LocalDate.now();
+        this.isVisible = true;
     }
 
     public Long getId() {
@@ -88,6 +92,14 @@ public class Review {
 
     public void setReviewDate(LocalDate reviewDate) {
         this.reviewDate = reviewDate;
+    }
+
+    public Boolean getVisible() {
+        return isVisible != null ? isVisible : true;
+    }
+
+    public void setVisible(Boolean visible) {
+        isVisible = visible;
     }
 
     @Override

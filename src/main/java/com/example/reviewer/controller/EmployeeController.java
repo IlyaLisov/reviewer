@@ -4,6 +4,7 @@ import com.example.reviewer.model.entity.Employee;
 import com.example.reviewer.model.entity.EmployeeType;
 import com.example.reviewer.model.entity.Entity;
 import com.example.reviewer.model.review.EmployeeReview;
+import com.example.reviewer.model.review.Review;
 import com.example.reviewer.model.review.SlangRemover;
 import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.role.RoleDocument;
@@ -51,6 +52,7 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
             model.addAttribute("imageURL", employee.get().getImageURL() == null ? "default.jpg" : employee.get().getImageURL());
             model.addAttribute("reviews", reviews.stream()
                     .filter(markFilter)
+                    .filter(Review::getVisible)
                     .filter(review -> review.getText() != null && !review.getText().isEmpty())
                     .collect(Collectors.toList()));
             if (user != null) {

@@ -7,6 +7,9 @@ import com.example.reviewer.model.entity.Entity;
 import com.example.reviewer.model.entity.EntityType;
 import com.example.reviewer.model.entity.Region;
 import com.example.reviewer.model.feedback.Feedback;
+import com.example.reviewer.model.review.EmployeeReview;
+import com.example.reviewer.model.review.EntityReview;
+import com.example.reviewer.model.review.Review;
 import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.role.RoleDocument;
 import com.example.reviewer.model.role.RoleEntity;
@@ -133,9 +136,11 @@ public class AdminController extends com.example.reviewer.controller.Controller 
         if (userToBeBlocked.isPresent()) {
             if (userToBeBlocked.get().getBlocked() != null && !userToBeBlocked.get().getBlocked()) {
                 userToBeBlocked.get().setBlocked(true);
+                updateReviewVisibility(userToBeBlocked.get(), false);
                 model.addAttribute("success", "Пользователь " + userToBeBlocked.get().getName() + " заблокирован.");
             } else {
                 userToBeBlocked.get().setBlocked(false);
+                updateReviewVisibility(userToBeBlocked.get(), true);
                 model.addAttribute("success", "Пользователь " + userToBeBlocked.get().getName() + " разблокирован.");
             }
             userRepository.save(userToBeBlocked.get());
@@ -144,6 +149,19 @@ public class AdminController extends com.example.reviewer.controller.Controller 
             model.addAttribute("error", "Пользователя с таким логином не существует.");
         }
         return blockUser(model);
+    }
+
+    private void updateReviewVisibility(User user, boolean status) {
+        List<EntityReview> entityReviews = entityReviewRepository.findAllByAuthorId(user.getId());
+        for(EntityReview review : entityReviews) {
+            review.setVisible(status);
+            entityReviewRepository.save(review);
+        }
+        List<EmployeeReview> employeeReviews = employeeReviewRepository.findAllByAuthorId(user.getId());
+        for(EmployeeReview review : employeeReviews) {
+            review.setVisible(status);
+            employeeReviewRepository.save(review);
+        }
     }
 
     @GetMapping("/add-entity")

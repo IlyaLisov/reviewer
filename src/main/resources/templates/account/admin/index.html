@@ -16,7 +16,9 @@
             <div class="account">
                 <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
                 <div class="account-content">
-                    <p>Скоро тут можно будет делать многое...</p>
+                    <p>Вы попали на страницу управления сайтом.</p>
+                    <p>Как <b>Администратору</b> Вам доступен весь функционал взаимодействия с сайтом.</p>
+                    <p>Как <b>Модератору</b> Вам доступен весь функционал взаимодействия с сайтом за исключением создания и блокировки пользователей.</p>
                     <p class="success" th:text="${success}"></p>
                     <p class="error" th:text="${error}"></p>
                 </div>

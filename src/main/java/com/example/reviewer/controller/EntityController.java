@@ -6,6 +6,7 @@ import com.example.reviewer.model.entity.Entity;
 import com.example.reviewer.model.entity.EntityType;
 import com.example.reviewer.model.entity.Region;
 import com.example.reviewer.model.review.EntityReview;
+import com.example.reviewer.model.review.Review;
 import com.example.reviewer.model.review.SlangRemover;
 import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.user.User;
@@ -48,6 +49,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
             model.addAttribute("imageURL", entity.get().getImageURL() == null ? "default.png" : entity.get().getImageURL());
             model.addAttribute("reviews", reviews.stream()
                     .filter(markFilter)
+                    .filter(Review::getVisible)
                     .filter(review -> review.getText() != null && !review.getText().isEmpty())
                     .sorted((review1, review2) -> review2.getReviewDate().compareTo(review1.getReviewDate()))
                     .collect(Collectors.toList()));
