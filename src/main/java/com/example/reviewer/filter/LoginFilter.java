@@ -18,7 +18,8 @@ public class LoginFilter implements Filter {
 
         if (user == null) {
             HttpServletResponse response = (HttpServletResponse) servletResponse;
-            response.sendRedirect("/login");
+            HttpServletRequest request = (HttpServletRequest) servletRequest;
+            response.sendRedirect("/login?redirect=" + request.getRequestURI().substring(1));
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
         }

@@ -37,7 +37,7 @@
                 <p class="error" th:text="${error}"></p>
 
                 <div th:if="${user == null}">
-                    <h4><a th:href="@{/login}" th:text="'Войдите в аккаунт'"></a>, чтобы иметь возможность оставить свой
+                    <h4><a th:href="@{/login(redirect = ${#request.getRequestURI().substring(1)})}" th:text="'Войдите в аккаунт'"></a>, чтобы иметь возможность оставить свой
                         отзыв, либо проголосовать за существующие.</h4>
                 </div>
                 <div th:if="${user != null}">

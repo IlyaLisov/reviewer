@@ -23,7 +23,7 @@ public class MainController extends com.example.reviewer.controller.Controller {
     }
 
     @GetMapping("/login")
-    public String login(Model model) {
+    public String login(@RequestParam(value = "redirect", required = false) String redirect, Model model) {
         if (model.getAttribute("user") != null) {
             return "redirect:account";
         }
@@ -31,12 +31,12 @@ public class MainController extends com.example.reviewer.controller.Controller {
     }
 
     @PostMapping("/login")
-    public synchronized String doLogin(@RequestParam("login") String login, @RequestParam("password") String password, HttpSession session, Model model) {
+    public synchronized String doLogin(@RequestParam(value = "redirect", required = false) String redirect, @RequestParam("login") String login, @RequestParam("password") String password, HttpSession session, Model model) {
         Optional<User> userFromDataBase = userRepository.getByLogin(login);
         if (userFromDataBase.isPresent()) {
             if (userFromDataBase.get().getBlocked()) {
                 model.addAttribute("error", "Пользователь с таким логином заблокирован.");
-                return login(model);
+                return login(redirect, model);
             }
             String generatedPassword = Crypter.crypt(password, userFromDataBase.get().getRegisterDate().toString());
             if (generatedPassword.equals(userFromDataBase.get().getPassword())) {
@@ -46,14 +46,14 @@ public class MainController extends com.example.reviewer.controller.Controller {
             } else {
                 model.addAttribute("error", "Проверьте правильность введенных данных.");
                 model.addAttribute("login", login);
-                return login(model);
+                return login(redirect, model);
             }
         } else {
             model.addAttribute("error", "Проверьте правильность введенных данных.");
             model.addAttribute("login", login);
-            return login(model);
+            return login(redirect, model);
         }
-        return "redirect:account";
+        return (redirect != null && !redirect.isEmpty()) ? "redirect:" + redirect : "redirect:account";
     }
 
     @GetMapping("/register")

@@ -20,6 +20,7 @@
                            type="text">
                     <br><br><label for="password">Пароль</label><br>
                     <input id="password" name="password" placeholder="обязательное поле" required type="password">
+                    <input name="redirect" th:value="${param.redirect}" hidden>
                     <br><br>
                     <button>Войти</button>
                 </form>
