@@ -4,6 +4,7 @@ import com.example.reviewer.model.entity.Employee;
 import com.example.reviewer.model.entity.EmployeeType;
 import com.example.reviewer.model.entity.Entity;
 import com.example.reviewer.model.review.EmployeeReview;
+import com.example.reviewer.model.review.EntityReview;
 import com.example.reviewer.model.review.Review;
 import com.example.reviewer.model.review.SlangRemover;
 import com.example.reviewer.model.role.Role;
@@ -207,5 +208,50 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
             }
         }
         return "redirect:" + request.getHeader("referer");
+    }
+
+
+    @GetMapping("/{id}/edit/{reviewId}")
+    public String editReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId,
+                             HttpServletRequest request, Model model) {
+        Optional<EmployeeReview> review = employeeReviewRepository.findById(reviewId);
+        User user = (User) model.getAttribute("user");
+        if (review.isPresent() && (user != null && (user.isAdmin() || user.isModerator() || user.equals(review.get().getAuthor())))) {
+            model.addAttribute("employee", review.get().getEmployee());
+            model.addAttribute("review", review.get());
+            model.addAttribute("roles", user.getRolesInEntity(review.get().getEmployee().getEntity().getId()));
+            return "employee/edit-review";
+        } else {
+            return "redirect:" + request.getHeader("referer");
+        }
+    }
+
+    @PostMapping("/{id}/edit/{reviewId}")
+    public String doEditReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId, @RequestParam("text") String text,
+                               @RequestParam("mark") int mark, @RequestParam(value = "role", required = false) String role, Model model) {
+        Optional<EmployeeReview> review = employeeReviewRepository.findById(reviewId);
+        User user = (User) model.getAttribute("user");
+        if (review.isPresent() && (user != null && (user.isAdmin() || user.isModerator() || user.equals(review.get().getAuthor())))) {
+            if (!review.get().getText().equals(text)) {
+                if(user.isAdmin() || user.isModerator()) {
+                    review.get().setText(text);
+                } else {
+                    review.get().setText(SlangRemover.removeSlang(text));
+                }
+                review.get().setEdited(true);
+            }
+            if (review.get().getMark() != mark) {
+                review.get().setMark(mark);
+                review.get().setEdited(true);
+            }
+            if(role != null && !review.get().getAuthorRole().equals(Role.valueOf(role))) {
+                review.get().setAuthorRole(Role.valueOf(role));
+                review.get().setEdited(true);
+            }
+            employeeReviewRepository.save(review.get());
+            return "redirect:/employee/" + id;
+        } else {
+            return "redirect:/rating";
+        }
     }
 }

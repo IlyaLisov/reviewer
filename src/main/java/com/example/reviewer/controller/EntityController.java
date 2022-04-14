@@ -175,7 +175,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
         return "redirect:/rating";
     }
 
-    @PostMapping("/{id}/like/{reviewId}")
+    @GetMapping("/{id}/like/{reviewId}")
     public String likeReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId,
                              HttpServletRequest request, Model model) {
         Optional<EntityReview> review = entityReviewRepository.findById(reviewId);
@@ -200,12 +200,56 @@ public class EntityController extends com.example.reviewer.controller.Controller
             if (user.isAdmin() || user.isModerator() || (review.get().getAuthor() != null && review.get().getAuthor().equals(user))) {
                 if (review.get().getAuthor() != null) {
                     Optional<User> author = userRepository.findById(review.get().getAuthor().getId());
-                    author.get().upRating(-RATING_FOR_LEFTING_REVIEW);
+                    author.ifPresent(value -> value.upRating(-RATING_FOR_LEFTING_REVIEW));
                     userRepository.save(author.get());
                 }
                 entityReviewRepository.delete(review.get());
             }
         }
         return "redirect:" + request.getHeader("referer");
+    }
+
+    @GetMapping("/{id}/edit/{reviewId}")
+    public String editReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId,
+                             HttpServletRequest request, Model model) {
+        Optional<EntityReview> review = entityReviewRepository.findById(reviewId);
+        User user = (User) model.getAttribute("user");
+        if (review.isPresent() && (user != null && (user.isAdmin() || user.isModerator() || user.equals(review.get().getAuthor())))) {
+            model.addAttribute("entity", review.get().getEntity());
+            model.addAttribute("review", review.get());
+            model.addAttribute("roles", user.getRolesInEntity(id));
+            return "entity/edit-review";
+        } else {
+            return "redirect:" + request.getHeader("referer");
+        }
+    }
+
+    @PostMapping("/{id}/edit/{reviewId}")
+    public String doEditReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId, @RequestParam("text") String text,
+                               @RequestParam("mark") int mark, @RequestParam(value = "role", required = false) String role, Model model) {
+        Optional<EntityReview> review = entityReviewRepository.findById(reviewId);
+        User user = (User) model.getAttribute("user");
+        if (review.isPresent() && (user != null && (user.isAdmin() || user.isModerator() || user.equals(review.get().getAuthor())))) {
+            if (!review.get().getText().equals(text)) {
+                if(user.isAdmin() || user.isModerator()) {
+                    review.get().setText(text);
+                } else {
+                    review.get().setText(SlangRemover.removeSlang(text));
+                }
+                review.get().setEdited(true);
+            }
+            if (review.get().getMark() != mark) {
+                review.get().setMark(mark);
+                review.get().setEdited(true);
+            }
+            if(role != null && !review.get().getAuthorRole().equals(Role.valueOf(role))) {
+                review.get().setAuthorRole(Role.valueOf(role));
+                review.get().setEdited(true);
+            }
+            entityReviewRepository.save(review.get());
+            return "redirect:/entity/" + id;
+        } else {
+            return "redirect:/rating";
+        }
     }
 }

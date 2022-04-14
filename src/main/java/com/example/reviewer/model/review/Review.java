@@ -41,9 +41,13 @@ public class Review {
     @NotNull
     private Boolean isVisible;
 
+    @NotNull
+    private Boolean isEdited;
+
     public Review() {
         this.reviewDate = LocalDate.now();
         this.isVisible = true;
+        this.isEdited = false;
     }
 
     public Long getId() {
@@ -100,6 +104,14 @@ public class Review {
 
     public void setVisible(Boolean visible) {
         isVisible = visible;
+    }
+
+    public Boolean getEdited() {
+        return isEdited != null ? isEdited : false;
+    }
+
+    public void setEdited(Boolean edited) {
+        isEdited = edited;
     }
 
     @Override
