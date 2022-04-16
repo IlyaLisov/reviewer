@@ -6,7 +6,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DefaultDosProtectionService {
-    private static final int THRESHOLD = 150;
+    private static final int THRESHOLD = 500;
     private static DefaultDosProtectionService instance;
     private final Map<String, Long> countMap = new ConcurrentHashMap<>();
 

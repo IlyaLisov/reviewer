@@ -16,7 +16,10 @@
             <div class="account">
                 <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
                 <div class="account-content">
-                    <p>Скоро тут будет много статистики...</p>
+                    <p>Список всех пользователей:</p>
+                    <li th:each="user : ${users}">
+                        <a th:text="${user.login}" th:href="@{/account/admin/edit-user/{login}(login=${user.login})}" target="_blank"></a>
+                    </li>
                     <p class="success" th:text="${success}"></p>
                     <p class="error" th:text="${error}"></p>
                 </div>

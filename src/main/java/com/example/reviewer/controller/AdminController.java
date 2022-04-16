@@ -210,6 +210,9 @@ public class AdminController extends com.example.reviewer.controller.Controller 
             model.addAttribute("name", name);
             model.addAttribute("abbreviation", abbreviation);
         }
+        model.addAttribute("type", type);
+        model.addAttribute("region", region);
+        model.addAttribute("district", district);
         return addEntity(model);
     }
 
@@ -356,6 +359,8 @@ public class AdminController extends com.example.reviewer.controller.Controller 
 
     @GetMapping("/statistics")
     public String statistics(Model model) {
+        List<User> users = (List<User>) userRepository.findAll();
+        model.addAttribute("users", users);
         return "account/admin/statistics";
     }
 }

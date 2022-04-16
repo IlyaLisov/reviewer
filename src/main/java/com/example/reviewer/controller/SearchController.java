@@ -16,15 +16,16 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/search")
 public class SearchController extends com.example.reviewer.controller.MainController {
+
     @GetMapping("/entities")
     public String education(@RequestParam("query") String query, Model model) {
         Comparator<Entity> comparator = (entity1, entity2) -> {
             if (!query.isEmpty()) {
                 String[] wordsInQuery = query.split(" ");
-                return (int) (Arrays.stream(wordsInQuery).filter(word -> entity2.getName().toLowerCase().contains(word.toLowerCase())).count()
-                        + (query.toLowerCase().contains(entity2.getAbbreviation().toLowerCase()) ? 1 : 0)
-                        - (Arrays.stream(wordsInQuery).filter(word -> entity1.getName().toLowerCase().contains(word.toLowerCase())).count())
-                        + (query.toLowerCase().contains(entity1.getAbbreviation().toLowerCase()) ? 1 : 0));
+                return (int) (Arrays.stream(wordsInQuery).filter(word -> entity1.getName().toLowerCase().contains(word.toLowerCase())).count()
+                        + (query.toLowerCase().contains(entity1.getAbbreviation().toLowerCase()) ? 1 : 0)
+                        - (Arrays.stream(wordsInQuery).filter(word -> entity2.getName().toLowerCase().contains(word.toLowerCase())).count())
+                        + (query.toLowerCase().contains(entity2.getAbbreviation().toLowerCase()) ? 1 : 0));
             } else {
                 return entity1.getRating().compareTo(entity2.getRating());
             }

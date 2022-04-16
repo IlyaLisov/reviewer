@@ -176,7 +176,7 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
         return "redirect:/rating";
     }
 
-    @PostMapping("/{id}/like/{reviewId}")
+    @GetMapping("/{id}/like/{reviewId}")
     public String likeReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId,
                              HttpServletRequest request, Model model) {
         Optional<EmployeeReview> review = employeeReviewRepository.findById(reviewId);
