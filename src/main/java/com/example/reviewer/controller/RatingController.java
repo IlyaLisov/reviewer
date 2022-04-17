@@ -88,6 +88,7 @@ public class RatingController extends com.example.reviewer.controller.Controller
 
         List<Entity> entities = (List<Entity>) entityRepository.findAll();
         model.addAttribute("entities", entities.stream()
+                .filter(Entity::getVisible)
                 .filter(entityTypeFilter)
                 .filter(regionFilter)
                 .filter(districtFilter)
@@ -98,6 +99,7 @@ public class RatingController extends com.example.reviewer.controller.Controller
 
         List<Employee> employees = (List<Employee>) employeeRepository.findAll();
         model.addAttribute("employees", employees.stream()
+                .filter(Employee::getVisible)
                 .filter(employeeTypeFilter)
                 .filter(entityFilter)
                 .sorted((e1, e2) -> e2.getRating() - e1.getRating())

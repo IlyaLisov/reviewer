@@ -17,8 +17,11 @@
             <div class="content">
                 <img class="entity-page" th:src="@{/images/entity/{imageURL}(imageURL=${imageURL})}">
                 <p class="success" th:text="${success}"></p>
+                <p class="error" th:text="${error}"></p>
                 <p><a th:href="@{/entity/{id}(id=${entity.id})}" th:text="'Перейти к учреждению образования'"></a></p>
-                <form method="post" th:action="@{/entity/edit/{id}(id=${entity.id})}">
+                <form enctype="multipart/form-data" method="post" th:action="@{/entity/edit/{id}(id=${entity.id})}">
+                    <label for="file">Фотография УО (не более 8МБ, .png, .jpeg, .jpg)</label><br>
+                    <input type="file" name="file" id="file"><br><br>
                     <label for="name">Название учреждения образования:</label><br>
                     <input id="name" name="name" placeholder="обязательное поле" required style="width: 300px"
                            th:value="${entity.name}" type="text"><br><br>

@@ -43,6 +43,17 @@ public class Employee {
     @Formula("(SELECT SUM(r.mark) FROM rdb.review r WHERE r.employee_id = id)")
     private Integer rating;
 
+    @NotNull
+    private Boolean isVisible;
+
+    @NotNull
+    private Integer reportCounter;
+
+    public Employee() {
+        this.isVisible = true;
+        this.reportCounter = 0;
+    }
+
     public Long getId() {
         return id;
     }
@@ -117,5 +128,29 @@ public class Employee {
 
     public String getAverageRating() {
         return (reviewsAmount != null && rating != null && reviewsAmount != 0) ? String.format("%.1f", 1.0f * rating / reviewsAmount) : "Нет оценок";
+    }
+
+    public Boolean getVisible() {
+        return isVisible != null ? isVisible : true;
+    }
+
+    public void setVisible(Boolean visible) {
+        isVisible = visible;
+    }
+
+    public Integer getReportCounter() {
+        return reportCounter;
+    }
+
+    public void setReportCounter(Integer reportCounter) {
+        this.reportCounter = reportCounter;
+    }
+
+    public void increaseReportCounter() {
+        if (reportCounter != null) {
+            reportCounter++;
+        } else {
+            reportCounter = 1;
+        }
     }
 }

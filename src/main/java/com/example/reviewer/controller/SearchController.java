@@ -22,10 +22,8 @@ public class SearchController extends com.example.reviewer.controller.MainContro
         Comparator<Entity> comparator = (entity1, entity2) -> {
             if (!query.isEmpty()) {
                 String[] wordsInQuery = query.split(" ");
-                return (int) (Arrays.stream(wordsInQuery).filter(word -> entity1.getName().toLowerCase().contains(word.toLowerCase())).count()
-                        + (query.toLowerCase().contains(entity1.getAbbreviation().toLowerCase()) ? 1 : 0)
-                        - (Arrays.stream(wordsInQuery).filter(word -> entity2.getName().toLowerCase().contains(word.toLowerCase())).count())
-                        + (query.toLowerCase().contains(entity2.getAbbreviation().toLowerCase()) ? 1 : 0));
+                return (int) (Arrays.stream(wordsInQuery).filter(word -> entity2.getName().toLowerCase().contains(word.toLowerCase())).count()
+                        - (Arrays.stream(wordsInQuery).filter(word -> entity1.getName().toLowerCase().contains(word.toLowerCase())).count()));
             } else {
                 return entity1.getRating().compareTo(entity2.getRating());
             }
@@ -34,6 +32,7 @@ public class SearchController extends com.example.reviewer.controller.MainContro
         String[] wordsInQuery = query.split(" ");
         List<Entity> entities = (List<Entity>) entityRepository.findAll();
         model.addAttribute("entities", entities.stream()
+                .filter(Entity::getVisible)
                 .filter(entity -> Arrays.stream(wordsInQuery)
                         .anyMatch(word -> entity.getName().toLowerCase().contains(word.toLowerCase())
                                 || firstLettersFromName(entity.getName().toLowerCase()).contains(word.toLowerCase()))
@@ -69,6 +68,7 @@ public class SearchController extends com.example.reviewer.controller.MainContro
         String[] wordsInQuery = query.split(" ");
         List<Employee> employees = (List<Employee>) employeeRepository.findAll();
         model.addAttribute("employees", employees.stream()
+                .filter(Employee::getVisible)
                 .filter(employee -> Arrays.stream(wordsInQuery)
                         .anyMatch(word -> employee.getName().toLowerCase().contains(word.toLowerCase())))
                 .sorted(comparator)

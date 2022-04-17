@@ -19,30 +19,30 @@ import java.util.Objects;
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    protected Long id;
 
     @Column(length = 1024)
-    private String text;
+    protected String text;
 
     @NotNull
     @ManyToOne
-    private User author;
+    protected User author;
 
     @NotNull
     @Enumerated(value = EnumType.STRING)
-    private Role authorRole;
+    protected Role authorRole;
 
     @NotNull
-    private Integer mark;
+    protected Integer mark;
 
     @NotNull
-    private LocalDate reviewDate;
+    protected LocalDate reviewDate;
 
     @NotNull
-    private Boolean isVisible;
+    protected Boolean isVisible;
 
     @NotNull
-    private Boolean isEdited;
+    protected Boolean isEdited;
 
     public Review() {
         this.reviewDate = LocalDate.now();

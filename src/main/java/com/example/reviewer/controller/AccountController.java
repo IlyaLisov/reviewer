@@ -2,6 +2,7 @@ package com.example.reviewer.controller;
 
 import com.example.reviewer.model.review.EmployeeReview;
 import com.example.reviewer.model.review.EntityReview;
+import com.example.reviewer.model.review.Review;
 import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.role.RoleDocument;
 import com.example.reviewer.model.user.Crypter;
@@ -90,11 +91,13 @@ public class AccountController extends com.example.reviewer.controller.Controlle
         User user = (User) model.getAttribute("user");
         List<EntityReview> entityReviews = entityReviewRepository.findAllByAuthorId(user.getId());
         model.addAttribute("entityReviews", entityReviews.stream()
+                .filter(Review::getVisible)
                 .sorted((e1, e2) -> e2.getReviewDate().compareTo(e1.getReviewDate()))
                 .collect(Collectors.toList()));
 
         List<EmployeeReview> employeeReviews = employeeReviewRepository.findAllByAuthorId(user.getId());
         model.addAttribute("employeeReviews", employeeReviews.stream()
+                .filter(Review::getVisible)
                 .sorted((e1, e2) -> e2.getReviewDate().compareTo(e1.getReviewDate()))
                 .collect(Collectors.toList()));
 

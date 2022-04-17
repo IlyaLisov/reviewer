@@ -5,6 +5,7 @@ import com.sun.istack.NotNull;
 import org.hibernate.annotations.Formula;
 
 import javax.persistence.ManyToOne;
+import java.util.Objects;
 
 @javax.persistence.Entity
 public class EntityReview extends Review {
@@ -34,5 +35,18 @@ public class EntityReview extends Review {
 
     public void setEntity(Entity entity) {
         this.entity = entity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof EntityReview)) return false;
+        EntityReview review = (EntityReview) o;
+        return this.id.equals(review.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

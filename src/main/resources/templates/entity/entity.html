@@ -17,10 +17,13 @@
                 <div class="two-items">
                     <div style="margin-right: 30px">
                         <img class="entity-page" th:src="@{/images/entity/{imageURL}(imageURL=${imageURL})}">
-                        <p th:if="${user != null && (user.isAdmin() || user.isModerator())}">
-                            <a th:href="@{/entity/edit/{id}(id=${entity.id})}" th:text="'Редактировать'"></a>
-                            <a th:href="@{/entity/delete/{id}(id=${entity.id})}" th:text="'Удалить'"></a>
-                        </p>
+                        <div>
+                            <p th:if="${user != null && (user.isAdmin() || user.isModerator())}">
+                                <a th:href="@{/entity/edit/{id}(id=${entity.id})}" th:text="'Редактировать'"></a>
+                                <a th:href="@{/entity/delete/{id}(id=${entity.id})}" th:text="'Удалить'"></a>
+                            </p>
+                            <a th:href="@{/entity/report/{id}(id=${entity.id})}" th:text="'Пожаловаться'"></a>
+                        </div>
                     </div>
                     <div>
                         <p th:text="${entity.type.name}"></p>

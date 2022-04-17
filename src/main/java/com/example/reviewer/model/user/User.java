@@ -6,7 +6,6 @@ import com.example.reviewer.model.review.EntityReview;
 import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.role.RoleEntity;
 import com.sun.istack.NotNull;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 

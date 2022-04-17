@@ -97,6 +97,7 @@ public class MainController extends com.example.reviewer.controller.Controller {
 
     @GetMapping("/feedback")
     public String feedback(Model model) {
+        model.addAttribute("types", FeedbackType.values());
         return "feedback";
     }
 
@@ -104,9 +105,9 @@ public class MainController extends com.example.reviewer.controller.Controller {
     public synchronized String doFeedback(@RequestParam("theme") String theme, @RequestParam("text") String text,
                                           Model model) {
         User user = (User) model.getAttribute("user");
-        if (text.length() > MAX_FEEDBACK_LENGTH) {
+        if (text.length() < MAX_FEEDBACK_LENGTH) {
             Feedback feedback = new Feedback();
-            feedback.setFeedbackType(FeedbackType.valueOf(theme.toUpperCase()));
+            feedback.setFeedbackType(FeedbackType.valueOf(theme));
             feedback.setText(text);
             if (user != null) {
                 feedback.setAuthor(user);
@@ -114,7 +115,8 @@ public class MainController extends com.example.reviewer.controller.Controller {
             feedbackRepository.save(feedback);
             model.addAttribute("success", "Ваше сообщение успешно отправлено.");
         } else {
-            model.addAttribute("error", "Сообщение не должно превышать 1024 символа.");
+            model.addAttribute("error", "Сообщение не должно превышать " + MAX_FEEDBACK_LENGTH + " символа.");
+            model.addAttribute("text", text);
         }
         return feedback(model);
     }

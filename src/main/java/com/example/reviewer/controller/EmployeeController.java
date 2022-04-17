@@ -3,12 +3,12 @@ package com.example.reviewer.controller;
 import com.example.reviewer.model.entity.Employee;
 import com.example.reviewer.model.entity.EmployeeType;
 import com.example.reviewer.model.entity.Entity;
+import com.example.reviewer.model.report.EmployeeReport;
+import com.example.reviewer.model.report.EmployeeReportType;
 import com.example.reviewer.model.review.EmployeeReview;
-import com.example.reviewer.model.review.EntityReview;
 import com.example.reviewer.model.review.Review;
 import com.example.reviewer.model.review.SlangRemover;
 import com.example.reviewer.model.role.Role;
-import com.example.reviewer.model.role.RoleDocument;
 import com.example.reviewer.model.user.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,7 +47,7 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
 
         Optional<Employee> employee = employeeRepository.findById(id);
         User user = (User) model.getAttribute("user");
-        if (employee.isPresent()) {
+        if (employee.isPresent() && (employee.get().getVisible() || (user != null && (user.isModerator() || user.isAdmin())))) {
             List<EmployeeReview> reviews = employeeReviewRepository.findAllByEmployeeId(id);
             model.addAttribute("employee", employee.get());
             model.addAttribute("imageURL", employee.get().getImageURL() == null ? "default.jpg" : employee.get().getImageURL());
@@ -176,7 +176,7 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
         return "redirect:/rating";
     }
 
-    @GetMapping("/{id}/like/{reviewId}")
+    @PostMapping("/{id}/like/{reviewId}")
     public String likeReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId,
                              HttpServletRequest request, Model model) {
         Optional<EmployeeReview> review = employeeReviewRepository.findById(reviewId);
@@ -244,7 +244,7 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
                 review.get().setMark(mark);
                 review.get().setEdited(true);
             }
-            if(role != null && !review.get().getAuthorRole().equals(Role.valueOf(role))) {
+            if (role != null && !review.get().getAuthorRole().equals(Role.valueOf(role))) {
                 review.get().setAuthorRole(Role.valueOf(role));
                 review.get().setEdited(true);
             }
@@ -252,6 +252,43 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
             return "redirect:/employee/" + id;
         } else {
             return "redirect:/rating";
+        }
+    }
+
+    @GetMapping("/report/{id}")
+    public String report(@PathVariable("id") Long id, Model model) {
+        Optional<Employee> employee = employeeRepository.findById(id);
+        if (employee.isPresent()) {
+            model.addAttribute("employee", employee.get());
+            model.addAttribute("types", EmployeeReportType.values());
+            model.addAttribute("imageURL", employee.get().getImageURL() == null ? "default.jpg" : employee.get().getImageURL());
+            return "employee/report";
+        } else {
+            return "error/404";
+        }
+    }
+
+    @PostMapping("/report/{id}")
+    public String doReport(@PathVariable("id") Long id, @RequestParam("theme") String theme,
+                           @RequestParam(value = "text", required = false) String text, Model model) {
+        Optional<Employee> employee = employeeRepository.findById(id);
+        if (employee.isPresent()) {
+            EmployeeReport employeeReport = new EmployeeReport();
+            employeeReport.setType(EmployeeReportType.valueOf(theme));
+            employeeReport.setEmployee(employee.get());
+            employeeReport.setText(text);
+            employeeReportRepository.save(employeeReport);
+
+            employee.get().increaseReportCounter();
+            if (employee.get().getReportCounter() > AMOUNT_OF_EMPLOYEE_REPORTS_TO_HIDE) {
+                employee.get().setVisible(false);
+            }
+            employeeRepository.save(employee.get());
+
+            model.addAttribute("success", "Ваша жалоба успешно принята. При наличии определенного количества жалоб, мы заблокируем данного сотрудника.");
+            return report(id, model);
+        } else {
+            return "error/404";
         }
     }
 }

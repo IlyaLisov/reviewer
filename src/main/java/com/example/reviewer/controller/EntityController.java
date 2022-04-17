@@ -5,6 +5,8 @@ import com.example.reviewer.model.entity.Employee;
 import com.example.reviewer.model.entity.Entity;
 import com.example.reviewer.model.entity.EntityType;
 import com.example.reviewer.model.entity.Region;
+import com.example.reviewer.model.report.EntityReport;
+import com.example.reviewer.model.report.EntityReportType;
 import com.example.reviewer.model.review.EntityReview;
 import com.example.reviewer.model.review.Review;
 import com.example.reviewer.model.review.SlangRemover;
@@ -17,11 +19,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -42,7 +50,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
 
         Optional<Entity> entity = entityRepository.findById(id);
         User user = (User) model.getAttribute("user");
-        if (entity.isPresent()) {
+        if (entity.isPresent() && (entity.get().getVisible() || (user != null && (user.isModerator() || user.isAdmin())))) {
             List<EntityReview> reviews = entityReviewRepository.findAllByEntityId(id);
             List<Employee> employees = employeeRepository.findAllByEntityId(entity.get().getId());
             model.addAttribute("entity", entity.get());
@@ -54,6 +62,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
                     .sorted((review1, review2) -> review2.getReviewDate().compareTo(review1.getReviewDate()))
                     .collect(Collectors.toList()));
             model.addAttribute("employees", employees.stream()
+                    .filter(Employee::getVisible)
                     .sorted(Comparator.comparing(Employee::getName))
                     .collect(Collectors.toList()));
             if (user != null) {
@@ -128,9 +137,30 @@ public class EntityController extends com.example.reviewer.controller.Controller
                          @RequestParam("type") String type, @RequestParam(value = "parentEntity", required = false) Long parentEntityId,
                          @RequestParam("region") String region, @RequestParam("district") String district,
                          @RequestParam("address") String address, @RequestParam(value = "siteURL", required = false) String siteURL,
-                         Model model) {
+                         @RequestParam(value = "file", required = false) MultipartFile file, Model model) {
         Optional<Entity> entity = entityRepository.findById(id);
         if (entity.isPresent()) {
+            if (file != null && !file.isEmpty()) {
+                if (Arrays.asList(contentTypes).contains(file.getContentType())) {
+                    try {
+                        if (file.getSize() > MAX_UPLOAD_SIZE) {
+                            model.addAttribute("error", "Превышен допустимый размер файла.");
+                        } else {
+                            String uuid = String.valueOf(UUID.randomUUID());
+                            File convertFile = new File(entitiesPath + "/" + uuid + "." + file.getContentType().replace("image/", ""));
+                            convertFile.createNewFile();
+                            FileOutputStream fout = new FileOutputStream(convertFile);
+                            fout.write(file.getBytes());
+                            fout.close();
+                            entity.get().setImageURL(uuid + "." + file.getContentType().replace("image/", ""));
+                        }
+                    } catch (IOException e) {
+                        model.addAttribute("error", "Произошла ошибка при загрузке документа.");
+                    }
+                } else {
+                    model.addAttribute("error", "Вы пытаетесь загрузить файл с неподходящим расширением." + file.getContentType());
+                }
+            }
             entity.get().setName(name);
             entity.get().setAbbreviation(abbreviation);
             entity.get().setType(EntityType.valueOf(type));
@@ -175,7 +205,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
         return "redirect:/rating";
     }
 
-    @GetMapping("/{id}/like/{reviewId}")
+    @PostMapping("/{id}/like/{reviewId}")
     public String likeReview(@PathVariable("id") Long id, @PathVariable("reviewId") Long reviewId,
                              HttpServletRequest request, Model model) {
         Optional<EntityReview> review = entityReviewRepository.findById(reviewId);
@@ -242,7 +272,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
                 review.get().setMark(mark);
                 review.get().setEdited(true);
             }
-            if(role != null && !review.get().getAuthorRole().equals(Role.valueOf(role))) {
+            if (role != null && !review.get().getAuthorRole().equals(Role.valueOf(role))) {
                 review.get().setAuthorRole(Role.valueOf(role));
                 review.get().setEdited(true);
             }
@@ -250,6 +280,47 @@ public class EntityController extends com.example.reviewer.controller.Controller
             return "redirect:/entity/" + id;
         } else {
             return "redirect:/rating";
+        }
+    }
+
+    @GetMapping("/report/{id}")
+    public String report(@PathVariable("id") Long id, Model model) {
+        Optional<Entity> entity = entityRepository.findById(id);
+        if (entity.isPresent()) {
+            model.addAttribute("entity", entity.get());
+            model.addAttribute("types", EntityReportType.values());
+            model.addAttribute("imageURL", entity.get().getImageURL() == null ? "default.png" : entity.get().getImageURL());
+            return "entity/report";
+        } else {
+            return "error/404";
+        }
+    }
+
+    @PostMapping("/report/{id}")
+    public String doReport(@PathVariable("id") Long id, @RequestParam("theme") String theme,
+                           @RequestParam(value = "text", required = false) String text, Model model) {
+        Optional<Entity> entity = entityRepository.findById(id);
+        if (entity.isPresent()) {
+            EntityReport entityReport = new EntityReport();
+            entityReport.setType(EntityReportType.valueOf(theme));
+            entityReport.setEntity(entity.get());
+            entityReport.setText(text);
+            entityReportRepository.save(entityReport);
+
+            entity.get().increaseReportCounter();
+            if (entity.get().getReportCounter() > AMOUNT_OF_ENTITY_REPORTS_TO_HIDE && entity.get().getVisible()) {
+                entity.get().setVisible(false);
+//                List<EntityReview> reviews = entityReviewRepository.findAllByEntityId(id);
+//                for(EntityReview review : reviews) {
+//                    review.setVisible(false);
+//                }
+            }
+            entityRepository.save(entity.get());
+
+            model.addAttribute("success", "Ваша жалоба успешно принята. При наличии определенного количества жалоб, мы заблокируем данное учреждение образования.");
+            return report(id, model);
+        } else {
+            return "error/404";
         }
     }
 }

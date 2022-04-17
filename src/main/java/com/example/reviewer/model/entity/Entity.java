@@ -11,8 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @javax.persistence.Entity
@@ -61,6 +59,17 @@ public class Entity {
 
     @Formula("(SELECT SUM(r.mark) FROM rdb.review r WHERE r.entity_id = id)")
     private Integer rating;
+
+    @NotNull
+    private Boolean isVisible;
+
+    @NotNull
+    private Integer reportCounter;
+
+    public Entity() {
+        this.isVisible = true;
+        this.reportCounter = 0;
+    }
 
     public Long getId() {
         return id;
@@ -176,6 +185,30 @@ public class Entity {
 
     public String getAverageRating() {
         return (reviewsAmount != null && rating != null && reviewsAmount != 0) ? String.format("%.1f", 1.0f * rating / reviewsAmount) : "Нет оценок";
+    }
+
+    public Boolean getVisible() {
+        return isVisible != null ? isVisible : true;
+    }
+
+    public void setVisible(Boolean visible) {
+        isVisible = visible;
+    }
+
+    public Integer getReportCounter() {
+        return reportCounter;
+    }
+
+    public void setReportCounter(Integer reportCounter) {
+        this.reportCounter = reportCounter;
+    }
+
+    public void increaseReportCounter() {
+        if (reportCounter != null) {
+            reportCounter++;
+        } else {
+            reportCounter = 1;
+        }
     }
 
     @Override
