@@ -18,11 +18,11 @@
                 <div class="account-content">
                     <p>В этом разделе Вы можете заблокировать и разблокировать пользователя.</p>
                     <b>Если пользователь был заблокирован, тогда он станет разблокированным.</b>
-                    <form method="post" th:action="@{/account/admin/block-user}">
+                    <form method="get" th:action="@{/account/admin/block-user/{login}(login=${param.login})}">
                         <br><br><label for="login">Логин</label><br>
                         <input id="login" name="login" placeholder="обязательное поле" required th:value="${login}"
                                type="text"><br><br>
-                        <button type="submit">Заблокировать</button>
+                        <button>Заблокировать</button>
                     </form>
                     <p class="success" th:text="${success}"></p>
                     <p class="error" th:text="${error}"></p>

@@ -20,6 +20,7 @@ public class ReviewsController extends com.example.reviewer.controller.Controlle
         model.addAttribute("entityReviews", entityReviews.stream()
                 .filter(review -> !review.getText().isEmpty())
                 .filter(Review::getVisible)
+                .filter(review -> !review.getDeleted())
                 .sorted((e1, e2) -> e2.getReviewDate().compareTo(e1.getReviewDate()))
                 .collect(Collectors.toList()));
 
@@ -27,6 +28,7 @@ public class ReviewsController extends com.example.reviewer.controller.Controlle
         model.addAttribute("employeeReviews", employeeReviews.stream()
                 .filter(review -> !review.getText().isEmpty())
                 .filter(Review::getVisible)
+                .filter(review -> !review.getDeleted())
                 .sorted((e1, e2) -> e2.getReviewDate().compareTo(e1.getReviewDate()))
                 .collect(Collectors.toList()));
 

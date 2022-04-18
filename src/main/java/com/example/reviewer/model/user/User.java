@@ -211,7 +211,7 @@ public class User implements Comparable<User> {
     }
 
     public Boolean getBlocked() {
-        return isBlocked;
+        return isBlocked != null ? isBlocked : false;
     }
 
     public void setBlocked(Boolean blocked) {

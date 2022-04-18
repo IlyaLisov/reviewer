@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель администратора - Reviewer</title>
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div th:insert="blocks/header :: header"></div>
+    <div class="page">
+        <div class="body">
+            <div class="page-name">
+                Панель администратора
+            </div>
+            <div class="account">
+                <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
+                <div class="account-content">
+                    <p>На данной странице Вы можете увидеть всех заблокированных сотрудников и разблокировать их.</p>
+                    <p class="success" th:text="${success}"></p>
+                    <p class="error" th:text="${error}"></p>
+                    <table>
+                        <thead>
+                        <td>№</td>
+                        <td>ФИО сотрудника</td>
+                        <td>Информация</td>
+                        <td>Жалобы</td>
+                        </thead>
+                        <tr th:each="employee, iter : ${employees}">
+                            <td><span th:text="${iter.count}"></span></td>
+                            <td><a target="_blank" th:href="@{/employee/{id}(id = ${employee.id})}"
+                                   th:text="${employee.name}"></a></td>
+                            <td>
+                                <p th:text="${employee.type.name}"></p>
+                                <a target="_blank" th:href="@{/entity/{id}(id=${employee.entity.id})}"
+                                   th:text="${employee.entity.name}"></a>
+                            </td>
+                            <td>
+                                <a th:href="@{/employee/block/{id}(id=${employee.id})}" th:text="'Разблокировать'"></a>
+                                <h4>Жалобы пользователей:</h4>
+                                <div th:each="report : ${reports}">
+                                    <div th:if="${report.employee.id eq employee.id}"
+                                         th:insert="blocks/report :: report(r = ${report})"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div th:insert="blocks/sidebar :: sidebar"></div>
+    </div>
+    <div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>

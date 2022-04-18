@@ -8,7 +8,6 @@ import com.example.reviewer.model.entity.Region;
 import com.example.reviewer.model.report.EntityReport;
 import com.example.reviewer.model.report.EntityReportType;
 import com.example.reviewer.model.review.EntityReview;
-import com.example.reviewer.model.review.Review;
 import com.example.reviewer.model.review.SlangRemover;
 import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.user.User;
@@ -57,7 +56,8 @@ public class EntityController extends com.example.reviewer.controller.Controller
             model.addAttribute("imageURL", entity.get().getImageURL() == null ? "default.png" : entity.get().getImageURL());
             model.addAttribute("reviews", reviews.stream()
                     .filter(markFilter)
-                    .filter(Review::getVisible)
+                    .filter(review -> user != null && (user.isModerator() || user.isAdmin()) || review.getVisible())
+                    .filter(review -> !review.getDeleted())
                     .filter(review -> review.getText() != null && !review.getText().isEmpty())
                     .sorted((review1, review2) -> review2.getReviewDate().compareTo(review1.getReviewDate()))
                     .collect(Collectors.toList()));
@@ -230,10 +230,13 @@ public class EntityController extends com.example.reviewer.controller.Controller
             if (user.isAdmin() || user.isModerator() || (review.get().getAuthor() != null && review.get().getAuthor().equals(user))) {
                 if (review.get().getAuthor() != null) {
                     Optional<User> author = userRepository.findById(review.get().getAuthor().getId());
-                    author.ifPresent(value -> value.upRating(-RATING_FOR_LEFTING_REVIEW));
-                    userRepository.save(author.get());
+                    if (author.isPresent()) {
+                        author.get().upRating(-RATING_FOR_LEFTING_REVIEW);
+                        userRepository.save(author.get());
+                    }
                 }
-                entityReviewRepository.delete(review.get());
+                review.get().setDeleted(true);
+                entityReviewRepository.save(review.get());
             }
         }
         return "redirect:" + request.getHeader("referer");
@@ -310,10 +313,11 @@ public class EntityController extends com.example.reviewer.controller.Controller
             entity.get().increaseReportCounter();
             if (entity.get().getReportCounter() > AMOUNT_OF_ENTITY_REPORTS_TO_HIDE && entity.get().getVisible()) {
                 entity.get().setVisible(false);
-//                List<EntityReview> reviews = entityReviewRepository.findAllByEntityId(id);
-//                for(EntityReview review : reviews) {
-//                    review.setVisible(false);
-//                }
+                List<EntityReview> reviews = entityReviewRepository.findAllByEntityId(id);
+                for (EntityReview review : reviews) {
+                    review.setVisible(false);
+                    entityReviewRepository.save(review);
+                }
             }
             entityRepository.save(entity.get());
 
@@ -322,5 +326,29 @@ public class EntityController extends com.example.reviewer.controller.Controller
         } else {
             return "error/404";
         }
+    }
+
+    @GetMapping("/block/{id}")
+    public String block(@PathVariable("id") Long id, HttpServletRequest request, Model model) {
+        Optional<Entity> entity = entityRepository.findById(id);
+        if (entity.isPresent()) {
+            if (entity.get().getVisible()) {
+                entity.get().setVisible(false);
+                List<EntityReview> reviews = entityReviewRepository.findAllByEntityId(id);
+                for (EntityReview review : reviews) {
+                    review.setVisible(false);
+                    entityReviewRepository.save(review);
+                }
+            } else {
+                entity.get().setVisible(true);
+                List<EntityReview> reviews = entityReviewRepository.findAllByEntityId(id);
+                for (EntityReview review : reviews) {
+                    review.setVisible(true);
+                    entityReviewRepository.save(review);
+                }
+            }
+            entityRepository.save(entity.get());
+        }
+        return "redirect:" + request.getHeader("referer");
     }
 }

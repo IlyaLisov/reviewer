@@ -7,9 +7,10 @@ import com.example.reviewer.model.entity.Entity;
 import com.example.reviewer.model.entity.EntityType;
 import com.example.reviewer.model.entity.Region;
 import com.example.reviewer.model.feedback.Feedback;
+import com.example.reviewer.model.report.EmployeeReport;
+import com.example.reviewer.model.report.EntityReport;
 import com.example.reviewer.model.review.EmployeeReview;
 import com.example.reviewer.model.review.EntityReview;
-import com.example.reviewer.model.review.Review;
 import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.role.RoleDocument;
 import com.example.reviewer.model.role.RoleEntity;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.Comparator;
 import java.util.List;
@@ -34,8 +36,28 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/account/admin")
 public class AdminController extends com.example.reviewer.controller.Controller {
     @GetMapping()
-    public String index() {
+    public String index(Model model) {
+        List<User> users = (List<User>) userRepository.findAll();
+        model.addAttribute("admins", users.stream()
+                .filter(User::isAdmin)
+                .collect(Collectors.toList()));
+        model.addAttribute("moderators", users.stream()
+                .filter(User::isModerator)
+                .collect(Collectors.toList()));
         return "account/admin/index";
+    }
+
+    @GetMapping("/blocked-reviews")
+    public String blockedReviews(Model model) {
+        List<EntityReview> entityReviews = (List<EntityReview>) entityReviewRepository.findAll();
+        model.addAttribute("entityReviews", entityReviews.stream()
+                .filter(review -> !review.getVisible())
+                .collect(Collectors.toList()));
+        List<EmployeeReview> employeeReviews = (List<EmployeeReview>) employeeReviewRepository.findAll();
+        model.addAttribute("employeeReviews", employeeReviews.stream()
+                .filter(review -> !review.getVisible())
+                .collect(Collectors.toList()));
+        return "account/admin/blocked-reviews";
     }
 
     @GetMapping("/add-user")
@@ -73,6 +95,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
 
     @GetMapping("/edit-user")
     public String editUser(Model model) {
+        model.addAttribute("users", userRepository.findAll());
         return "account/admin/edit-user";
     }
 
@@ -125,16 +148,16 @@ public class AdminController extends com.example.reviewer.controller.Controller 
         return "account/admin/block-user";
     }
 
-    @PostMapping("/block-user")
-    public String doBlockUser(@RequestParam("login") String login, Model model) {
+    @GetMapping("/block-user/{login}")
+    public String doBlockUser(@PathVariable("login") String login, HttpServletRequest request, Model model) {
         Optional<User> userToBeBlocked = userRepository.getByLogin(login);
         if (login.equals("admin")) {
             model.addAttribute("login", login);
             model.addAttribute("error", "У вас нет полномочий на данное действие.");
-            return blockUser(model);
+            return "redirect:" + request.getHeader("referer");
         }
         if (userToBeBlocked.isPresent()) {
-            if (userToBeBlocked.get().getBlocked() != null && !userToBeBlocked.get().getBlocked()) {
+            if (!userToBeBlocked.get().getBlocked()) {
                 userToBeBlocked.get().setBlocked(true);
                 updateReviewVisibility(userToBeBlocked.get(), false);
                 model.addAttribute("success", "Пользователь " + userToBeBlocked.get().getName() + " заблокирован.");
@@ -148,17 +171,26 @@ public class AdminController extends com.example.reviewer.controller.Controller 
             model.addAttribute("login", login);
             model.addAttribute("error", "Пользователя с таким логином не существует.");
         }
-        return blockUser(model);
+        return "redirect:" + request.getHeader("referer");
+    }
+
+    @GetMapping("/blocked-users")
+    public String blockedUsers(Model model) {
+        List<User> users = (List<User>) userRepository.findAll();
+        model.addAttribute("users", users.stream()
+                .filter(User::getBlocked)
+                .collect(Collectors.toList()));
+        return "account/admin/blocked-users";
     }
 
     private void updateReviewVisibility(User user, boolean status) {
         List<EntityReview> entityReviews = entityReviewRepository.findAllByAuthorId(user.getId());
-        for(EntityReview review : entityReviews) {
+        for (EntityReview review : entityReviews) {
             review.setVisible(status);
             entityReviewRepository.save(review);
         }
         List<EmployeeReview> employeeReviews = employeeReviewRepository.findAllByAuthorId(user.getId());
-        for(EmployeeReview review : employeeReviews) {
+        for (EmployeeReview review : employeeReviews) {
             review.setVisible(status);
             employeeReviewRepository.save(review);
         }
@@ -216,6 +248,17 @@ public class AdminController extends com.example.reviewer.controller.Controller 
         return addEntity(model);
     }
 
+    @GetMapping("/blocked-entities")
+    public String blockedEntities(Model model) {
+        List<Entity> entities = (List<Entity>) entityRepository.findAll();
+        List<EntityReport> reports = (List<EntityReport>) entityReportRepository.findAll();
+        model.addAttribute("entities", entities.stream()
+                .filter(entity -> !entity.getVisible())
+                .collect(Collectors.toList()));
+        model.addAttribute("reports", reports);
+        return "account/admin/blocked-entities";
+    }
+
     @GetMapping("/add-employee")
     public String addEmployee(Model model) {
         List<Entity> entities = (List<Entity>) entityRepository.findAll();
@@ -249,6 +292,17 @@ public class AdminController extends com.example.reviewer.controller.Controller 
         model.addAttribute("type", type);
         model.addAttribute("entityId", id);
         return addEmployee(model);
+    }
+
+    @GetMapping("/blocked-employees")
+    public String blockedEmployees(Model model) {
+        List<Employee> employees = (List<Employee>) employeeRepository.findAll();
+        List<EmployeeReport> reports = (List<EmployeeReport>) employeeReportRepository.findAll();
+        model.addAttribute("employees", employees.stream()
+                .filter(employee -> !employee.getVisible())
+                .collect(Collectors.toList()));
+        model.addAttribute("reports", reports);
+        return "account/admin/blocked-employees";
     }
 
     @GetMapping("/verify")

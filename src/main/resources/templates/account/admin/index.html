@@ -18,9 +18,18 @@
                 <div class="account-content">
                     <p>Вы попали на страницу управления сайтом.</p>
                     <p>Как <b>Администратору</b> Вам доступен весь функционал взаимодействия с сайтом.</p>
-                    <p>Как <b>Модератору</b> Вам доступен весь функционал взаимодействия с сайтом за исключением создания и блокировки пользователей.</p>
+                    <p>Как <b>Модератору</b> Вам доступен весь функционал взаимодействия с сайтом за исключением
+                        создания и блокировки пользователей.</p>
                     <p class="success" th:text="${success}"></p>
                     <p class="error" th:text="${error}"></p>
+                    <h4>Администраторы:</h4>
+                    <li th:each="user : ${admins}"><a
+                            th:href="@{/account/admin/edit-user/{login}(login = ${user.login})}"
+                            th:text="${user.login} + '(' + ${user.name} + ')'"></a></li>
+                    <h4>Модераторы:</h4>
+                    <li th:each="user : ${moderators}"><a
+                            th:href="@{/account/admin/edit-user/{login}(login = ${user.login})}"
+                            th:text="${user.login} + '(' + ${user.name} + ')'"></a></li>
                 </div>
             </div>
         </div>

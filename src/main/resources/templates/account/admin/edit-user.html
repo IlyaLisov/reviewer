@@ -26,6 +26,10 @@
                     </form>
                     <p class="success" th:text="${success}"></p>
                     <p class="error" th:text="${error}"></p>
+                    <h4>Все пользователи сайта:</h4>
+                    <li th:each="user : ${users}"><a
+                            th:href="@{/account/admin/edit-user/{login}(login = ${user.login})}"
+                            th:text="${user.login} + '(' + ${user.name} + ')'"></a></li>
                 </div>
             </div>
         </div>

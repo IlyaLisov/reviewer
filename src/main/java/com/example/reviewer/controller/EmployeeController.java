@@ -6,7 +6,6 @@ import com.example.reviewer.model.entity.Entity;
 import com.example.reviewer.model.report.EmployeeReport;
 import com.example.reviewer.model.report.EmployeeReportType;
 import com.example.reviewer.model.review.EmployeeReview;
-import com.example.reviewer.model.review.Review;
 import com.example.reviewer.model.review.SlangRemover;
 import com.example.reviewer.model.role.Role;
 import com.example.reviewer.model.user.User;
@@ -53,7 +52,8 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
             model.addAttribute("imageURL", employee.get().getImageURL() == null ? "default.jpg" : employee.get().getImageURL());
             model.addAttribute("reviews", reviews.stream()
                     .filter(markFilter)
-                    .filter(Review::getVisible)
+                    .filter(review -> user != null && (user.isModerator() || user.isAdmin()) || review.getVisible())
+                    .filter(review -> !review.getDeleted())
                     .filter(review -> review.getText() != null && !review.getText().isEmpty())
                     .collect(Collectors.toList()));
             if (user != null) {
@@ -201,10 +201,13 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
             if (user.isAdmin() || user.isModerator() || (review.get().getAuthor() != null && review.get().getAuthor().equals(user))) {
                 if (review.get().getAuthor() != null) {
                     Optional<User> author = userRepository.findById(review.get().getAuthor().getId());
-                    author.get().upRating(-RATING_FOR_LEFTING_REVIEW);
-                    userRepository.save(author.get());
+                    if (author.isPresent()) {
+                        author.get().upRating(-RATING_FOR_LEFTING_REVIEW);
+                        userRepository.save(author.get());
+                    }
                 }
-                employeeReviewRepository.delete(review.get());
+                review.get().setDeleted(true);
+                employeeReviewRepository.save(review.get());
             }
         }
         return "redirect:" + request.getHeader("referer");
@@ -280,8 +283,13 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
             employeeReportRepository.save(employeeReport);
 
             employee.get().increaseReportCounter();
-            if (employee.get().getReportCounter() > AMOUNT_OF_EMPLOYEE_REPORTS_TO_HIDE) {
+            if (employee.get().getReportCounter() > AMOUNT_OF_EMPLOYEE_REPORTS_TO_HIDE && !employee.get().getVisible()) {
                 employee.get().setVisible(false);
+                List<EmployeeReview> reviews = employeeReviewRepository.findAllByEmployeeId(id);
+                for (EmployeeReview review : reviews) {
+                    review.setVisible(false);
+                    employeeReviewRepository.save(review);
+                }
             }
             employeeRepository.save(employee.get());
 
@@ -290,5 +298,29 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
         } else {
             return "error/404";
         }
+    }
+
+    @GetMapping("/block/{id}")
+    public String block(@PathVariable("id") Long id, HttpServletRequest request, Model model) {
+        Optional<Employee> employee = employeeRepository.findById(id);
+        if (employee.isPresent()) {
+            if (employee.get().getVisible()) {
+                employee.get().setVisible(false);
+                List<EmployeeReview> reviews = employeeReviewRepository.findAllByEmployeeId(id);
+                for (EmployeeReview review : reviews) {
+                    review.setVisible(false);
+                    employeeReviewRepository.save(review);
+                }
+            } else {
+                employee.get().setVisible(true);
+                List<EmployeeReview> reviews = employeeReviewRepository.findAllByEmployeeId(id);
+                for (EmployeeReview review : reviews) {
+                    review.setVisible(true);
+                    employeeReviewRepository.save(review);
+                }
+            }
+            employeeRepository.save(employee.get());
+        }
+        return "redirect:" + request.getHeader("referer");
     }
 }

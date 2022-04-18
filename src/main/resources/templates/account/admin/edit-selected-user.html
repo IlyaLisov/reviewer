@@ -17,12 +17,25 @@
                 <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
                 <div class="account-content">
                     <p>В этом разделе Вы можете редактировать существующего пользователя.</p>
-                    <b th:if="${user.getBlocked()}" th:text="'Данный пользователь заблоикрован.'"></b>
+                    <div>
+                        <b th:if="${user.getBlocked()}" th:text="'Данный пользователь заблокирован.'"></b>
+                        <div>
+                            <a th:href="@{/account/admin/block-user/{login}(login=${user.login})}"
+                               th:if="${!user.blocked}"
+                               th:text="'Заблокировать'"></a>
+                            <a th:href="@{/account/admin/block-user/{login}(login=${user.login})}"
+                               th:if="${user.blocked}"
+                               th:text="'Разблокировать'"></a>
+                        </div>
+                    </div>
+                    <br><br>
                     <form method="post" th:action="@{/account/admin/edit-user/{login}(login=${user.login})}">
                         <label for="name">Имя (используйте настоящее, необходимо для подтверждения
                             документов)</label><br>
                         <input id="name" name="name" th:value="${user.name}" type="text">
-                        <br><br><label for="login">Логин</label><br>
+                        <br><br>
+                        <p th:text="'Дата регистрации: ' + ${user.registerDate}"></p>
+                        <label for="login">Логин</label><br>
                         <input id="login" name="login" readonly th:value="${user.login}" type="text">
                         <br><br><label for="password">Пароль</label><br>
                         <input id="password" name="password" type="password">

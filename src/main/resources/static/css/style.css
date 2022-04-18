@@ -178,7 +178,7 @@ body {
     flex-direction: column;
 }
 
-.review {
+.review, .report {
     margin-top: 5px;
     margin-bottom: 5px;
     padding: 10px;

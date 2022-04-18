@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель администратора - Reviewer</title>
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div th:insert="blocks/header :: header"></div>
+    <div class="page">
+        <div class="body">
+            <div class="page-name">
+                Панель администратора
+            </div>
+            <div class="account">
+                <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
+                <div class="account-content">
+                    <p>На данной странице Вы можете увидеть всех заблокированных пользователей и разблокировать их.</p>
+                    <p class="success" th:text="${success}"></p>
+                    <p class="error" th:text="${error}"></p>
+                    <table>
+                        <thead>
+                        <td>№</td>
+                        <td>Информация о пользователе</td>
+                        <td>Действие</td>
+                        </thead>
+                        <tr th:each="user, iter : ${users}">
+                            <td><span th:text="${iter.count}"></span></td>
+                            <td><a target="_blank" th:href="@{/account/admin/edit-user/{login}(login = ${user.login})}"
+                                   th:text="${user.login} + ' (' + ${user.name} +')'"></a></td>
+                            <td>
+                                <a th:href="@{/account/admin/block-user/{login}(login=${user.login})}"
+                                   th:text="'Разблокировать'"></a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div th:insert="blocks/sidebar :: sidebar"></div>
+    </div>
+    <div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>

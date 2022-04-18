@@ -92,12 +92,14 @@ public class AccountController extends com.example.reviewer.controller.Controlle
         List<EntityReview> entityReviews = entityReviewRepository.findAllByAuthorId(user.getId());
         model.addAttribute("entityReviews", entityReviews.stream()
                 .filter(Review::getVisible)
+                .filter(review -> !review.getDeleted())
                 .sorted((e1, e2) -> e2.getReviewDate().compareTo(e1.getReviewDate()))
                 .collect(Collectors.toList()));
 
         List<EmployeeReview> employeeReviews = employeeReviewRepository.findAllByAuthorId(user.getId());
         model.addAttribute("employeeReviews", employeeReviews.stream()
                 .filter(Review::getVisible)
+                .filter(review -> !review.getDeleted())
                 .sorted((e1, e2) -> e2.getReviewDate().compareTo(e1.getReviewDate()))
                 .collect(Collectors.toList()));
 

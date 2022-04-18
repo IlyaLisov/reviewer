@@ -42,12 +42,16 @@ public class Review {
     protected Boolean isVisible;
 
     @NotNull
+    protected Boolean isDeleted;
+
+    @NotNull
     protected Boolean isEdited;
 
     public Review() {
         this.reviewDate = LocalDate.now();
         this.isVisible = true;
         this.isEdited = false;
+        this.isDeleted = false;
     }
 
     public Long getId() {
@@ -104,6 +108,14 @@ public class Review {
 
     public void setVisible(Boolean visible) {
         isVisible = visible;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted != null ? isDeleted : false;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 
     public Boolean getEdited() {

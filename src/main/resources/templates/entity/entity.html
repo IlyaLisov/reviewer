@@ -21,6 +21,10 @@
                             <p th:if="${user != null && (user.isAdmin() || user.isModerator())}">
                                 <a th:href="@{/entity/edit/{id}(id=${entity.id})}" th:text="'Редактировать'"></a>
                                 <a th:href="@{/entity/delete/{id}(id=${entity.id})}" th:text="'Удалить'"></a>
+                                <a th:href="@{/entity/block/{id}(id=${entity.id})}" th:if="${entity.visible}"
+                                   th:text="'Заблокировать'"></a>
+                                <a th:href="@{/entity/block/{id}(id=${entity.id})}" th:text="'Разблокировать'"
+                                   th:unless="${entity.visible}"></a>
                             </p>
                             <a th:href="@{/entity/report/{id}(id=${entity.id})}" th:text="'Пожаловаться'"></a>
                         </div>
