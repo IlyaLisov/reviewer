@@ -43,6 +43,11 @@
                                 th:text="${university.name}"
                                 th:value="${university.id}"></option>
                     </select><br><br>
+                    <label for="country">Страна:</label><br>
+                    <select id="country" name="country">
+                        <option th:each="country : ${countries}" th:selected="${country.equals(entity.country)}"
+                                th:text="${country.name}" th:value="${country}"></option>
+                    </select><br><br>
                     <label for="region">Область:</label><br>
                     <select id="region" name="region">
                         <option th:each="region : ${regions}" th:selected="${region.equals(entity.region)}"

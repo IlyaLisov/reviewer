@@ -32,6 +32,10 @@ public class Entity {
 
     @NotNull
     @Enumerated(value = EnumType.STRING)
+    private Country country;
+
+    @NotNull
+    @Enumerated(value = EnumType.STRING)
     private Region region;
 
     @NotNull
@@ -51,13 +55,13 @@ public class Entity {
     @ManyToOne
     private Entity parentEntity;
 
-    @Formula("(SELECT COUNT(*) FROM rdb.review r WHERE r.entity_id = id)")
+    @Formula("(SELECT COUNT(*) FROM rdb.review r WHERE r.entity_id = id AND r.is_deleted != 1)")
     private Integer reviewsAmount;
 
-    @Formula("(SELECT COUNT(DISTINCT r.author_id) FROM rdb.review r WHERE r.entity_id = id)")
+    @Formula("(SELECT COUNT(DISTINCT r.author_id) FROM rdb.review r WHERE r.entity_id = id AND r.is_deleted != 1)")
     private Integer peopleInvolved;
 
-    @Formula("(SELECT SUM(r.mark) FROM rdb.review r WHERE r.entity_id = id)")
+    @Formula("(SELECT SUM(r.mark) FROM rdb.review r WHERE r.entity_id = id AND r.is_deleted != 1)")
     private Integer rating;
 
     @NotNull
@@ -101,6 +105,14 @@ public class Entity {
 
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
     }
 
     public Region getRegion() {

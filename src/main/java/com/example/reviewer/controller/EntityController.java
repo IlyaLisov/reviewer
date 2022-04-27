@@ -1,5 +1,6 @@
 package com.example.reviewer.controller;
 
+import com.example.reviewer.model.entity.Country;
 import com.example.reviewer.model.entity.District;
 import com.example.reviewer.model.entity.Employee;
 import com.example.reviewer.model.entity.Entity;
@@ -65,9 +66,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
                     .filter(Employee::getVisible)
                     .sorted(Comparator.comparing(Employee::getName))
                     .collect(Collectors.toList()));
-            if (user != null) {
-                model.addAttribute("roles", user.getRolesInEntity(entity.get().getId()));
-            }
+            model.addAttribute("roles", Role.values());
             List<Entity> childEntities = entityRepository.findByParentEntity(entity.get());
             model.addAttribute("childEntities", childEntities.stream()
                     .sorted(Comparator.comparing(Entity::getName))
@@ -82,17 +81,24 @@ public class EntityController extends com.example.reviewer.controller.Controller
     @PostMapping("/left-review/{id}")
     public String leftReview(@PathVariable("id") Long id, @RequestParam(value = "text", required = false) String text,
                              @RequestParam("role") String role, @RequestParam("mark") int mark, Model model) {
-        ;
         EntityReview review = new EntityReview();
         Optional<Entity> entity = entityRepository.findById(id);
         User author = (User) model.getAttribute("user");
-        if (entity.isPresent() && author != null && author.hasRole(entity.get().getId())) {
-            Long reviewsFromUser = entityReviewRepository.countAllByAuthorAndEntity(author, entity.get());
+        if (entity.isPresent() && author != null) {
+            Long reviewsFromUser = entityReviewRepository.countAllByAuthorAndEntityAndIsDeleted(author, entity.get(), false);
             if (reviewsFromUser < MAX_REVIEW_PER_ENTITY) {
                 review.setEntity(entity.get());
                 review.setAuthor(author);
                 review.setMark(mark);
-                review.setAuthorRole(Role.valueOf(role));
+                if (!role.equals("ANONYMOUS")) {
+                    review.setAuthorRole(Role.valueOf(role));
+                }
+                if (author.hasRole(id)) {
+                    review.setConfirmed(true);
+                }
+                if (!role.equals("ANONYMOUS") && !author.getRolesInEntity(id).contains(Role.valueOf(role))) {
+                    author.addRole(Role.valueOf(role), entity.get());
+                }
                 if (text != null) {
                     if (text.length() < MAX_REVIEW_TEXT_LENGTH) {
                         review.setText(slangRemover.removeSlang(text));
@@ -120,6 +126,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
             model.addAttribute("entity", entity.get());
             model.addAttribute("types", EntityType.values());
             model.addAttribute("imageURL", entity.get().getImageURL() == null ? "default.png" : entity.get().getImageURL());
+            model.addAttribute("countries", Country.values());
             model.addAttribute("regions", Region.values());
             model.addAttribute("districts", District.values());
             List<Entity> universities = (List<Entity>) entityRepository.findAll();
@@ -135,7 +142,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
     @PostMapping("/edit/{id}")
     public String doEdit(@PathVariable("id") Long id, @RequestParam("name") String name, @RequestParam("abbreviation") String abbreviation,
                          @RequestParam("type") String type, @RequestParam(value = "parentEntity", required = false) Long parentEntityId,
-                         @RequestParam("region") String region, @RequestParam("district") String district,
+                         @RequestParam("country") String country, @RequestParam("region") String region, @RequestParam("district") String district,
                          @RequestParam("address") String address, @RequestParam(value = "siteURL", required = false) String siteURL,
                          @RequestParam(value = "file", required = false) MultipartFile file, Model model) {
         Optional<Entity> entity = entityRepository.findById(id);
@@ -170,6 +177,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
                 Optional<Entity> parentEntity = entityRepository.findById(parentEntityId);
                 entity.get().setParentEntity(parentEntity.get());
             }
+            entity.get().setCountry(Country.valueOf(country));
             entity.get().setRegion(Region.valueOf(region));
             entity.get().setDistrict(District.valueOf(district));
             entity.get().setAddress(address);

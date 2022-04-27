@@ -13,5 +13,5 @@ public interface EntityReviewRepository extends CrudRepository<EntityReview, Lon
 
     List<EntityReview> findAllByAuthorId(Long id);
 
-    Long countAllByAuthorAndEntity(User author, Entity entity);
+    Long countAllByAuthorAndEntityAndIsDeleted(User author, Entity entity, Boolean isDeleted);
 }

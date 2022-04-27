@@ -32,7 +32,7 @@
                     <div>
                         <p th:text="${entity.type.name}"></p>
                         <p th:text="'Адрес: ' + (${entity.address != null} ? ${entity.address} : '') + ', ' +
-                            ${entity.district.name} + ' район, ' + ${entity.district.getRegion().name} + ' область'"></p>
+                            ${entity.district.name} + ' район, ' + ${entity.district.getRegion().name} + ' область, ' + ${entity.country != null ? entity.country.name : ''}"></p>
                         <div th:if="${entity.siteURL != null}">
                             Сайт: <a target="_blank" th:href="@{//{site}(site=${entity.siteURL})}"
                                      th:text="${entity.siteURL}"></a>
@@ -74,15 +74,14 @@
                         отзыв, либо проголосовать за существующие.</h4>
                 </div>
                 <div th:if="${user != null}">
-                    <div th:if="${user.hasRole(entity.id)}">
-                        <div th:insert="blocks/review :: left-entity-review(e = ${entity}, roles = ${roles})"></div>
+                    <div th:if="${!user.hasRole(entity.id)}">
+                        <p class="error">Отзывы, оставляемые <a th:href="@{/account/roles}"
+                                                                th:text="'без подтверждения своей роли'"></a> в
+                            учреждении образования будут помечены как "Неподтвержденные",
+                            после подтверждения связи с учреждением образования отзывы будет помечены как
+                            "Подтвержденные"</p>
                     </div>
-                    <div th:unless="${user.hasRole(entity.id)}">
-                        <h4>Отзывы могут оставлять только пользователи, которые <a th:href="@{/account/roles}"
-                                                                                   th:text="'подтвердили свою связь'"></a>
-                            с
-                            этим учреждением образования.</h4>
-                    </div>
+                    <div th:insert="blocks/review :: left-entity-review(e = ${entity}, roles = ${roles})"></div>
                 </div>
                 <div>
                     <form method="get" th:href="@{/entity/{id}(id=${entity.id})}">

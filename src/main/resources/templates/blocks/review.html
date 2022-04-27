@@ -1,12 +1,15 @@
 <div class="review" th:fragment="entity-review(r)">
     <div class="error" th:if="${!r.visible}">Отзыв скрыт</div>
+    <div class="error" th:if="${!r.confirmed}">Связь автора с учреждением образования не подтверждена</div>
+    <div class="success" th:if="${r.confirmed}">Связь автора с учреждением образования подтверждена</div>
     <p>"<span th:text="${r.text}"></span>"</p>
     <p th:if="${r.getEdited()}" th:text="'Отзыв был отредактирован'"></p>
     <div>
         <b>Отзыв оставлен: </b><span th:text="${r.reviewDate}"></span><br>
-        <b>Отзыв оставил: </b><span th:text="${r.authorRole.name}"></span> <a th:href="@{/account/admin/edit-user/{login}(login = ${r.author.login})}"
-                                                                              th:if="${user != null && (user.isAdmin() || user.isModerator())}"
-                                                                              th:text="${r.author.login}"></a><br>
+        <div th:if="${r.authorRole != null}"><b>Отзыв оставил: </b><span th:text="${r.authorRole.name}"></span></div>
+        <a th:href="@{/account/admin/edit-user/{login}(login = ${r.author.login})}"
+           th:if="${user != null && (user.isAdmin() || user.isModerator())}"
+           th:text="${r.author.login}"><br></a>
         <b>Оценка: </b><span th:text="${r.mark}"></span><br>
         <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
     </div>
@@ -34,14 +37,17 @@
 </div>
 
 <div class="review" th:fragment="entity-review-with-anchor(r)">
+    <div class="error" th:if="${!r.confirmed}">Связь автора с учреждением образования не подтверждена</div>
+    <div class="success" th:if="${r.confirmed}">Связь автора с учреждением образования подтверждена</div>
     <p><a th:href="@{/entity/{id}(id=${r.entity.id})}" th:text="${r.entity.name}"></a></p>
     <div class="error" th:if="${!r.visible}">Отзыв скрыт</div>
     <p>"<span th:text="${r.text}"></span>"</p>
     <div>
         <b>Отзыв оставлен: </b><span th:text="${r.reviewDate}"></span><br>
-        <b>Отзыв оставил: </b><span th:text="${r.authorRole.name}"></span> <a th:href="@{/account/admin/edit-user/{login}(login = ${r.author.login})}"
-                                                                              th:if="${user != null && (user.isAdmin() || user.isModerator())}"
-                                                                              th:text="${r.author.login}"></a><br>
+        <div th:if="${r.authorRole != null}"><b>Отзыв оставил: </b><span th:text="${r.authorRole.name}"></span></div>
+        <a th:href="@{/account/admin/edit-user/{login}(login = ${r.author.login})}"
+           th:if="${user != null && (user.isAdmin() || user.isModerator())}"
+           th:text="${r.author.login}"><br></a>
         <b>Оценка: </b><span th:text="${r.mark}"></span><br>
         <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
     </div>
@@ -70,13 +76,16 @@
 
 <div class="review" th:fragment="employee-review(r)">
     <div class="error" th:if="${!r.visible}">Отзыв скрыт</div>
+    <div class="error" th:if="${!r.confirmed}">Связь автора с учреждением образования сотрудника не подтверждена</div>
+    <div class="success" th:if="${r.confirmed}">Связь автора с учреждением образования сотрудника подтверждена</div>
     <p>"<span th:text="${r.text}"></span>"</p>
     <p th:if="${r.getEdited()}" th:text="'Отзыв был отредактирован'"></p>
     <div>
         <b>Отзыв оставлен: </b><span th:text="${r.reviewDate}"></span><br>
-        <b>Отзыв оставил: </b><span th:text="${r.authorRole.name}"></span> <a th:href="@{/account/admin/edit-user/{login}(login = ${r.author.login})}"
-                                                                              th:if="${user != null && (user.isAdmin() || user.isModerator())}"
-                                                                              th:text="${r.author.login}"></a><br>
+        <div th:if="${r.authorRole != null}"><b>Отзыв оставил: </b><span th:text="${r.authorRole.name}"></span></div>
+        <a th:href="@{/account/admin/edit-user/{login}(login = ${r.author.login})}"
+           th:if="${user != null && (user.isAdmin() || user.isModerator())}"
+           th:text="${r.author.login}"><br></a>
         <b>Оценка: </b><span th:text="${r.mark}"></span><br>
         <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
     </div>
@@ -103,14 +112,17 @@
 </div>
 
 <div class="review" th:fragment="employee-review-with-anchor(r)">
+    <div class="error" th:if="${!r.confirmed}">Связь автора с учреждением образования сотрудника не подтверждена</div>
+    <div class="success" th:if="${r.confirmed}">Связь автора с учреждением образования сотрудника подтверждена</div>
     <p><a th:href="@{/employee/{id}(id=${r.employee.id})}" th:text="${r.employee.name}"></a></p>
     <div class="error" th:if="${!r.visible}">Отзыв скрыт</div>
     <p>"<span th:text="${r.text}"></span>"</p>
     <div>
         <b>Отзыв оставлен: </b><span th:text="${r.reviewDate}"></span><br>
-        <b>Отзыв оставил: </b><span th:text="${r.authorRole.name}"></span> <a th:href="@{/account/admin/edit-user/{login}(login = ${r.author.login})}"
-                                                                              th:if="${user != null && (user.isAdmin() || user.isModerator())}"
-                                                                              th:text="${r.author.login}"></a><br>
+        <div th:if="${r.authorRole != null}"><b>Отзыв оставил: </b><span th:text="${r.authorRole.name}"></span></div>
+        <a th:href="@{/account/admin/edit-user/{login}(login = ${r.author.login})}"
+           th:if="${user != null && (user.isAdmin() || user.isModerator())}"
+           th:text="${r.author.login}"><br></a>
         <b>Оценка: </b><span th:text="${r.mark}"></span><br>
         <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
     </div>
@@ -142,6 +154,7 @@
         <textarea id="text" name="text" style="width: 90%; height: 150px; resize: none;"></textarea><br><br>
         <label for="role">От лица кого Вы оставляете отзыв:</label><br>
         <select id="role" name="role">
+            <option selected th:text="'Не выбрано'" th:value="ANONYMOUS"></option>
             <option th:each="role : ${roles}" th:text="${role.name}" th:value="${role}"></option>
         </select><br><br>
         <label for="mark">Ваша оценка:</label><br>
@@ -162,6 +175,7 @@
         <textarea id="text2" name="text" style="width: 90%; height: 150px; resize: none;"></textarea><br><br>
         <label for="role2">От лица кого Вы оставляете отзыв:</label><br>
         <select id="role2" name="role">
+            <option selected th:text="'Не выбрано'" th:value="ANONYMOUS"></option>
             <option th:each="role : ${roles}" th:text="${role.name}" th:value="${role}"></option>
         </select><br><br>
         <label for="mark2">Ваша оценка:</label><br>

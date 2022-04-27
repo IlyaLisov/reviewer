@@ -56,9 +56,7 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
                     .filter(review -> !review.getDeleted())
                     .filter(review -> review.getText() != null && !review.getText().isEmpty())
                     .collect(Collectors.toList()));
-            if (user != null) {
-                model.addAttribute("roles", user.getRolesInEntity(employee.get().getEntity().getId()));
-            }
+            model.addAttribute("roles", Role.values());
         } else {
             return "error/404";
         }
@@ -72,13 +70,21 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
         EmployeeReview review = new EmployeeReview();
         Optional<Employee> employee = employeeRepository.findById(id);
         User author = (User) model.getAttribute("user");
-        if (employee.isPresent() && author != null && author.hasRole(employee.get().getEntity().getId())) {
-            Long reviewsFromUser = employeeReviewRepository.countAllByAuthorAndEmployee(author, employee.get());
+        if (employee.isPresent() && author != null) {
+            Long reviewsFromUser = employeeReviewRepository.countAllByAuthorAndEmployeeAndIsDeleted(author, employee.get(), false);
             if (reviewsFromUser < MAX_REVIEW_PER_ENTITY) {
                 review.setEmployee(employee.get());
                 review.setAuthor(author);
                 review.setMark(mark);
-                review.setAuthorRole(Role.valueOf(role));
+                if (!role.equals("ANONYMOUS")) {
+                    review.setAuthorRole(Role.valueOf(role));
+                }
+                if (author.hasRole(employee.get().getEntity().getId())) {
+                    review.setConfirmed(true);
+                }
+                if (!role.equals("ANONYMOUS") && !author.getRolesInEntity(id).contains(Role.valueOf(role))) {
+                    author.addRole(Role.valueOf(role), employee.get().getEntity());
+                }
                 if (text != null) {
                     if (text.length() < MAX_REVIEW_TEXT_LENGTH) {
                         review.setText(slangRemover.removeSlang(text));

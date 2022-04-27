@@ -44,19 +44,24 @@
                 <p class="error" th:text="${error}"></p>
 
                 <div th:if="${user == null}">
-                    <h4><a th:href="@{/login(redirect = ${#request.getRequestURI().substring(1)})}" th:text="'Войдите в аккаунт'"></a>, чтобы иметь возможность оставить свой
+                    <h4><a th:href="@{/login(redirect = ${#request.getRequestURI().substring(1)})}"
+                           th:text="'Войдите в аккаунт'"></a>, чтобы иметь возможность оставить свой
+                        отзыв, либо проголосовать за существующие.</h4>
+                </div>
+                <div th:if="${user == null}">
+                    <h4><a th:href="@{/login(redirect = ${#request.getRequestURI().substring(1)})}"
+                           th:text="'Войдите в аккаунт'"></a>, чтобы иметь возможность оставить свой
                         отзыв, либо проголосовать за существующие.</h4>
                 </div>
                 <div th:if="${user != null}">
-                    <div th:if="${user.hasRole(employee.entity.id)}">
-                        <div th:insert="blocks/review :: left-employee-review(e = ${employee}, roles = ${roles})"></div>
+                    <div th:if="${!user.hasRole(employee.entity.id)}">
+                        <p class="error">Отзывы, оставляемые <a th:href="@{/account/roles}"
+                                                                th:text="'без подтверждения своей роли'"></a> в
+                            учреждении образования будут помечены как "Неподтвержденные",
+                            после подтверждения связи с учреждением образования отзывы будет помечены как
+                            "Подтвержденные"</p>
                     </div>
-                    <div th:unless="${user.hasRole(employee.entity.id)}">
-                        <h4>Отзывы могут оставлять только пользователи, которые <a th:href="@{/account/roles}"
-                                                                                   th:text="'подтвердили свою связь'"></a>
-                            с
-                            учреждением образования этого сотрудника.</h4>
-                    </div>
+                    <div th:insert="blocks/review :: left-employee-review(e = ${employee}, roles = ${roles})"></div>
                 </div>
 
                 <div>
@@ -64,7 +69,8 @@
                         <label for="mark">Оценки: </label>
                         <select name="mark" id="mark">
                             <option th:text="'Не выбрано'" th:value="0"></option>
-                            <option th:each="i : ${#numbers.sequence(1, 5)}" th:text="${i}" th:value="${i}" th:selected="${i eq mark}"></option>
+                            <option th:each="i : ${#numbers.sequence(1, 5)}" th:selected="${i eq mark}" th:text="${i}"
+                                    th:value="${i}"></option>
                         </select><br><br>
                         <button>Показать</button>
                     </form>

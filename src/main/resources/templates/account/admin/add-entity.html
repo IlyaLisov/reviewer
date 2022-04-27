@@ -35,10 +35,16 @@
                             <option th:each="entityType : ${entityTypes}" th:text="${entityType.name}"
                                     th:value="${entityType}" th:selected="${entityType.name().equals(type)}"></option>
                         </select><br>
-                        <br><br><label for="parentEntity">Университет (только для факультетов, общежитий и структурных подразделений):</label><br>
+                        <br><br><label for="parentEntity">Университет (только для факультетов, общежитий и структурных
+                        подразделений):</label><br>
                         <select id="parentEntity" name="parentEntity">
                             <option th:each="parentEntity : ${parentEntities}" th:text="${parentEntity.name}"
                                     th:value="${parentEntity.id}"></option>
+                        </select><br><br>
+                        <label for="country">Страна:</label><br>
+                        <select id="country" name="country">
+                            <option th:each="country : ${countries}" th:selected="${country.name().equals(country)}"
+                                    th:text="${country.name}" th:value="${country}"></option>
                         </select><br><br>
                         <label for="region">Область:</label><br>
                         <select id="region" name="region">

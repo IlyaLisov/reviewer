@@ -34,13 +34,13 @@ public class Employee {
 
     private String imageURL;
 
-    @Formula("(SELECT COUNT(*) FROM rdb.review r WHERE r.employee_id = id)")
+    @Formula("(SELECT COUNT(*) FROM rdb.review r WHERE r.employee_id = id AND r.is_deleted != 1)")
     private Integer reviewsAmount;
 
-    @Formula("(SELECT COUNT(DISTINCT r.author_id) FROM rdb.review r WHERE r.employee_id = id)")
+    @Formula("(SELECT COUNT(DISTINCT r.author_id) FROM rdb.review r WHERE r.employee_id = id AND r.is_deleted != 1)")
     private Integer peopleInvolved;
 
-    @Formula("(SELECT SUM(r.mark) FROM rdb.review r WHERE r.employee_id = id)")
+    @Formula("(SELECT SUM(r.mark) FROM rdb.review r WHERE r.employee_id = id AND r.is_deleted != 1)")
     private Integer rating;
 
     @NotNull

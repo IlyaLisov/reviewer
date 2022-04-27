@@ -1,5 +1,6 @@
 package com.example.reviewer.controller;
 
+import com.example.reviewer.model.entity.Country;
 import com.example.reviewer.model.entity.District;
 import com.example.reviewer.model.entity.Employee;
 import com.example.reviewer.model.entity.EmployeeType;
@@ -200,6 +201,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
     public String addEntity(Model model) {
         List<Entity> universities = (List<Entity>) entityRepository.findAll();
         model.addAttribute("entityTypes", EntityType.values());
+        model.addAttribute("countries", Country.values());
         model.addAttribute("regions", Region.values());
         model.addAttribute("districts", District.values());
         model.addAttribute("parentEntities", universities.stream()
@@ -211,7 +213,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
     @PostMapping("/add-entity")
     public String doAddEntity(@RequestParam("name") String name, @RequestParam("abbreviation") String abbreviation,
                               @RequestParam("type") String type, @RequestParam(value = "parentEntity", required = false) Long parentEntity,
-                              @RequestParam("region") String region, @RequestParam("district") String district,
+                              @RequestParam("country") String country, @RequestParam("region") String region, @RequestParam("district") String district,
                               @RequestParam("address") String address, @RequestParam(value = "siteURL", required = false) String siteURL,
                               Model model) {
         Entity entity = new Entity();
@@ -222,6 +224,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
             if (type.equals("FACULTY") || type.equals("STRUCTURE_UNIT") || type.equals("HOSTEL")) {
                 entity.setParentEntity(entityRepository.findById(parentEntity).get());
             }
+            entity.setCountry(Country.valueOf(country));
             entity.setRegion(Region.valueOf(region));
             entity.setDistrict(District.valueOf(district));
             if (address != null && !address.isEmpty()) {
@@ -243,6 +246,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
             model.addAttribute("abbreviation", abbreviation);
         }
         model.addAttribute("type", type);
+        model.addAttribute("country", country);
         model.addAttribute("region", region);
         model.addAttribute("district", district);
         return addEntity(model);
@@ -319,17 +323,35 @@ public class AdminController extends com.example.reviewer.controller.Controller 
         Optional<RoleDocument> roleDocument = roleDocumentRepository.findById(id);
         if (roleDocument.isPresent()) {
             User user = roleDocument.get().getUser();
-            Entity entity = entityRepository.findById(entityId).get();
+            Optional<Entity> entity = entityRepository.findById(entityId);
+            if (entity.isPresent()) {
 
-            user.addRole(roleDocument.get().getRole(), entity);
-            if (entity.getParentEntity() != null) {
-                user.addRole(roleDocument.get().getRole(), entity.getParentEntity());
+                user.addRole(roleDocument.get().getRole(), entity.get());
+                if (entity.get().getParentEntity() != null) {
+                    user.addRole(roleDocument.get().getRole(), entity.get().getParentEntity());
+                }
+                userRepository.save(user);
+                List<EmployeeReview> employeeReviews = employeeReviewRepository.findAllByAuthorId(user.getId());
+                employeeReviews.stream()
+                        .filter(employeeReview -> employeeReview.getEmployee().getEntity().equals(entity.get()))
+                        .forEach(employeeReview -> {
+                            employeeReview.setConfirmed(true);
+                            employeeReviewRepository.save(employeeReview);
+                        });
+                List<EntityReview> entityReviews = entityReviewRepository.findAllByAuthorId(user.getId());
+                entityReviews.stream()
+                        .filter(entityReview -> entityReview.getEntity().equals(entity.get()))
+                        .forEach(entityReview -> {
+                            entityReview.setConfirmed(true);
+                            entityReviewRepository.save(entityReview);
+                        });
+                File file = new File(uploadPath + "/" + roleDocument.get().getPhotoId());
+                file.delete();
+                roleDocumentRepository.delete(roleDocument.get());
+                model.addAttribute("success", "Роль была подтверждена.");
+            } else {
+                model.addAttribute("error", "Учреждение образования не найдено.");
             }
-            userRepository.save(user);
-            File file = new File(uploadPath + "/" + roleDocument.get().getPhotoId());
-            file.delete();
-            roleDocumentRepository.delete(roleDocument.get());
-            model.addAttribute("success", "Роль была подтверждена.");
         }
         return verify(model);
     }

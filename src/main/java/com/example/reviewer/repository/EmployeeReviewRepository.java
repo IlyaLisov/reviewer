@@ -13,6 +13,6 @@ public interface EmployeeReviewRepository extends CrudRepository<EmployeeReview,
 
     List<EmployeeReview> findAllByAuthorId(Long id);
 
-    Long countAllByAuthorAndEmployee(User author, Employee employee);
+    Long countAllByAuthorAndEmployeeAndIsDeleted(User author, Employee employee, Boolean isDeleted);
 
 }

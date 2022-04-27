@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -127,9 +128,9 @@ public class MainController extends com.example.reviewer.controller.Controller {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session, Model model) {
+    public String logout(HttpServletRequest request, HttpSession session, Model model) {
         session.invalidate();
         model.addAttribute("success", "Вы вышли из аккаунта.");
-        return "login";
+        return "redirect:" + request.getHeader("referer");
     }
 }

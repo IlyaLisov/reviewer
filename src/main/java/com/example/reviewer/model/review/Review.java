@@ -47,11 +47,15 @@ public class Review {
     @NotNull
     protected Boolean isEdited;
 
+    @NotNull
+    protected Boolean isConfirmed;
+
     public Review() {
         this.reviewDate = LocalDate.now();
         this.isVisible = true;
         this.isEdited = false;
         this.isDeleted = false;
+        this.isConfirmed = false;
     }
 
     public Long getId() {
@@ -124,6 +128,14 @@ public class Review {
 
     public void setEdited(Boolean edited) {
         isEdited = edited;
+    }
+
+    public Boolean getConfirmed() {
+        return isConfirmed;
+    }
+
+    public void setConfirmed(Boolean confirmed) {
+        isConfirmed = confirmed;
     }
 
     @Override
