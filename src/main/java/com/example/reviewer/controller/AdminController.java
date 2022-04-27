@@ -8,6 +8,8 @@ import com.example.reviewer.model.entity.Entity;
 import com.example.reviewer.model.entity.EntityType;
 import com.example.reviewer.model.entity.Region;
 import com.example.reviewer.model.feedback.Feedback;
+import com.example.reviewer.model.general.Setting;
+import com.example.reviewer.model.general.SettingType;
 import com.example.reviewer.model.report.EmployeeReport;
 import com.example.reviewer.model.report.EntityReport;
 import com.example.reviewer.model.review.EmployeeReview;
@@ -30,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -438,5 +441,37 @@ public class AdminController extends com.example.reviewer.controller.Controller 
         List<User> users = (List<User>) userRepository.findAll();
         model.addAttribute("users", users);
         return "account/admin/statistics";
+    }
+
+    @GetMapping("/settings")
+    public String settings(Model model) {
+        List<Setting> settings = (List<Setting>) settingRepository.findAll();
+        if(settings.size() != SettingType.values().length) {
+            for(SettingType settingType : SettingType.values()) {
+                Setting setting = new Setting();
+                setting.setType(settingType);
+                setting.setValue(true);
+                if(!settings.contains(setting)) {
+                    settings.add(setting);
+                    settingRepository.save(setting);
+                }
+            }
+        }
+        model.addAttribute("settings", settings);
+        return "account/admin/settings";
+    }
+
+    @PostMapping("/settings")
+    public String doSettings(HttpServletRequest request, Model model) {
+        Map<String, String[]> settings = request.getParameterMap();
+        for(String key : settings.keySet()) {
+            Optional<Setting> setting = settingRepository.findByType(SettingType.valueOf(key));
+            if(setting.isPresent() && setting.get().getValue() != Boolean.valueOf(settings.get(key)[0])) {
+                setting.get().setValue(Boolean.valueOf(settings.get(key)[0]));
+                settingRepository.save(setting.get());
+            }
+        }
+        model.addAttribute("success", "Настройки успешно обновлены");
+        return settings(model);
     }
 }

@@ -2,6 +2,8 @@ package com.example.reviewer.controller;
 
 import com.example.reviewer.model.feedback.Feedback;
 import com.example.reviewer.model.feedback.FeedbackType;
+import com.example.reviewer.model.general.Setting;
+import com.example.reviewer.model.general.SettingType;
 import com.example.reviewer.model.user.Crypter;
 import com.example.reviewer.model.user.User;
 import com.example.reviewer.model.user.UserRole;
@@ -33,8 +35,9 @@ public class MainController extends com.example.reviewer.controller.Controller {
 
     @PostMapping("/login")
     public synchronized String doLogin(@RequestParam(value = "redirect", required = false) String redirect, @RequestParam("login") String login, @RequestParam("password") String password, HttpSession session, Model model) {
+        Optional<Setting> setting = settingRepository.findByType(SettingType.ENABLE_LOGIN);
         Optional<User> userFromDataBase = userRepository.getByLogin(login);
-        if (userFromDataBase.isPresent()) {
+        if(setting.isPresent() && (setting.get().getValue() || userFromDataBase.isPresent() && (userFromDataBase.get().getUserRole().equals(UserRole.ADMIN) || userFromDataBase.get().getUserRole().equals(UserRole.MODERATOR)))) {
             if (userFromDataBase.get().getBlocked()) {
                 model.addAttribute("error", "Пользователь с таким логином заблокирован.");
                 return login(redirect, model);
@@ -50,9 +53,8 @@ public class MainController extends com.example.reviewer.controller.Controller {
                 return login(redirect, model);
             }
         } else {
-            model.addAttribute("error", "Проверьте правильность введенных данных.");
-            model.addAttribute("login", login);
-            return login(redirect, model);
+            model.addAttribute("error", "Вход в аккаунт недоступен. Ведутся технические работы.");
+            return "login";
         }
         return (redirect != null && !redirect.isEmpty()) ? "redirect:" + redirect : "redirect:account";
     }
@@ -69,29 +71,35 @@ public class MainController extends com.example.reviewer.controller.Controller {
     public synchronized String doRegister(@RequestParam("name") String name, @RequestParam("login") String login,
                                           @RequestParam("password") String password, @RequestParam("passwordConfirmation") String passwordConfirmation,
                                           HttpSession session, Model model) {
-        if (password.equals(passwordConfirmation)) {
-            Optional<User> userFromDatabase = userRepository.getByLogin(login);
-            if (userFromDatabase.isPresent()) {
-                model.addAttribute("error", "Пользователь с таким логином уже существует.");
+        Optional<Setting> setting = settingRepository.findByType(SettingType.ENABLE_REGISTRATION);
+        if(setting.isPresent() && setting.get().getValue()) {
+            if (password.equals(passwordConfirmation)) {
+                Optional<User> userFromDatabase = userRepository.getByLogin(login);
+                if (userFromDatabase.isPresent()) {
+                    model.addAttribute("error", "Пользователь с таким логином уже существует.");
+                    model.addAttribute("name", name);
+                    model.addAttribute("login", login);
+                    return register(model);
+                } else {
+                    User user = new User();
+                    user.setName(name);
+                    user.setLogin(login);
+                    user.setUserRole(UserRole.USER);
+                    String generatedPassword = Crypter.crypt(password, user.getRegisterDate().toString());
+                    user.setPassword(generatedPassword);
+
+                    userRepository.save(user);
+                    session.setAttribute("user", user);
+                }
+            } else {
+                model.addAttribute("error", "Введенные пароли не совпадают.");
                 model.addAttribute("name", name);
                 model.addAttribute("login", login);
                 return register(model);
-            } else {
-                User user = new User();
-                user.setName(name);
-                user.setLogin(login);
-                user.setUserRole(UserRole.USER);
-                String generatedPassword = Crypter.crypt(password, user.getRegisterDate().toString());
-                user.setPassword(generatedPassword);
-
-                userRepository.save(user);
-                session.setAttribute("user", user);
             }
         } else {
-            model.addAttribute("error", "Введенные пароли не совпадают.");
-            model.addAttribute("name", name);
-            model.addAttribute("login", login);
-            return register(model);
+            model.addAttribute("error", "Регистрация отключена на данный момент. Ведутся технические работы.");
+            return "register";
         }
         return "redirect:account";
     }

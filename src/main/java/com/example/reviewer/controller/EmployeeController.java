@@ -3,6 +3,8 @@ package com.example.reviewer.controller;
 import com.example.reviewer.model.entity.Employee;
 import com.example.reviewer.model.entity.EmployeeType;
 import com.example.reviewer.model.entity.Entity;
+import com.example.reviewer.model.general.Setting;
+import com.example.reviewer.model.general.SettingType;
 import com.example.reviewer.model.report.EmployeeReport;
 import com.example.reviewer.model.report.EmployeeReportType;
 import com.example.reviewer.model.review.EmployeeReview;
@@ -24,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -67,40 +70,46 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
     @PostMapping("/left-review/{id}")
     public String leftReview(@PathVariable("id") Long id, @RequestParam(value = "text", required = false) String text,
                              @RequestParam("role") String role, @RequestParam("mark") int mark, Model model) {
-        EmployeeReview review = new EmployeeReview();
-        Optional<Employee> employee = employeeRepository.findById(id);
+        Optional<Setting> setting = settingRepository.findByType(SettingType.ENABLE_REVIEWS);
         User author = (User) model.getAttribute("user");
-        if (employee.isPresent() && author != null) {
-            Long reviewsFromUser = employeeReviewRepository.countAllByAuthorAndEmployeeAndIsDeleted(author, employee.get(), false);
-            if (reviewsFromUser < MAX_REVIEW_PER_ENTITY) {
-                review.setEmployee(employee.get());
-                review.setAuthor(author);
-                review.setMark(mark);
-                if (!role.equals("ANONYMOUS")) {
-                    review.setAuthorRole(Role.valueOf(role));
-                }
-                if (author.hasRole(employee.get().getEntity().getId())) {
-                    review.setConfirmed(true);
-                }
-                if (!role.equals("ANONYMOUS") && !author.getRolesInEntity(id).contains(Role.valueOf(role))) {
-                    author.addRole(Role.valueOf(role), employee.get().getEntity());
-                }
-                if (text != null) {
-                    if (text.length() < MAX_REVIEW_TEXT_LENGTH) {
-                        review.setText(slangRemover.removeSlang(text));
-                    } else {
-                        model.addAttribute("error", "Превышен максимальный размер отзыва.");
+        if(setting.isPresent() && (setting.get().getValue() || (author != null && (Objects.requireNonNull(author).isModerator() || author.isAdmin())))) {
+            EmployeeReview review = new EmployeeReview();
+            Optional<Employee> employee = employeeRepository.findById(id);
+            if (employee.isPresent() && author != null) {
+                Long reviewsFromUser = employeeReviewRepository.countAllByAuthorAndEmployeeAndIsDeleted(author, employee.get(), false);
+                if (reviewsFromUser < MAX_REVIEW_PER_ENTITY) {
+                    review.setEmployee(employee.get());
+                    review.setAuthor(author);
+                    review.setMark(mark);
+                    if (!role.equals("ANONYMOUS")) {
+                        review.setAuthorRole(Role.valueOf(role));
                     }
+                    if (author.hasRole(employee.get().getEntity().getId())) {
+                        review.setConfirmed(true);
+                    }
+                    if (!role.equals("ANONYMOUS") && !author.getRolesInEntity(id).contains(Role.valueOf(role))) {
+                        author.addRole(Role.valueOf(role), employee.get().getEntity());
+                    }
+                    if (text != null) {
+                        if (text.length() < MAX_REVIEW_TEXT_LENGTH) {
+                            review.setText(slangRemover.removeSlang(text));
+                        } else {
+                            model.addAttribute("error", "Превышен максимальный размер отзыва.");
+                        }
+                    }
+                    if (model.getAttribute("error") == null) {
+                        author.upRating(RATING_FOR_LEFTING_REVIEW);
+                        userRepository.save(author);
+                        employeeReviewRepository.save(review);
+                        model.addAttribute("success", "Ваш отзыв был опубликован.");
+                    }
+                } else {
+                    model.addAttribute("error", "Вы можете оставить максимум " + MAX_REVIEW_PER_ENTITY + " отзывов на одного сотрудника.");
                 }
-                if (model.getAttribute("error") == null) {
-                    author.upRating(RATING_FOR_LEFTING_REVIEW);
-                    userRepository.save(author);
-                    employeeReviewRepository.save(review);
-                    model.addAttribute("success", "Ваш отзыв был опубликован.");
-                }
-            } else {
-                model.addAttribute("error", "Вы можете оставить максимум " + MAX_REVIEW_PER_ENTITY + " отзывов на одного сотрудника.");
             }
+        } else {
+            model.addAttribute("error", "На данный момент нельзя оставлять отзывы. Ведутся технические работы.");
+            return id(id, null, model);
         }
         return "redirect:/employee/" + id;
     }

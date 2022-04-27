@@ -9,6 +9,7 @@ import com.example.reviewer.repository.EntityRepository;
 import com.example.reviewer.repository.EntityReviewRepository;
 import com.example.reviewer.repository.FeedbackRepository;
 import com.example.reviewer.repository.RoleDocumentRepository;
+import com.example.reviewer.repository.SettingRepository;
 import com.example.reviewer.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -57,6 +58,9 @@ public class Controller {
 
     @Autowired
     protected EntityReportRepository entityReportRepository;
+
+    @Autowired
+    protected SettingRepository settingRepository;
 
     @ModelAttribute("user")
     public User getUser(HttpSession session) {
