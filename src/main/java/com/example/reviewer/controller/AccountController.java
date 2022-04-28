@@ -15,63 +15,107 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Controller of /account pages.
+ * Only logged-in users have access to these pages cause of filter.
+ */
 @Controller
 @RequestMapping(value = "/account")
 public class AccountController extends com.example.reviewer.controller.Controller {
+
+    /**
+     * Servlet for index page /account.
+     * Get user`s position in rating.
+     *
+     * @param model is storing required for view attributes.
+     * @return view of index page /account.
+     */
     @GetMapping()
-    public String index(HttpSession session, Model model) {
+    public String index(Model model) {
         User user = (User) model.getAttribute("user");
+
         List<User> users = (List<User>) userRepository.findAll();
         users.sort((u1, u2) -> u2.getRating() - u1.getRating());
         int positionInRating = users.indexOf(user);
+
         model.addAttribute("index", positionInRating + 1);
         return "account/index";
     }
 
+    /**
+     * Servlet for user roles page /account/roles.
+     * Get all roles that user has.
+     *
+     * @param model is storing required for view attributes.
+     * @return view of user roles page /account/roles.
+     */
     @GetMapping("/roles")
-    public String roles(HttpSession session, Model model) {
+    public String roles(Model model) {
         User user = (User) model.getAttribute("user");
-        model.addAttribute("roles", user.getRoles());
+        if (user != null) {
+            model.addAttribute("roles", user.getRoles());
+        }
         return "account/roles/index";
     }
 
+    /**
+     * Servlet for user add roles page /account/roles/add.
+     * Get amount of document for roles user send.
+     *
+     * @param model is storing required for view attributes.
+     * @return view of user add roles page /account/roles/add.
+     */
     @GetMapping("/roles/add")
-    public String rolesAdd(HttpSession session, Model model) {
+    public String rolesAdd(Model model) {
         User user = (User) model.getAttribute("user");
-        int requestAmount = roleDocumentRepository.countAllByUserId(user.getId());
+        int requestAmount = 0;
+        requestAmount = roleDocumentRepository.countAllByUserId(user.getId());
         model.addAttribute("requestAmount", requestAmount);
         return "account/roles/add";
     }
 
+    /**
+     * Servlet for user add roles page /account/roles/add.
+     * Save user documents and data to server.
+     *
+     * @param name  entity name of document that user provides.
+     * @param role  name of role user has in current entity.
+     * @param file  photo of document.
+     * @param model is storing required for view attributes.
+     * @return view of user add roles page /account/roles/add.
+     */
     @PostMapping("/roles/add")
     public String doRolesAdd(@RequestParam("name") String name, @RequestParam("role") String role, @RequestParam("file") MultipartFile file,
-                             HttpSession session, Model model) {
+                             Model model) {
         User user = (User) model.getAttribute("user");
         if (!file.isEmpty()) {
-            if (Arrays.asList(contentTypes).contains(file.getContentType())) {
+            if (Arrays.asList(CONTENT_TYPES).contains(file.getContentType())) {
                 try {
                     if (file.getSize() > MAX_UPLOAD_SIZE) {
                         model.addAttribute("error", "Превышен допустимый размер файла.");
                     } else {
                         String uuid = String.valueOf(UUID.randomUUID());
-                        File convertFile = new File(uploadPath + "/" + uuid + "." + file.getContentType().replace("image/", ""));
-                        convertFile.createNewFile();
-                        FileOutputStream fout = new FileOutputStream(convertFile);
-                        fout.write(file.getBytes());
-                        fout.close();
-                        RoleDocument document = new RoleDocument(name, Role.valueOf(role.toUpperCase()), user, uuid + "." + file.getContentType().replace("image/", ""));
-                        roleDocumentRepository.save(document);
-                        model.addAttribute("success", "Документ загружен успешно.");
-                        model.addAttribute("name", name);
+                        File convertFile = new File(UPLOAD_PATH + "/" + uuid + "." + Objects.requireNonNull(file.getContentType()).replace("image/", ""));
+                        if (convertFile.createNewFile()) {
+                            FileOutputStream outputStream = new FileOutputStream(convertFile);
+                            outputStream.write(file.getBytes());
+                            outputStream.close();
+                            RoleDocument document = new RoleDocument(name, Role.valueOf(role.toUpperCase()), user, uuid + "." + file.getContentType().replace("image/", ""));
+                            roleDocumentRepository.save(document);
+                            model.addAttribute("success", "Документ загружен успешно.");
+                            model.addAttribute("name", name);
+                        } else {
+                            model.addAttribute("error", "Не удалось загрузить файл.");
+                        }
                     }
                 } catch (IOException e) {
                     model.addAttribute("error", "Произошла ошибка при загрузке документа.");
@@ -83,9 +127,16 @@ public class AccountController extends com.example.reviewer.controller.Controlle
         } else {
             model.addAttribute("error", "Вы пытаетесь загрузить пустой файл.");
         }
-        return rolesAdd(session, model);
+        return rolesAdd(model);
     }
 
+    /**
+     * Servlet of user reviews page /account/reviews.
+     * Get reviews that user had left.
+     *
+     * @param model is storing required for view attributes.
+     * @return view of user reviews page /account/reviews.
+     */
     @GetMapping("/reviews")
     public String reviews(Model model) {
         User user = (User) model.getAttribute("user");
@@ -102,27 +153,39 @@ public class AccountController extends com.example.reviewer.controller.Controlle
                 .filter(review -> !review.getDeleted())
                 .sorted((e1, e2) -> e2.getReviewDate().compareTo(e1.getReviewDate()))
                 .collect(Collectors.toList()));
-
         return "account/reviews";
     }
 
+    /**
+     * Servlet of user liked reviews page /account/bookmarks.
+     * Get reviews user liked.
+     *
+     * @param model is storing required for view attributes.
+     * @return view of user liked reviews page /account/bookmarks.
+     */
     @GetMapping("/bookmarks")
     public String bookmarks(Model model) {
         User user = (User) model.getAttribute("user");
-        if (user != null) {
-            model.addAttribute("likedEntityReviews", user.getLikedEntityReviews());
-            model.addAttribute("likedEmployeeReviews", user.getLikedEmployeeReviews());
-        }
+        model.addAttribute("likedEntityReviews", user.getLikedEntityReviews());
+        model.addAttribute("likedEmployeeReviews", user.getLikedEmployeeReviews());
         return "account/bookmarks";
     }
 
     @GetMapping("/settings")
-    public String settings(Model model) {
+    public String settings() {
         return "account/settings";
     }
 
+    /**
+     * Servlet of user settings page /account/settings.
+     *
+     * @param password             new password user want to set.
+     * @param passwordConfirmation confirmation of new password.
+     * @param model                is storing required for view attributes.
+     * @return view of user settings page /account/settings.
+     */
     @PostMapping("/settings")
-    public String doSettings(@RequestParam(name = "password") String password, @RequestParam("passwordConfirmation") String passwordConfirmation,
+    public String doSettings(@RequestParam("password") String password, @RequestParam("passwordConfirmation") String passwordConfirmation,
                              Model model) {
         User user = (User) model.getAttribute("user");
         if (password.equals(passwordConfirmation)) {
@@ -137,6 +200,6 @@ public class AccountController extends com.example.reviewer.controller.Controlle
         } else {
             model.addAttribute("error", "Пароли не совпадают.");
         }
-        return settings(model);
+        return settings();
     }
 }

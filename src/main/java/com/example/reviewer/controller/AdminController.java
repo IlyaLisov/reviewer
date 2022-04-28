@@ -12,6 +12,7 @@ import com.example.reviewer.model.general.Setting;
 import com.example.reviewer.model.general.SettingType;
 import com.example.reviewer.model.report.EmployeeReport;
 import com.example.reviewer.model.report.EntityReport;
+import com.example.reviewer.model.report.ReviewReport;
 import com.example.reviewer.model.review.EmployeeReview;
 import com.example.reviewer.model.review.EntityReview;
 import com.example.reviewer.model.role.Role;
@@ -61,6 +62,8 @@ public class AdminController extends com.example.reviewer.controller.Controller 
         model.addAttribute("employeeReviews", employeeReviews.stream()
                 .filter(review -> !review.getVisible())
                 .collect(Collectors.toList()));
+        List<ReviewReport> reports = (List<ReviewReport>) reviewReportRepository.findAll();
+        model.addAttribute("reports", reports);
         return "account/admin/blocked-reviews";
     }
 
@@ -348,7 +351,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
                             entityReview.setConfirmed(true);
                             entityReviewRepository.save(entityReview);
                         });
-                File file = new File(uploadPath + "/" + roleDocument.get().getPhotoId());
+                File file = new File(UPLOAD_PATH + "/" + roleDocument.get().getPhotoId());
                 file.delete();
                 roleDocumentRepository.delete(roleDocument.get());
                 model.addAttribute("success", "Роль была подтверждена.");
@@ -363,7 +366,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
     public String verifyDiscard(@PathVariable("id") Long id, Model model) {
         Optional<RoleDocument> roleDocument = roleDocumentRepository.findById(id);
         if (roleDocument.isPresent()) {
-            File file = new File(uploadPath + "/" + roleDocument.get().getPhotoId());
+            File file = new File(UPLOAD_PATH + "/" + roleDocument.get().getPhotoId());
             file.delete();
             roleDocumentRepository.delete(roleDocument.get());
             model.addAttribute("success", "Роль была отклонена.");

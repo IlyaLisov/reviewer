@@ -13,27 +13,36 @@
         <b>Оценка: </b><span th:text="${r.mark}"></span><br>
         <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
     </div>
-    <div th:if="${user != null}">
         <div class="any-items">
-            <form class="any-items-content" method="post"
-                  th:action="@{/entity/{id}/like/{reviewId}(id=${r.entity.id}, reviewId=${r.id})}">
-                <button th:if="${user.likedEntityReviews.contains(r)}" th:text="'Не нравится'"></button>
-                <button th:text="'Нравится'" th:unless="${user.likedEntityReviews.contains(r)}"></button>
-            </form>
-            <div th:if="${r.author.equals(user) || user.isAdmin() || user.isModerator()}">
+            <div class="any-items" th:if="${user != null}">
                 <form class="any-items-content" method="post"
-                      th:action="@{/entity/{id}/delete/{reviewId}(id=${r.entity.id}, reviewId=${r.id})}">
-                    <button th:text="'Удалить отзыв'"></button>
+                      th:action="@{/entity/{id}/like/{reviewId}(id=${r.entity.id}, reviewId=${r.id})}">
+                    <button th:if="${user.likedEntityReviews.contains(r)}" th:text="'Не нравится'"></button>
+                    <button th:text="'Нравится'" th:unless="${user.likedEntityReviews.contains(r)}"></button>
                 </form>
+                <div th:if="${r.author.equals(user) || user.isAdmin() || user.isModerator()}">
+                    <form class="any-items-content" method="post"
+                          th:action="@{/entity/{id}/delete/{reviewId}(id=${r.entity.id}, reviewId=${r.id})}">
+                        <button th:text="'Удалить отзыв'"></button>
+                    </form>
+                </div>
+                <div th:if="${r.author.equals(user) || user.isAdmin() || user.isModerator()}">
+                    <form class="any-items-content" method="get"
+                          th:action="@{/entity/{id}/edit/{reviewId}(id=${r.entity.id}, reviewId=${r.id})}">
+                        <button th:text="'Редактировать отзыв'"></button>
+                    </form>
+                </div>
+                <div class="any-items-content" th:if="${user.isAdmin() || user.isModerator()}">
+                    <a th:href="@{/reviews/report/entity-review/block/{id}(id=${r.id})}" th:text="'Скрыть отзыв'"></a>
+                </div>
             </div>
-            <div th:if="${r.author.equals(user) || user.isAdmin() || user.isModerator()}">
+            <div>
                 <form class="any-items-content" method="get"
-                      th:action="@{/entity/{id}/edit/{reviewId}(id=${r.entity.id}, reviewId=${r.id})}">
-                    <button th:text="'Редактировать отзыв'"></button>
+                      th:action="@{/reviews/report/entity-review/{id}(id=${r.id})}">
+                    <button th:text="'Пожаловаться'"></button>
                 </form>
             </div>
         </div>
-    </div>
 </div>
 
 <div class="review" th:fragment="entity-review-with-anchor(r)">
@@ -51,8 +60,8 @@
         <b>Оценка: </b><span th:text="${r.mark}"></span><br>
         <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
     </div>
-    <div th:if="${user != null}">
-        <div class="any-items">
+    <div class="any-items">
+        <div class="any-items" th:if="${user != null}">
             <form class="any-items-content" method="post"
                   th:action="@{/entity/{id}/like/{reviewId}(id=${r.entity.id}, reviewId=${r.id})}">
                 <button th:if="${user.likedEntityReviews.contains(r)}" th:text="'Не нравится'"></button>
@@ -70,6 +79,15 @@
                     <button th:text="'Редактировать отзыв'"></button>
                 </form>
             </div>
+            <div class="any-items-content" th:if="${user.isAdmin() || user.isModerator()}">
+                <a th:href="@{/reviews/report/entity-review/block/{id}(id=${r.id})}" th:text="'Скрыть отзыв'"></a>
+            </div>
+        </div>
+        <div>
+            <form class="any-items-content" method="get"
+                  th:action="@{/reviews/report/entity-review/{id}(id=${r.id})}">
+                <button th:text="'Пожаловаться'"></button>
+            </form>
         </div>
     </div>
 </div>
@@ -89,9 +107,10 @@
         <b>Оценка: </b><span th:text="${r.mark}"></span><br>
         <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
     </div>
-    <div th:if="${user != null}">
-        <div class="any-items">
-            <form class= "any-items-content" method="post" th:action="@{/employee/{id}/like/{reviewId}(id=${r.employee.id}, reviewId=${r.id})}">
+    <div class="any-items">
+        <div class="any-items" th:if="${user != null}">
+            <form class="any-items-content" method="post"
+                  th:action="@{/employee/{id}/like/{reviewId}(id=${r.employee.id}, reviewId=${r.id})}">
                 <button th:if="${user.likedEmployeeReviews.contains(r)}" th:text="'Не нравится'"></button>
                 <button th:text="'Нравится'" th:unless="${user.likedEmployeeReviews.contains(r)}"></button>
             </form>
@@ -107,6 +126,15 @@
                     <button th:text="'Редактировать отзыв'"></button>
                 </form>
             </div>
+            <div class="any-items-content" th:if="${user.isAdmin() || user.isModerator()}">
+                <a th:href="@{/reviews/report/employee-review/block/{id}(id=${r.id})}" th:text="'Скрыть отзыв'"></a>
+            </div>
+        </div>
+        <div>
+            <form class="any-items-content" method="get"
+                  th:action="@{/reviews/report/employee-review/{id}(id=${r.id})}">
+                <button th:text="'Пожаловаться'"></button>
+            </form>
         </div>
     </div>
 </div>
@@ -126,9 +154,10 @@
         <b>Оценка: </b><span th:text="${r.mark}"></span><br>
         <b>Отзыв поддержали: </b><span th:text="${r.rating} + ' человек'"></span>
     </div>
-    <div th:if="${user != null}">
-        <div class="any-items">
-            <form class= "any-items-content" method="post" th:action="@{/employee/{id}/like/{reviewId}(id=${r.employee.id}, reviewId=${r.id})}">
+    <div class="any-items">
+        <div class="any-items" th:if="${user != null}">
+            <form class="any-items-content" method="post"
+                  th:action="@{/employee/{id}/like/{reviewId}(id=${r.employee.id}, reviewId=${r.id})}">
                 <button th:if="${user.likedEmployeeReviews.contains(r)}" th:text="'Не нравится'"></button>
                 <button th:text="'Нравится'" th:unless="${user.likedEmployeeReviews.contains(r)}"></button>
             </form>
@@ -144,6 +173,15 @@
                     <button th:text="'Редактировать отзыв'"></button>
                 </form>
             </div>
+            <div class="any-items-content" th:if="${user.isAdmin() || user.isModerator()}">
+                <a th:href="@{/reviews/report/employee-review/block/{id}(id=${r.id})}" th:text="'Скрыть отзыв'"></a>
+            </div>
+        </div>
+        <div>
+            <form class="any-items-content" method="get"
+                  th:action="@{/reviews/report/employee-review/{id}(id=${r.id})}">
+                <button th:text="'Пожаловаться'"></button>
+            </form>
         </div>
     </div>
 </div>

@@ -22,23 +22,45 @@
                     <table>
                         <thead>
                         <td>№</td>
+                        <td>Учреждение образования</td>
+                        <td>Отзыв</td>
+                        <td>Действие</td>
+                        </thead>
+                        <tr th:each="review, iter : ${entityReviews}">
+                            <td><span th:text="${iter.count}"></span></td>
+                            <td>
+                                <div th:insert="blocks/review :: entity-review-with-anchor(r = ${review})"></div>
+                            </td>
+                            <td>
+                                <a th:href="@{/reviews/report/entity-review/block/{id}(id=${review.id})}"
+                                   th:text="'Разблокировать'"></a>
+                                <h4>Жалобы пользователей:</h4>
+                                <div th:each="report : ${reports}">
+                                    <div th:if="${report.entityReview != null && report.entityReview eq review}"
+                                         th:insert="blocks/report :: report(r = ${report})"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <br>
+                    <table>
+                        <thead>
+                        <td>№</td>
                         <td>Сотрудник</td>
                         <td>Отзыв</td>
                         <td>Действие</td>
                         </thead>
                         <tr th:each="review, iter : ${employeeReviews}">
                             <td><span th:text="${iter.count}"></span></td>
-                            <td><a target="_blank" th:href="@{/employee/{id}(id = ${review.employee.id})}"
-                                   th:text="${review.employee.name}"></a></td>
                             <td>
-                                <div th:insert="blocks/review :: employee-review(r = ${review})"></div>
+                                <div th:insert="blocks/review :: employee-review-with-anchor(r = ${review})"></div>
                             </td>
                             <td>
-                                <a th:href="@{/employee/{id}/block-review/{reviewId}(id=${employee.id})}"
+                                <a th:href="@{/reviews/report/employee-review/block/{id}(id=${review.id})}"
                                    th:text="'Разблокировать'"></a>
                                 <h4>Жалобы пользователей:</h4>
                                 <div th:each="report : ${reports}">
-                                    <div th:if="${report.employee.id eq employee.id}"
+                                    <div th:if="${report.employeeReview != null && report.employeeReview eq review}"
                                          th:insert="blocks/report :: report(r = ${report})"></div>
                                 </div>
                             </td>

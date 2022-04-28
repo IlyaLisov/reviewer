@@ -50,12 +50,16 @@ public class Review {
     @NotNull
     protected Boolean isConfirmed;
 
+    @NotNull
+    private Integer reportCounter;
+
     public Review() {
         this.reviewDate = LocalDate.now();
         this.isVisible = true;
         this.isEdited = false;
         this.isDeleted = false;
         this.isConfirmed = false;
+        this.reportCounter = 0;
     }
 
     public Long getId() {
@@ -136,6 +140,22 @@ public class Review {
 
     public void setConfirmed(Boolean confirmed) {
         isConfirmed = confirmed;
+    }
+
+    public Integer getReportCounter() {
+        return reportCounter != null ? reportCounter : 0;
+    }
+
+    public void setReportCounter(Integer reportCounter) {
+        this.reportCounter = reportCounter;
+    }
+
+    public void increaseReportCounter() {
+        if (reportCounter != null) {
+            reportCounter++;
+        } else {
+            reportCounter = 1;
+        }
     }
 
     @Override

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Жалоба на отзыв - Reviewer</title>
+    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+</head>
+<body>
+<div class=container>
+    <div th:insert="blocks/header :: header"></div>
+    <div class="page">
+        <div class="body">
+            <div class="page-name">
+                <p th:text="${review.entity.name}"></p>
+            </div>
+            <div class="content">
+                <p class="success" th:text="${success}"></p>
+                <div th:insert="blocks/review :: employee-review(r = ${review})"></div>
+                <p><a th:href="@{/employee/{id}(id=${review.employee.id})}" th:text="'Перейти к сотруднику'"></a></p>
+                <form id="report" method="post" th:action="@{/reviews/report/employee-review/{id}(id=${review.id})}">
+                    <label for="theme">Причина</label>
+                    <select id="theme" name="theme" required>
+                        <option th:each="type : ${types}" th:text="${type.name}" th:value="${type}"></option>
+                    </select><br><br>
+                    <label for="text">Ваше сообщение</label><br>
+                    <textarea id="text" name="text" style="width: 90%; height: 150px; resize: none;"></textarea><br><br>
+                    <button type="submit">Отправить</button>
+                </form>
+            </div>
+        </div>
+        <div th:insert="blocks/sidebar :: sidebar"></div>
+    </div>
+    <div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>

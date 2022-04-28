@@ -112,7 +112,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
                         }
                     }
                     if (model.getAttribute("error") == null) {
-                        author.upRating(RATING_FOR_LEFTING_REVIEW);
+                        author.upRating(RATING_FOR_LEFT_REVIEW);
                         userRepository.save(author);
                         entityReviewRepository.save(review);
                         model.addAttribute("success", "Ваш отзыв был опубликован.");
@@ -157,13 +157,13 @@ public class EntityController extends com.example.reviewer.controller.Controller
         Optional<Entity> entity = entityRepository.findById(id);
         if (entity.isPresent()) {
             if (file != null && !file.isEmpty()) {
-                if (Arrays.asList(contentTypes).contains(file.getContentType())) {
+                if (Arrays.asList(CONTENT_TYPES).contains(file.getContentType())) {
                     try {
                         if (file.getSize() > MAX_UPLOAD_SIZE) {
                             model.addAttribute("error", "Превышен допустимый размер файла.");
                         } else {
                             String uuid = String.valueOf(UUID.randomUUID());
-                            File convertFile = new File(entitiesPath + "/" + uuid + "." + file.getContentType().replace("image/", ""));
+                            File convertFile = new File(ENTITIES_PATH + "/" + uuid + "." + file.getContentType().replace("image/", ""));
                             convertFile.createNewFile();
                             FileOutputStream fout = new FileOutputStream(convertFile);
                             fout.write(file.getBytes());
@@ -248,7 +248,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
                 if (review.get().getAuthor() != null) {
                     Optional<User> author = userRepository.findById(review.get().getAuthor().getId());
                     if (author.isPresent()) {
-                        author.get().upRating(-RATING_FOR_LEFTING_REVIEW);
+                        author.get().upRating(-RATING_FOR_LEFT_REVIEW);
                         userRepository.save(author.get());
                     }
                 }
@@ -339,14 +339,14 @@ public class EntityController extends com.example.reviewer.controller.Controller
             entityRepository.save(entity.get());
 
             model.addAttribute("success", "Ваша жалоба успешно принята. При наличии определенного количества жалоб, мы заблокируем данное учреждение образования.");
-            return report(id, model);
+            return id(id, null, model);
         } else {
             return "error/404";
         }
     }
 
     @GetMapping("/block/{id}")
-    public String block(@PathVariable("id") Long id, HttpServletRequest request, Model model) {
+    public String block(@PathVariable("id") Long id, HttpServletRequest request) {
         Optional<Entity> entity = entityRepository.findById(id);
         if (entity.isPresent()) {
             if (entity.get().getVisible()) {

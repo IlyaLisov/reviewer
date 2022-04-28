@@ -98,7 +98,7 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
                         }
                     }
                     if (model.getAttribute("error") == null) {
-                        author.upRating(RATING_FOR_LEFTING_REVIEW);
+                        author.upRating(RATING_FOR_LEFT_REVIEW);
                         userRepository.save(author);
                         employeeReviewRepository.save(review);
                         model.addAttribute("success", "Ваш отзыв был опубликован.");
@@ -136,13 +136,13 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
         Optional<Employee> employee = employeeRepository.findById(id);
         if (employee.isPresent()) {
             if (file != null && !file.isEmpty()) {
-                if (Arrays.asList(contentTypes).contains(file.getContentType())) {
+                if (Arrays.asList(CONTENT_TYPES).contains(file.getContentType())) {
                     try {
                         if (file.getSize() > MAX_UPLOAD_SIZE) {
                             model.addAttribute("error", "Превышен допустимый размер файла.");
                         } else {
                             String uuid = String.valueOf(UUID.randomUUID());
-                            File convertFile = new File(employeesPath + "/" + uuid + "." + file.getContentType().replace("image/", ""));
+                            File convertFile = new File(EMPLOYEES_PATH + "/" + uuid + "." + file.getContentType().replace("image/", ""));
                             convertFile.createNewFile();
                             FileOutputStream fout = new FileOutputStream(convertFile);
                             fout.write(file.getBytes());
@@ -217,7 +217,7 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
                 if (review.get().getAuthor() != null) {
                     Optional<User> author = userRepository.findById(review.get().getAuthor().getId());
                     if (author.isPresent()) {
-                        author.get().upRating(-RATING_FOR_LEFTING_REVIEW);
+                        author.get().upRating(-RATING_FOR_LEFT_REVIEW);
                         userRepository.save(author.get());
                     }
                 }
