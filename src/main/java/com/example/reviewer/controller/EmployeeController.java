@@ -52,7 +52,6 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
         if (employee.isPresent() && (employee.get().getVisible() || (user != null && (user.isModerator() || user.isAdmin())))) {
             List<EmployeeReview> reviews = employeeReviewRepository.findAllByEmployeeId(id);
             model.addAttribute("employee", employee.get());
-            model.addAttribute("imageURL", employee.get().getImageURL() == null ? "default.jpg" : employee.get().getImageURL());
             model.addAttribute("reviews", reviews.stream()
                     .filter(markFilter)
                     .filter(review -> user != null && (user.isModerator() || user.isAdmin()) || review.getVisible())
@@ -120,7 +119,6 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
         if (employee.isPresent()) {
             model.addAttribute("employee", employee.get());
             model.addAttribute("types", EmployeeType.values());
-            model.addAttribute("imageURL", employee.get().getImageURL() == null ? "default.jpg" : employee.get().getImageURL());
             List<Entity> entities = (List<Entity>) entityRepository.findAll();
             model.addAttribute("entities", entities);
         } else {
@@ -279,7 +277,6 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
         if (employee.isPresent()) {
             model.addAttribute("employee", employee.get());
             model.addAttribute("types", EmployeeReportType.values());
-            model.addAttribute("imageURL", employee.get().getImageURL() == null ? "default.jpg" : employee.get().getImageURL());
             return "employee/report";
         } else {
             return "error/404";
@@ -309,7 +306,7 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
             employeeRepository.save(employee.get());
 
             model.addAttribute("success", "Ваша жалоба успешно принята. При наличии определенного количества жалоб, мы заблокируем данного сотрудника.");
-            return report(id, model);
+            return "redirect:employee" + id;
         } else {
             return "error/404";
         }

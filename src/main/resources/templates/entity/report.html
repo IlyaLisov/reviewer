@@ -15,7 +15,7 @@
                 <p th:text="${entity.name}"></p>
             </div>
             <div class="content">
-                <img class="entity-page" th:src="@{/images/entity/{imageURL}(imageURL=${imageURL})}">
+                <img class="entity-page" th:src="@{/images/entity/{imageURL}(imageURL=${entity.imageURL})}">
                 <p class="success" th:text="${success}"></p>
                 <p><a th:href="@{/entity/{id}(id=${entity.id})}" th:text="'Перейти к учреждению образования'"></a></p>
                 <form id="feedback" method="post" th:action="@{/entity/report/{id}(id=${entity.id})}">

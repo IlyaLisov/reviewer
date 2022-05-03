@@ -57,7 +57,11 @@
                             </td>
                             <td>
                                 <a th:href="@{/reviews/report/employee-review/block/{id}(id=${review.id})}"
+                                   th:if="${!review.visible}"
                                    th:text="'Разблокировать'"></a>
+                                <a th:href="@{/reviews/report/employee-review/block/{id}(id=${review.id})}"
+                                   th:if="${review.visible}"
+                                   th:text="'Заблокировать'"></a>
                                 <h4>Жалобы пользователей:</h4>
                                 <div th:each="report : ${reports}">
                                     <div th:if="${report.employeeReview != null && report.employeeReview eq review}"

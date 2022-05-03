@@ -15,7 +15,7 @@
                 <p th:text="${employee.name}"></p>
             </div>
             <div class="content">
-                <img class="employee-page" th:src="@{/images/employee/{imageURL}(imageURL=${imageURL})}">
+                <img class="employee-page" th:src="@{/images/employee/{imageURL}(imageURL=${employee.imageURL})}">
                 <p class="success" th:text="${success}"></p>
                 <p class="error" th:text="${error}"></p>
                 <p><a th:href="@{/employee/{id}(id=${employee.id})}" th:text="'Перейти к сотруднику'"></a></p>

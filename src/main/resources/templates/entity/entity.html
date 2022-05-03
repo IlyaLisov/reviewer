@@ -16,7 +16,7 @@
             <div class="content">
                 <div class="two-items">
                     <div style="margin-right: 30px">
-                        <img class="entity-page" th:src="@{/images/entity/{imageURL}(imageURL=${imageURL})}">
+                        <img class="entity-page" th:src="@{/images/entity/{imageURL}(imageURL=${entity.imageURL})}">
                         <div>
                             <p th:if="${user != null && (user.isAdmin() || user.isModerator())}">
                                 <a th:href="@{/entity/edit/{id}(id=${entity.id})}" th:text="'Редактировать'"></a>
@@ -31,6 +31,15 @@
                     </div>
                     <div>
                         <p th:text="${entity.type.name}"></p>
+                        <div th:if="${parentEntity != null}">
+                            <span th:text="'Подчиняется '"></span>
+                            <a th:href="@{/entity/{id}(id=${parentEntity.id})}" th:if="${parentEntity != null}"
+                               th:text="${parentEntity.name}"></a>
+                        </div>
+                        <div th:if="${head != null}">
+                            <span th:text="${headName} + ' - '"></span><a th:href="@{/employee/{id}(id=${head.id})}"
+                                                                          th:text="${head.name}"></a>
+                        </div>
                         <p th:text="'Адрес: ' + (${entity.address != null} ? ${entity.address} : '') + ', ' +
                             ${entity.district.name} + ' район, ' + ${entity.district.getRegion().name} + ' область, ' + ${entity.country != null ? entity.country.name : ''}"></p>
                         <div th:if="${entity.siteURL != null}">

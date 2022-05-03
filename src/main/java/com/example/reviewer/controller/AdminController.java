@@ -54,15 +54,15 @@ public class AdminController extends com.example.reviewer.controller.Controller 
 
     @GetMapping("/blocked-reviews")
     public String blockedReviews(Model model) {
+        List<ReviewReport> reports = (List<ReviewReport>) reviewReportRepository.findAll();
         List<EntityReview> entityReviews = (List<EntityReview>) entityReviewRepository.findAll();
         model.addAttribute("entityReviews", entityReviews.stream()
-                .filter(review -> !review.getVisible())
+                .filter(review -> !review.getVisible() || reports.stream().anyMatch(report -> report.getEntityReview() != null && report.getEntityReview().equals(review)))
                 .collect(Collectors.toList()));
         List<EmployeeReview> employeeReviews = (List<EmployeeReview>) employeeReviewRepository.findAll();
         model.addAttribute("employeeReviews", employeeReviews.stream()
-                .filter(review -> !review.getVisible())
+                .filter(review -> !review.getVisible() || reports.stream().anyMatch(report -> report.getEmployeeReview() != null && report.getEmployeeReview().equals(review)))
                 .collect(Collectors.toList()));
-        List<ReviewReport> reports = (List<ReviewReport>) reviewReportRepository.findAll();
         model.addAttribute("reports", reports);
         return "account/admin/blocked-reviews";
     }
@@ -263,7 +263,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
         List<Entity> entities = (List<Entity>) entityRepository.findAll();
         List<EntityReport> reports = (List<EntityReport>) entityReportRepository.findAll();
         model.addAttribute("entities", entities.stream()
-                .filter(entity -> !entity.getVisible())
+                .filter(entity -> !entity.getVisible() || reports.stream().anyMatch(report -> report.getEntity().equals(entity)))
                 .collect(Collectors.toList()));
         model.addAttribute("reports", reports);
         return "account/admin/blocked-entities";
@@ -309,7 +309,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
         List<Employee> employees = (List<Employee>) employeeRepository.findAll();
         List<EmployeeReport> reports = (List<EmployeeReport>) employeeReportRepository.findAll();
         model.addAttribute("employees", employees.stream()
-                .filter(employee -> !employee.getVisible())
+                .filter(employee -> !employee.getVisible() || reports.stream().anyMatch(report -> report.getEmployee().equals(employee)))
                 .collect(Collectors.toList()));
         model.addAttribute("reports", reports);
         return "account/admin/blocked-employees";
@@ -337,20 +337,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
                     user.addRole(roleDocument.get().getRole(), entity.get().getParentEntity());
                 }
                 userRepository.save(user);
-                List<EmployeeReview> employeeReviews = employeeReviewRepository.findAllByAuthorId(user.getId());
-                employeeReviews.stream()
-                        .filter(employeeReview -> employeeReview.getEmployee().getEntity().equals(entity.get()))
-                        .forEach(employeeReview -> {
-                            employeeReview.setConfirmed(true);
-                            employeeReviewRepository.save(employeeReview);
-                        });
-                List<EntityReview> entityReviews = entityReviewRepository.findAllByAuthorId(user.getId());
-                entityReviews.stream()
-                        .filter(entityReview -> entityReview.getEntity().equals(entity.get()))
-                        .forEach(entityReview -> {
-                            entityReview.setConfirmed(true);
-                            entityReviewRepository.save(entityReview);
-                        });
+                confirmReviews(user, entity);
                 File file = new File(UPLOAD_PATH + "/" + roleDocument.get().getPhotoId());
                 file.delete();
                 roleDocumentRepository.delete(roleDocument.get());
@@ -360,6 +347,23 @@ public class AdminController extends com.example.reviewer.controller.Controller 
             }
         }
         return verify(model);
+    }
+
+    private void confirmReviews(User user, Optional<Entity> entity) {
+        List<EmployeeReview> employeeReviews = employeeReviewRepository.findAllByAuthorId(user.getId());
+        employeeReviews.stream()
+                .filter(employeeReview -> employeeReview.getEmployee().getEntity().equals(entity.get()))
+                .forEach(employeeReview -> {
+                    employeeReview.setConfirmed(true);
+                    employeeReviewRepository.save(employeeReview);
+                });
+        List<EntityReview> entityReviews = entityReviewRepository.findAllByAuthorId(user.getId());
+        entityReviews.stream()
+                .filter(entityReview -> entityReview.getEntity().equals(entity.get()))
+                .forEach(entityReview -> {
+                    entityReview.setConfirmed(true);
+                    entityReviewRepository.save(entityReview);
+                });
     }
 
     @PostMapping("/verify/discard/{id}")
@@ -398,6 +402,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
                 } else {
                     user.get().addRole(Role.valueOf(role), entity.get());
                     userRepository.save(user.get());
+                    confirmReviews(user.get(), entity);
                     model.addAttribute("success", "Роль " + Role.valueOf(role).getName() + " в "
                             + entity.get().getName() + " успешно добавлена.");
                 }

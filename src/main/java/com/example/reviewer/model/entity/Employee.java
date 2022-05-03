@@ -50,6 +50,7 @@ public class Employee {
     private Integer reportCounter;
 
     public Employee() {
+        this.imageURL = "default.jpg";
         this.isVisible = true;
         this.reportCounter = 0;
     }

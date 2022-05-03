@@ -3,6 +3,7 @@ package com.example.reviewer.controller;
 import com.example.reviewer.model.entity.Country;
 import com.example.reviewer.model.entity.District;
 import com.example.reviewer.model.entity.Employee;
+import com.example.reviewer.model.entity.EmployeeType;
 import com.example.reviewer.model.entity.Entity;
 import com.example.reviewer.model.entity.EntityType;
 import com.example.reviewer.model.entity.Region;
@@ -56,8 +57,10 @@ public class EntityController extends com.example.reviewer.controller.Controller
         if (entity.isPresent() && (entity.get().getVisible() || (user != null && (user.isModerator() || user.isAdmin())))) {
             List<EntityReview> reviews = entityReviewRepository.findAllByEntityId(id);
             List<Employee> employees = employeeRepository.findAllByEntityId(entity.get().getId());
+            putHeadOfEntity(entity.get(), model);
+            putParentEntity(entity.get(), model);
             model.addAttribute("entity", entity.get());
-            model.addAttribute("imageURL", entity.get().getImageURL() == null ? "default.png" : entity.get().getImageURL());
+            model.addAttribute("imageURL", entity.get().getImageURL());
             model.addAttribute("reviews", reviews.stream()
                     .filter(markFilter)
                     .filter(review -> user != null && (user.isModerator() || user.isAdmin()) || review.getVisible())
@@ -81,12 +84,46 @@ public class EntityController extends com.example.reviewer.controller.Controller
         return "entity/entity";
     }
 
+    private void putHeadOfEntity(Entity entity, Model model) {
+        if (entity.getType().equals(EntityType.UNIVERSITY)) {
+            Optional<Employee> head = employeeRepository.findByEntityAndType(entity, EmployeeType.RECTOR);
+            if (head.isPresent()) {
+                model.addAttribute("headName", EmployeeType.RECTOR.getName());
+                model.addAttribute("head", head.get());
+            }
+        } else if (entity.getType().equals(EntityType.FACULTY)) {
+            Optional<Employee> head = employeeRepository.findByEntityAndType(entity, EmployeeType.DEAN);
+            if (head.isPresent()) {
+                model.addAttribute("headName", EmployeeType.DEAN.getName());
+                model.addAttribute("head", head.get());
+            }
+        } else if (entity.getType().equals(EntityType.HOSTEL)) {
+            Optional<Employee> head = employeeRepository.findByEntityAndType(entity, EmployeeType.HOSTEL_DIRECTOR);
+            if (head.isPresent()) {
+                model.addAttribute("headName", EmployeeType.HOSTEL_DIRECTOR.getName());
+                model.addAttribute("head", head.get());
+            }
+        } else {
+            Optional<Employee> head = employeeRepository.findByEntityAndType(entity, EmployeeType.DIRECTOR);
+            if (head.isPresent()) {
+                model.addAttribute("headName", EmployeeType.DIRECTOR.getName());
+                model.addAttribute("head", head.get());
+            }
+        }
+    }
+
+    private void putParentEntity(Entity entity, Model model) {
+        if (entity.getParentEntity() != null) {
+            model.addAttribute("parentEntity", entity.getParentEntity());
+        }
+    }
+
     @PostMapping("/left-review/{id}")
     public String leftReview(@PathVariable("id") Long id, @RequestParam(value = "text", required = false) String text,
                              @RequestParam("role") String role, @RequestParam("mark") int mark, Model model) {
         Optional<Setting> setting = settingRepository.findByType(SettingType.ENABLE_REVIEWS);
         User author = (User) model.getAttribute("user");
-        if(setting.isPresent() && (setting.get().getValue() || (author != null && (Objects.requireNonNull(author).isModerator() || author.isAdmin())))) {
+        if (setting.isPresent() && (setting.get().getValue() || (author != null && (Objects.requireNonNull(author).isModerator() || author.isAdmin())))) {
             EntityReview review = new EntityReview();
             Optional<Entity> entity = entityRepository.findById(id);
             if (entity.isPresent() && author != null) {
@@ -134,7 +171,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
         if (entity.isPresent()) {
             model.addAttribute("entity", entity.get());
             model.addAttribute("types", EntityType.values());
-            model.addAttribute("imageURL", entity.get().getImageURL() == null ? "default.png" : entity.get().getImageURL());
+            model.addAttribute("imageURL", entity.get().getImageURL());
             model.addAttribute("countries", Country.values());
             model.addAttribute("regions", Region.values());
             model.addAttribute("districts", District.values());
@@ -309,7 +346,6 @@ public class EntityController extends com.example.reviewer.controller.Controller
         if (entity.isPresent()) {
             model.addAttribute("entity", entity.get());
             model.addAttribute("types", EntityReportType.values());
-            model.addAttribute("imageURL", entity.get().getImageURL() == null ? "default.png" : entity.get().getImageURL());
             return "entity/report";
         } else {
             return "error/404";
@@ -339,7 +375,7 @@ public class EntityController extends com.example.reviewer.controller.Controller
             entityRepository.save(entity.get());
 
             model.addAttribute("success", "Ваша жалоба успешно принята. При наличии определенного количества жалоб, мы заблокируем данное учреждение образования.");
-            return id(id, null, model);
+            return "redirect:entity/" + id;
         } else {
             return "error/404";
         }

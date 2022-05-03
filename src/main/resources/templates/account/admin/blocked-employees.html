@@ -36,7 +36,10 @@
                                    th:text="${employee.entity.name}"></a>
                             </td>
                             <td>
-                                <a th:href="@{/employee/block/{id}(id=${employee.id})}" th:text="'Разблокировать'"></a>
+                                <a th:href="@{/employee/block/{id}(id=${employee.id})}" th:if="${!employee.visible}"
+                                   th:text="'Разблокировать'"></a>
+                                <a th:href="@{/employee/block/{id}(id=${employee.id})}" th:if="${employee.visible}"
+                                   th:text="'Заблокировать'"></a>
                                 <h4>Жалобы пользователей:</h4>
                                 <div th:each="report : ${reports}">
                                     <div th:if="${report.employee.id eq employee.id}"

@@ -38,7 +38,10 @@
                                    th:text="${entity.siteURL}"></a>
                             </td>
                             <td>
-                                <a th:href="@{/entity/block/{id}(id=${entity.id})}" th:text="'Разблокировать'"></a>
+                                <a th:href="@{/entity/block/{id}(id=${entity.id})}" th:if="${!entity.visible}"
+                                   th:text="'Разблокировать'"></a>
+                                <a th:href="@{/entity/block/{id}(id=${entity.id})}" th:if="${entity.visible}"
+                                   th:text="'Заблокировать'"></a>
                                 <h4>Жалобы пользователей:</h4>
                                 <div th:each="report : ${reports}">
                                     <div th:if="${report.entity.id eq entity.id}"
