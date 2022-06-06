@@ -80,6 +80,7 @@ public class AccountController extends com.example.reviewer.controller.Controlle
         int requestAmount = 0;
         requestAmount = roleDocumentRepository.countAllByUserId(user.getId());
         model.addAttribute("requestAmount", requestAmount);
+        model.addAttribute("roles", Role.values());
         return "account/roles/add";
     }
 

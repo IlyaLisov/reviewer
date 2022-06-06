@@ -10,6 +10,7 @@ import com.example.reviewer.model.report.EmployeeReportType;
 import com.example.reviewer.model.review.EmployeeReview;
 import com.example.reviewer.model.review.SlangRemover;
 import com.example.reviewer.model.role.Role;
+import com.example.reviewer.model.role.RoleEntity;
 import com.example.reviewer.model.user.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -80,10 +81,9 @@ public class EmployeeController extends com.example.reviewer.controller.Controll
                     review.setEmployee(employee.get());
                     review.setAuthor(author);
                     review.setMark(mark);
-                    if (!role.equals("ANONYMOUS")) {
-                        review.setAuthorRole(Role.valueOf(role));
-                    }
-                    if (author.hasRole(employee.get().getEntity().getId())) {
+                    review.setAuthorRole(Role.valueOf(role));
+                    Optional<RoleEntity> roleEntity = author.getRole(employee.get().getEntity().getId(), Role.valueOf(role));
+                    if (author.hasRole(id) && roleEntity.isPresent() && roleEntity.get().getConfirmed()) {
                         review.setConfirmed(true);
                     }
                     if (!role.equals("ANONYMOUS") && !author.getRolesInEntity(id).contains(Role.valueOf(role))) {

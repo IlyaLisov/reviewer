@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Рейтинг сотрудников - Reviewer</title>
+</head>
+<body>
+<div class=container>
+    <div th:insert="blocks/header :: header"></div>
+    <div class="content">
+        <h1>Рейтинг сотрудников</h1>
+        <form>
+            <fieldset>
+                <div class="form-group">
+                    <label for="employeeType" class="form-label mt-4">Тип сотрудника: </label>
+                    <select class="form-select" id="employeeType" name="employeeType">
+                        <option th:text="'Не выбрано'" th:value="'ANY'"></option>
+                        <option th:each="type : ${employeeTypes}" th:selected="${type.name() eq #httpServletRequest.getParameter('employeeType')}"
+                                th:text="${type.name}"
+                                th:value="${type}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="entity" class="form-label mt-4">Учреждение образования: </label>
+                    <select class="form-select" id="entity" name="entity">
+                        <option th:text="'Не выбрано'" th:value="0"></option>
+                        <option th:each="e : ${entities}" th:selected="${#strings.equals(e.id, #httpServletRequest.getParameter('entity'))}" th:text="${e.name}"
+                                th:value="${e.id}"></option>
+                    </select>
+                </div>
+            </fieldset>
+            <br>
+            <button type="submit" class="btn btn-primary">Найти</button>
+            <a th:href="@{/rating/employee}" class="btn btn-primary" th:text="'Сбросить'"></a>
+        </form>
+        <br>
+        <div th:insert="blocks/table :: employee-table(employees=${employees}, page=${employeePage})"></div>
+        <div th:insert="blocks/pagination :: employee-rating-pagination"></div>
+    </div>
+    <div th:insert="blocks/footer :: footer"></div>
+</div>
+</body>
+</html>

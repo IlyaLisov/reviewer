@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Отзывы об учреждениях образования - Reviewer</title>
+</head>
+<body>
+<div class=container>
+    <div th:insert="blocks/header :: header"></div>
+    <div class="content">
+        <h1>Отзывы об учреждениях образования</h1>
+        <div class="reviews" th:each="review : ${entityReviews}">
+            <div th:insert="blocks/review :: entity-review-with-anchor(r = ${review})"></div>
+        </div>
+        <div th:insert="blocks/footer :: footer"></div>
+    </div>
+</body>
+</html>

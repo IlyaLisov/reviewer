@@ -3,33 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>Мои отзывы - Reviewer</title>
-    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class="container">
     <div th:insert="blocks/header :: header"></div>
-    <div class="page">
-        <div class="body">
-            <div class="page-name">
-                Аккаунт
-            </div>
-            <div class="account">
-                <div th:insert="${session.user.isAdmin() || session.user.isModerator()}? ~{blocks/account-menu :: account-menu-admin} : ~{blocks/account-menu :: account-menu-user}"></div>
-                <div class="account-content">
-                    <p>В этом разделе расположены все Ваши отзывы об учреждениях образования. Они полностью анонимны и
-                        информация об их авторстве доступна только Вам.</p>
-                    <h4>Отзывы на учреждения образования:</h4>
-                    <div class="reviews" th:each="review : ${entityReviews}">
-                        <div th:insert="blocks/review :: entity-review-with-anchor(r = ${review})"></div>
+    <div class="content">
+        <h1>Аккаунт</h1>
+        <div class="account">
+            <div th:insert="${session.user.isAdmin() || session.user.isModerator()}? ~{blocks/account-menu :: account-menu-admin} : ~{blocks/account-menu :: account-menu-user}"></div>
+            <div class="account-content">
+                <p>В этом разделе расположены все Ваши отзывы об учреждениях образования и сотрудниках. Они полностью
+                    анонимны и
+                    информация об их авторстве доступна только Вам.</p>
+
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#education">Отзывы об учреждениях
+                            образования</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#employee">Отзывы о сотрудниках</a>
+                    </li>
+                </ul>
+                <div id="myTabContent" class="tab-content">
+                    <div class="tab-pane fade active show" id="education">
+                        <br>
+                        <div class="reviews" th:each="review : ${entityReviews}">
+                            <div th:insert="blocks/review :: entity-review-with-anchor(r = ${review})"></div>
+                        </div>
                     </div>
-                    <h4>Отзывы на сотрудников:</h4>
-                    <div class="reviews" th:each="review : ${employeeReviews}">
-                        <div th:insert="blocks/review :: employee-review-with-anchor(r = ${review})"></div>
+                    <div class="tab-pane fade" id="employee">
+                        <br>
+                        <div class="reviews" th:each="review : ${employeeReviews}">
+                            <div th:insert="blocks/review :: employee-review-with-anchor(r = ${review})"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div th:insert="blocks/sidebar :: sidebar"></div>
     </div>
     <div th:insert="blocks/footer :: footer"></div>
 </div>

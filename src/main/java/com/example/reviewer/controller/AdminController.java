@@ -242,6 +242,7 @@ public class AdminController extends com.example.reviewer.controller.Controller 
             User user = (User) model.getAttribute("user");
             user.upRating(RATING_FOR_CREATION_ENTITY);
             entity.setAuthor(user);
+            entity.setImageURL("default.png");
 
             userRepository.save(user);
             entityRepository.save(entity);
@@ -331,13 +332,13 @@ public class AdminController extends com.example.reviewer.controller.Controller 
             User user = roleDocument.get().getUser();
             Optional<Entity> entity = entityRepository.findById(entityId);
             if (entity.isPresent()) {
-
                 user.addRole(roleDocument.get().getRole(), entity.get());
                 if (entity.get().getParentEntity() != null) {
                     user.addRole(roleDocument.get().getRole(), entity.get().getParentEntity());
                 }
+                user.confirmRole(entity.get().getId(), roleDocument.get().getRole());
                 userRepository.save(user);
-                confirmReviews(user, entity);
+                confirmReviews(user, entity, roleDocument.get().getRole());
                 File file = new File(UPLOAD_PATH + "/" + roleDocument.get().getPhotoId());
                 file.delete();
                 roleDocumentRepository.delete(roleDocument.get());
@@ -349,21 +350,23 @@ public class AdminController extends com.example.reviewer.controller.Controller 
         return verify(model);
     }
 
-    private void confirmReviews(User user, Optional<Entity> entity) {
-        List<EmployeeReview> employeeReviews = employeeReviewRepository.findAllByAuthorId(user.getId());
-        employeeReviews.stream()
-                .filter(employeeReview -> employeeReview.getEmployee().getEntity().equals(entity.get()))
-                .forEach(employeeReview -> {
-                    employeeReview.setConfirmed(true);
-                    employeeReviewRepository.save(employeeReview);
-                });
-        List<EntityReview> entityReviews = entityReviewRepository.findAllByAuthorId(user.getId());
-        entityReviews.stream()
-                .filter(entityReview -> entityReview.getEntity().equals(entity.get()))
-                .forEach(entityReview -> {
-                    entityReview.setConfirmed(true);
-                    entityReviewRepository.save(entityReview);
-                });
+    private void confirmReviews(User user, Optional<Entity> entity, Role role) {
+        if (entity.isPresent()) {
+            List<EmployeeReview> employeeReviews = employeeReviewRepository.findAllByAuthorId(user.getId());
+            employeeReviews.stream()
+                    .filter(employeeReview -> employeeReview.getEmployee().getEntity().equals(entity.get()) && employeeReview.getAuthorRole().equals(role))
+                    .forEach(employeeReview -> {
+                        employeeReview.setConfirmed(true);
+                        employeeReviewRepository.save(employeeReview);
+                    });
+            List<EntityReview> entityReviews = entityReviewRepository.findAllByAuthorId(user.getId());
+            entityReviews.stream()
+                    .filter(entityReview -> entityReview.getEntity().equals(entity.get()) && entityReview.getAuthorRole().equals(role))
+                    .forEach(entityReview -> {
+                        entityReview.setConfirmed(true);
+                        entityReviewRepository.save(entityReview);
+                    });
+        }
     }
 
     @PostMapping("/verify/discard/{id}")
@@ -401,8 +404,9 @@ public class AdminController extends com.example.reviewer.controller.Controller 
                     model.addAttribute("error", "У этого пользователя уже существует эта роль.");
                 } else {
                     user.get().addRole(Role.valueOf(role), entity.get());
+                    user.get().confirmRole(entityId, Role.valueOf(role));
                     userRepository.save(user.get());
-                    confirmReviews(user.get(), entity);
+                    confirmReviews(user.get(), entity, roleEntity.getRole());
                     model.addAttribute("success", "Роль " + Role.valueOf(role).getName() + " в "
                             + entity.get().getName() + " успешно добавлена.");
                 }

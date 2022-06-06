@@ -3,37 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Панель администратора - Reviewer</title>
-    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class="container">
     <div th:insert="blocks/header :: header"></div>
-    <div class="page">
-        <div class="body">
-            <div class="page-name">
-                Панель администратора
-            </div>
-            <div class="account">
-                <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
-                <div class="account-content">
-                    <p>Вы попали на страницу управления сайтом.</p>
-                    <p>Как <b>Администратору</b> Вам доступен весь функционал взаимодействия с сайтом.</p>
-                    <p>Как <b>Модератору</b> Вам доступен весь функционал взаимодействия с сайтом за исключением
-                        создания и блокировки пользователей.</p>
-                    <p class="success" th:text="${success}"></p>
-                    <p class="error" th:text="${error}"></p>
-                    <h4>Администраторы:</h4>
-                    <li th:each="user : ${admins}"><a
-                            th:href="@{/account/admin/edit-user/{login}(login = ${user.login})}"
-                            th:text="${user.login} + '(' + ${user.name} + ')'"></a></li>
-                    <h4>Модераторы:</h4>
-                    <li th:each="user : ${moderators}"><a
-                            th:href="@{/account/admin/edit-user/{login}(login = ${user.login})}"
-                            th:text="${user.login} + '(' + ${user.name} + ')'"></a></li>
+    <div class="content">
+        <h1>Панель администратора</h1>
+        <div class="account">
+            <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
+            <div class="account-content">
+                <p>Вы попали на страницу управления сайтом.</p>
+                <p>Как <b>Администратору</b> Вам доступен весь функционал взаимодействия с сайтом.</p>
+                <p>Как <b>Модератору</b> Вам доступен весь функционал взаимодействия с сайтом за исключением
+                    создания пользователей и изменения настроек сайта.</p>
+
+                <div th:if="${success != null}" class="alert alert-dismissible alert-success">
+                    <p th:text="${success}"></p>
                 </div>
+                <div th:if="${error != null}" class="alert alert-dismissible alert-secondary">
+                    <p th:text="${error}"></p>
+                </div>
+
+                <h4>Администраторы сайта:</h4>
+                <li th:each="user : ${admins}"><a
+                        th:href="@{/account/admin/edit-user/{login}(login = ${user.login})}"
+                        th:text="${user.login} + '(' + ${user.name} + ')'"></a></li>
+                <h4>Модераторы сайта:</h4>
+                <li th:each="user : ${moderators}"><a
+                        th:href="@{/account/admin/edit-user/{login}(login = ${user.login})}"
+                        th:text="${user.login} + '(' + ${user.name} + ')'"></a></li>
             </div>
         </div>
-        <div th:insert="blocks/sidebar :: sidebar"></div>
     </div>
     <div th:insert="blocks/footer :: footer"></div>
 </div>

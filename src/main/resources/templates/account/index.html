@@ -3,35 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>Аккаунт - Reviewer</title>
-    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class="container">
     <div th:insert="blocks/header :: header"></div>
-    <div class="page">
-        <div class="body">
-            <div class="page-name">
-                Аккаунт
-            </div>
-            <div class="account">
-                <div th:insert="${session.user.isAdmin() || session.user.isModerator()}? ~{blocks/account-menu :: account-menu-admin} : ~{blocks/account-menu :: account-menu-user}"></div>
-                <div class="account-content">
-                    <p>Добро пожаловать, <a th:text="${session.user.name}"></a></p>
-                    <p>Ваша роль на сайте: <a th:text="${session.user.userRole.getName()}"></a></p>
-                    <p>Ваш рейтинг: <a th:text="${session.user.rating}"></a></p>
-                    <p>Среди всех пользователей Вы находитесь на <a th:text="${index}"></a> месте</p>
-                    <p>Это Ваша личная учетная запись. С помощью нее Вы можете голосовать за правильные на Ваш взгляд
-                        отзывы, а также оставлять свои собственные отзывы и оценки.</p>
-                    <p>Вы можете оставить отзыв только о тех учреждениях образования, документы которых Вы <a
-                            th:href="@{/account/roles}">загрузили</a>, и об их сотрудниках.</p>
-                    <p class="success" th:text="${success}"></p>
-                    <p class="error" th:text="${error}"></p>
+    <div class="content">
+        <h1>Аккаунт</h1>
+        <div class="account">
+            <div th:insert="${session.user.isAdmin() || session.user.isModerator()}? ~{blocks/account-menu :: account-menu-admin} : ~{blocks/account-menu :: account-menu-user}"></div>
+            <div class="account-content">
+                <h4>Добро пожаловать, <a th:text="${session.user.name}"></a></h4>
+                <p><b>Ваша роль на сайте: </b><span th:text="${session.user.userRole.getName()}"></span></p>
+                <p><b>Ваш рейтинг: </b><span th:text="${session.user.rating} + ' единиц'"></span></p>
+                <p>Среди всех пользователей Вы находитесь на <b th:text="${index} + ' месте'"></b></p>
+                <p>Это Ваша личная учетная запись. С помощью нее Вы можете голосовать за правильные на Ваш взгляд
+                    отзывы, а также оставлять свои собственные отзывы и оценки.</p>
+                <p>Вы можете оставить подтвержденный отзыв только о тех учреждениях образования и их сотрудниках,
+                    документы которых Вы <a
+                            th:href="@{/account/roles}">загрузили</a>.</p>
+                <p>Вы можете оставлять неподтвержденные отзывы о любом учреждении образования и их сотрудниках, после
+                    подтверждения роли отзывы будут подтверждены.</p>
+                <div th:if="${success != null}" class="alert alert-dismissible alert-success">
+                    <p th:text="${success}"></p>
+                </div>
+                <div th:if="${error != null}" class="alert alert-dismissible alert-secondary">
+                    <p th:text="${error}"></p>
                 </div>
             </div>
         </div>
-        <div th:insert="blocks/sidebar :: sidebar"></div>
+        <div th:insert="blocks/footer :: footer"></div>
     </div>
-    <div th:insert="blocks/footer :: footer"></div>
 </div>
 </body>
 </html>

@@ -17,8 +17,15 @@ import java.util.stream.Collectors;
 @RequestMapping("/search")
 public class SearchController extends com.example.reviewer.controller.MainController {
 
-    @GetMapping("/entities")
-    public String education(@RequestParam("query") String query, Model model) {
+    @GetMapping()
+    public String index(@RequestParam("query") String query, Model model) {
+        model.addAttribute("entities", education(query));
+        model.addAttribute("employees", employee(query));
+        model.addAttribute("page", 1);
+        return "search/index";
+    }
+
+    public List<Entity> education(@RequestParam("query") String query) {
         Comparator<Entity> comparator = (entity1, entity2) -> {
             if (!query.isEmpty()) {
                 String[] wordsInQuery = query.split(" ");
@@ -31,17 +38,14 @@ public class SearchController extends com.example.reviewer.controller.MainContro
 
         String[] wordsInQuery = query.split(" ");
         List<Entity> entities = (List<Entity>) entityRepository.findAll();
-        model.addAttribute("entities", entities.stream()
+        return entities.stream()
                 .filter(Entity::getVisible)
                 .filter(entity -> Arrays.stream(wordsInQuery)
                         .anyMatch(word -> entity.getName().toLowerCase().contains(word.toLowerCase())
                                 || firstLettersFromName(entity.getName().toLowerCase()).contains(word.toLowerCase()))
                         || (entity.getAbbreviation() != null && query.toLowerCase().contains(entity.getAbbreviation().toLowerCase())))
                 .sorted(comparator)
-                .collect(Collectors.toList()));
-
-        model.addAttribute("page", 1);
-        return "search/entities";
+                .collect(Collectors.toList());
     }
 
     private String firstLettersFromName(String name) {
@@ -53,8 +57,7 @@ public class SearchController extends com.example.reviewer.controller.MainContro
         return result.toString();
     }
 
-    @GetMapping("/employees")
-    public String employees(@RequestParam("query") String query, Model model) {
+    public List<Employee> employee(@RequestParam("query") String query) {
         Comparator<Employee> comparator = (employee1, employee2) -> {
             if (!query.isEmpty()) {
                 String[] wordsInQuery = query.split(" ");
@@ -67,13 +70,11 @@ public class SearchController extends com.example.reviewer.controller.MainContro
 
         String[] wordsInQuery = query.split(" ");
         List<Employee> employees = (List<Employee>) employeeRepository.findAll();
-        model.addAttribute("employees", employees.stream()
+        return employees.stream()
                 .filter(Employee::getVisible)
                 .filter(employee -> Arrays.stream(wordsInQuery)
                         .anyMatch(word -> employee.getName().toLowerCase().contains(word.toLowerCase())))
                 .sorted(comparator)
-                .collect(Collectors.toList()));
-        model.addAttribute("page", 1);
-        return "search/employees";
+                .collect(Collectors.toList());
     }
 }

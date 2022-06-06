@@ -1,9 +1,12 @@
 <div th:fragment="sidebar">
-    <div class="sidebar">
-        <div th:insert="blocks/statistics :: statistics"></div>
-    </div>
+<!--    <div class="sidebar">-->
+<!--        <div th:insert="blocks/statistics :: statistics"></div>-->
+<!--    </div>-->
     <div class="sidebar">
         <div th:insert="blocks/search :: search-entity(value='')"></div>
         <div style="margin-top: 10px; margin-bottom: 10px" th:insert="blocks/search :: search-employee(value='')"></div>
+    </div>
+    <div class="sidebar">
+        <p> Уже скоро на этом месте будет что-то интересное :)</p>
     </div>
 </div>

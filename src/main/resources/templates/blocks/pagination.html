@@ -1,0 +1,55 @@
+<div th:fragment="entity-rating-pagination">
+        <div>
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${entityPage > 1} ? '' : 'disabled'">
+                    <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(entityType = ${param.entityType}, region = ${param.region}, district= ${param.district}, entityPage = ${entityPage - 1})}">&laquo;</a>
+                </li>
+                <li class="page-item" th:classappend="${entityPage != 1} ? '' : 'active'">
+                    <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(entityType = ${param.entityType}, region = ${param.region}, district= ${param.district}, entityPage = 1)}">1</a>
+                </li>
+                <li class="page-item" th:classappend="${entityPage != 2} ? '' : 'active'">
+                    <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(entityType = ${param.entityType}, region = ${param.region}, district= ${param.district}, entityPage = 2)}">2</a>
+                </li>
+                <li class="page-item" th:classappend="${entityPage != 3} ? '' : 'active'">
+                    <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(entityType = ${param.entityType}, region = ${param.region}, district= ${param.district}, entityPage = 3)}">3</a>
+                </li>
+                <li class="page-item" th:classappend="${entityPage != 4} ? '' : 'active'">
+                    <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(entityType = ${param.entityType}, region = ${param.region}, district= ${param.district}, entityPage = 4)}">4</a>
+                </li>
+                <li class="page-item" th:classappend="${entityPage != 5} ? '' : 'active'">
+                    <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(entityType = ${param.entityType}, region = ${param.region}, district= ${param.district}, entityPage = 5)}">5</a>
+                </li>
+                <li class="page-item" th:classappend="${entityPage != amountOfPages} ? '' : 'disabled'">
+                    <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(entityType = ${param.entityType}, region = ${param.region}, district= ${param.district}, entityPage = ${entityPage + 1})}">&raquo;</a>
+                </li>
+            </ul>
+        </div>
+</div>
+
+<div th:fragment="employee-rating-pagination">
+    <div>
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${employeePage > 1} ? '' : 'disabled'">
+                <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(employeeType = ${param.employeeType}, entity = ${param.entity}, employeePage = ${employeePage - 1})}">&laquo;</a>
+            </li>
+            <li class="page-item" th:classappend="${employeePage != 1} ? '' : 'active'">
+                <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(employeeType = ${param.employeeType}, entity = ${param.entity}, employeePage = 1)}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${employeePage != 2} ? '' : 'active'">
+                <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(employeeType = ${param.employeeType}, entity = ${param.entity}, employeePage = 2)}">2</a>
+            </li>
+            <li class="page-item" th:classappend="${employeePage != 3} ? '' : 'active'">
+                <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(employeeType = ${param.employeeType}, entity = ${param.entity}, employeePage = 3)}">3</a>
+            </li>
+            <li class="page-item" th:classappend="${employeePage != 4} ? '' : 'active'">
+                <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(employeeType = ${param.employeeType}, entity = ${param.entity}, employeePage = 4)}">4</a>
+            </li>
+            <li class="page-item" th:classappend="${employeePage != 5} ? '' : 'active'">
+                <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(employeeType = ${param.employeeType}, entity = ${param.entity}, employeePage = 5)}">5</a>
+            </li>
+            <li class="page-item" th:classappend="${employeePage != amountOfPages} ? '' : 'disabled'">
+                <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(employeeType = ${param.employeeType}, entity = ${param.entity}, employeePage = ${employeePage + 1})}">&raquo;</a>
+            </li>
+        </ul>
+    </div>
+</div>

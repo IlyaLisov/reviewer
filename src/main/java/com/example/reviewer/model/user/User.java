@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @javax.persistence.Entity
@@ -164,6 +165,18 @@ public class User implements Comparable<User> {
     public boolean hasRole(Long entityId) {
         return roles.stream()
                 .anyMatch(roleEntity -> Objects.equals(roleEntity.getEntity().getId(), entityId));
+    }
+
+    public Optional<RoleEntity> getRole(Long entityId, Role role) {
+        return roles.stream()
+                .filter(roleEntity -> Objects.equals(roleEntity.getEntity().getId(), entityId) && roleEntity.getRole().equals(role))
+                .findAny();
+    }
+
+    public void confirmRole(Long entityId, Role role) {
+        roles.stream()
+                .filter(roleEntity -> Objects.equals(roleEntity.getEntity().getId(), entityId) && roleEntity.getRole().equals(role))
+                .forEach(roleEntity -> roleEntity.setConfirmed(true));
     }
 
     public boolean isAdmin() {

@@ -1,26 +1,69 @@
 <div th:fragment="account-menu-admin">
-    <div class="account-menu">
-        <ul class="account-menu">
-            <li><a class="account-menu" th:href="@{/account}"> Аккаунт </a></li>
-            <li><a class="account-menu" th:href="@{/account/admin}"> Панель администратора </a></li>
-            <li><a class="account-menu" th:href="@{/account/roles}"> Ваши роли </a></li>
-            <li><a class="account-menu" th:href="@{/account/reviews}"> Ваши отзывы </a></li>
-            <li><a class="account-menu" th:href="@{/account/bookmarks}"> Ваши оценки </a></li>
-            <li><a class="account-menu" th:href="@{/account/settings}"> Настройки </a></li>
-            <li><a class="account-menu" th:href="@{/logout}"> Выйти </a></li>
-        </ul>
-    </div>
+    <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${#httpServletRequest.requestURI.endsWith('account')} ? 'active'"
+               th:href="@{/account}">Аккаунт</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${#httpServletRequest.requestURI.endsWith('admin')} ? 'active'"
+               th:href="@{/account/admin}"> Панель администратора </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${#httpServletRequest.requestURI.endsWith('roles')} ? 'active'"
+               th:href="@{/account/roles}"> Ваши роли </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${#httpServletRequest.requestURI.endsWith('add')} ? 'active'"
+               th:href="@{/account/roles/add}"> Добавить роль </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${#httpServletRequest.requestURI.endsWith('reviews')} ? 'active'"
+               th:href="@{/account/reviews}"> Ваши отзывы </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${#httpServletRequest.requestURI.endsWith('bookmarks')} ? 'active'"
+               th:href="@{/account/bookmarks}"> Ваши оценки </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${#httpServletRequest.requestURI.endsWith('settings')} ? 'active'"
+               th:href="@{/account/settings}"> Настройки </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${#httpServletRequest.requestURI.endsWith('logout')} ? 'active'"
+               th:href="@{/logout}"> Выйти </a>
+        </li>
+    </ul>
 </div>
 
 <div th:fragment="account-menu-user">
-    <div class="account-menu">
-        <ul class="account-menu">
-            <li><a class="account-menu" th:href="@{/account}"> Аккаунт </a></li>
-            <li><a class="account-menu" th:href="@{/account/roles}"> Ваши роли </a></li>
-            <li><a class="account-menu" th:href="@{/account/reviews}"> Ваши отзывы </a></li>
-            <li><a class="account-menu" th:href="@{/account/bookmarks}"> Ваши оценки </a></li>
-            <li><a class="account-menu" th:href="@{/account/settings}"> Настройки </a></li>
-            <li><a class="account-menu" th:href="@{/logout}"> Выйти </a></li>
-        </ul>
-    </div>
+    <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${#httpServletRequest.requestURI.endsWith('account')} ? 'active'"
+               th:href="@{/account}">Аккаунт</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${#httpServletRequest.requestURI.endsWith('roles')} ? 'active'"
+               th:href="@{/account/roles}"> Ваши роли </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${#httpServletRequest.requestURI.endsWith('add')} ? 'active'"
+               th:href="@{/account/roles/add}"> Добавить роль </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${#httpServletRequest.requestURI.endsWith('reviews')} ? 'active'"
+               th:href="@{/account/reviews}"> Ваши отзывы </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${#httpServletRequest.requestURI.endsWith('bookmarks')} ? 'active'"
+               th:href="@{/account/bookmarks}"> Ваши оценки </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${#httpServletRequest.requestURI.endsWith('settings')} ? 'active'"
+               th:href="@{/account/settings}"> Настройки </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${#httpServletRequest.requestURI.endsWith('logout')} ? 'active'"
+               th:href="@{/logout}"> Выйти </a>
+        </li>
+    </ul>
 </div>

@@ -1,27 +1,54 @@
 <div th:fragment="header">
-    <div class="header">
-        <a class="header" th:href="@{/}"> Reviewer </a>
-    </div>
-    <div class="description">
-        Только честные отзывы
-    </div>
-    <div class="menu">
-        <ul class="menu">
-            <li><a class="menu" href="/"> Главная </a></li>
-            <li th:if="${session.user != null}">
-                <a class="menu" th:href="@{/account}"> Аккаунт </a>
-            </li>
-            <li th:unless="${session.user != null}">
-                <a class="menu" th:href="@{/login}"> Войти </a>
-            </li>
-            <li th:unless="${session.user != null}">
-                <a class="menu" th:href="@{/register}"> Зарегистрироваться </a>
-            </li>
-            <li><a class="menu" th:href="@{/rating}"> Рейтинги </a></li>
-            <li><a class="menu" th:href="@{/reviews}"> Все отзывы </a></li>
-            <li th:if="${session.user != null}">
-                <a class="menu" th:href="@{/logout}"> Выйти </a>
-            </li>
-        </ul>
-    </div>
+    <head>
+        <link href="../static/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}">
+        <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
+        <script th:src="@{https://bootswatch.com/_vendor/popper.js/dist/umd/popper.min.js}"></script>
+        <script th:src="@{https://bootswatch.com/_vendor/bootstrap/dist/js/bootstrap.min.js}"></script>
+        <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    </head>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/}">Reviewer</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+                    aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarColor01">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item" th:if="${session.user != null}">
+                        <a class="nav-link" th:href="@{/account}">Аккаунт</a>
+                    </li>
+                    <li class="nav-item" th:if="${session.user == null}">
+                        <a class="nav-link" th:href="@{/login}">Войти</a>
+                    </li>
+                    <li class="nav-item" th:if="${session.user == null}">
+                        <a class="nav-link" th:href="@{/register}">Зарегистрироваться</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button"
+                           aria-haspopup="true" aria-expanded="false">Рейтинги</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" th:href="@{/rating/education}">Рейтинг учреждений образования</a>
+                            <a class="dropdown-item" th:href="@{/rating/employee}">Рейтинг сотрудников</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button"
+                           aria-haspopup="true" aria-expanded="false">Отзывы</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" th:href="@{/reviews/education}">Отзывы об учреждениях
+                                образования</a>
+                            <a class="dropdown-item" th:href="@{/reviews/employee}">Отзывы о сотрудниках</a>
+                        </div>
+                    </li>
+                    <li class="nav-item" th:if="${session.user != null}">
+                        <a class="nav-link" th:href="@{/logout}">Выйти</a>
+                    </li>
+                </ul>
+                <div th:insert="blocks/search :: search('')"></div>
+            </div>
+        </div>
+    </nav>
 </div>

@@ -1,14 +1,18 @@
-<div class="search" th:fragment="search-entity(value)">
-    <form method="get" name="searchEntity" th:action="@{/search/entities}">
-        <label for="entityQuery">Поиск учреждения образования:</label><br>
-        <input id="entityQuery" name="query" required th:value="${value}" type="text">
-        <button type="submit">Найти</button>
+<div th:fragment="search-entity(value)">
+    <form class="d-flex" method="get" name="searchEntity" th:action="@{/search/entities}">
+        <input class="form-control me-sm-2" id="entityQuery" name="query" required th:value="${value}" type="text" placeholder="Школа №1">
+        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Найти</button>
     </form>
 </div>
-<div class="search" th:fragment="search-employee(value)">
-    <form method="get" name="searchEmployee" th:action="@{/search/employees}">
-        <label for="employeeQuery">Поиск сотрудника:</label><br>
-        <input id="employeeQuery" name="query" required th:value="${value}" type="text">
-        <button type="submit">Найти</button>
+<div th:fragment="search-employee(value)">
+    <form class="d-flex" method="get" name="searchEmployee" th:action="@{/search/employees}">
+        <input class="form-control me-sm-2" id="employeeQuery" name="query" required th:value="${value}" type="text" placeholder="Иванов Иван Иванович">
+        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Найти</button>
+    </form>
+</div>
+<div th:fragment="search(value)">
+    <form class="d-flex" method="get" th:action="@{/search}">
+        <input class="form-control me-sm-2" type="text" id="query" name="query" th:value="${value}" placeholder="здесь есть поиск">
+        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Поиск</button>
     </form>
 </div>

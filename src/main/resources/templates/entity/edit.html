@@ -3,72 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <title>Редактирование учреждения образования - Reviewer</title>
-    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
 </head>
 <body>
 <div class=container>
     <div th:insert="blocks/header :: header"></div>
-    <div class="page">
-        <div class="body">
-            <div class="page-name">
-                <p th:text="${entity.name}"></p>
-            </div>
-            <div class="content">
-                <img class="entity-page" th:src="@{/images/entity/{imageURL}(imageURL=${entity.imageURL})}">
-                <p class="success" th:text="${success}"></p>
-                <p class="error" th:text="${error}"></p>
-                <p><a th:href="@{/entity/{id}(id=${entity.id})}" th:text="'Перейти к учреждению образования'"></a></p>
-                <form enctype="multipart/form-data" method="post" th:action="@{/entity/edit/{id}(id=${entity.id})}">
-                    <label for="file">Фотография УО (не более 8МБ, .png, .jpeg, .jpg)</label><br>
-                    <input type="file" name="file" id="file"><br><br>
-                    <label for="name">Название учреждения образования:</label><br>
-                    <input id="name" name="name" placeholder="обязательное поле" required style="width: 300px"
-                           th:value="${entity.name}" type="text"><br><br>
-                    <label for="abbreviation">Аббревиатура:</label><br>
-                    <input id="abbreviation" name="abbreviation" style="width: 300px"
+    <div class="content">
+        <h1>Редактирование учреждения образования</h1>
+        <img class="img-fluid" th:src="@{/images/entity/{imageURL}(imageURL=${entity.imageURL})}"><br><br>
+
+        <div th:if="${success != null}" class="alert alert-dismissible alert-success">
+            <p th:text="${success}"></p>
+        </div>
+        <div th:if="${error != null}" class="alert alert-dismissible alert-secondary">
+            <p th:text="${error}"></p>
+        </div>
+
+        <p><a th:href="@{/entity/{id}(id=${entity.id})}" th:text="'Перейти к учреждению образования'"></a></p>
+
+        <form enctype="multipart/form-data" method="post" th:action="@{/entity/edit/{id}(id=${entity.id})}">
+            <fieldset>
+                <div class="form-group">
+                    <label for="file" class="form-label mt-4">Фотография УО (не более 8МБ, .png, .jpeg, .jpg)</label>
+                    <input class="form-control" type="file" name="file" id="file">
+                </div>
+                <div class="form-group">
+                    <label for="name" class="form-label mt-4">Название учреждения образования:</label>
+                    <input class="form-control" id="name" name="name" placeholder="обязательное поле" required
+                           th:value="${entity.name}" type="text">
+                </div>
+                <div class="form-group">
+                    <label for="abbreviation" class="form-label mt-4">Аббревиатура:</label>
+                    <input class="form-control" id="abbreviation" name="abbreviation"
                            th:value="${entity.abbreviation}" type="text">
-                    <br><br>
-                    <label for="type">Тип учреждения образования:</label><br>
-                    <select id="type" name="type">
+                </div>
+                <div class="form-group">
+                    <label for="type" class="form-label mt-4">Тип учреждения образования:</label>
+                    <select class="form-select" id="type" name="type">
                         <option th:each="type : ${types}" th:selected="${type.equals(entity.type)}"
                                 th:text="${type.name}"
                                 th:value="${type}"></option>
-                    </select><br><br>
-                    <label for="parentEntity">Университет (только для факультетов):</label><br>
-                    <select id="parentEntity" name="parentEntity">
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="parentEntity" class="form-label mt-4">Университет (только для факультетов):</label>
+                    <select class="form-select" id="parentEntity" name="parentEntity">
                         <option th:selected="${entity.parentEntity == null}" th:value="0">Не выбрано</option>
                         <option th:each="university : ${parentEntities}"
                                 th:selected="${entity.parentEntity != null && university.id eq entity.parentEntity.id}"
                                 th:text="${university.name}"
                                 th:value="${university.id}"></option>
-                    </select><br><br>
-                    <label for="country">Страна:</label><br>
-                    <select id="country" name="country">
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="country" class="form-label mt-4">Страна:</label>
+                    <select class="form-select" id="country" name="country">
                         <option th:each="country : ${countries}" th:selected="${country.equals(entity.country)}"
                                 th:text="${country.name}" th:value="${country}"></option>
-                    </select><br><br>
-                    <label for="region">Область:</label><br>
-                    <select id="region" name="region">
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="region" class="form-label mt-4">Область:</label>
+                    <select class="form-select" id="region" name="region">
                         <option th:each="region : ${regions}" th:selected="${region.equals(entity.region)}"
                                 th:text="${region.name}" th:value="${region}"></option>
-                    </select><br><br>
-                    <label for="district">Район:</label><br>
-                    <select id="district" name="district">
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="district" class="form-label mt-4">Район:</label>
+                    <select class="form-select" id="district" name="district">
                         <option th:each="district : ${districts}" th:selected="${district.equals(entity.district)}"
                                 th:text="${district.name}" th:value="${district}"></option>
-                    </select><br><br>
-                    <label for="address">Адрес:</label><br>
-                    <input id="address" name="address" placeholder="обязательное поле" required style="width: 300px"
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="address" class="form-label mt-4">Адрес:</label>
+                    <input class="form-control" id="address" name="address" placeholder="обязательное поле" required
                            th:value="${entity.address}" type="text">
-                    <br><br><label for="siteURL">Сайт:</label><br>
-                    <input id="siteURL" name="siteURL" style="width: 300px"
-                           th:value="${entity.siteURL}" type="text"><br><br>
-                    <button>Сохранить</button>
-                </form>
-            </div>
-        </div>
-        <div th:insert="blocks/sidebar :: sidebar"></div>
+                </div>
+                <div class="form-group">
+                    <label for="siteURL" class="form-label mt-4">Сайт:</label>
+                    <input class="form-control" id="siteURL" name="siteURL"
+                           th:value="${entity.siteURL}" type="text">
+                </div>
+            </fieldset>
+            <br>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </form>
     </div>
     <div th:insert="blocks/footer :: footer"></div>
 </div>

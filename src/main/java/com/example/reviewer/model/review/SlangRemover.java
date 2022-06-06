@@ -32,8 +32,9 @@ public class SlangRemover {
     public static String removeSlang(String text) {
         for(String word : blackList) {
             int index = text.toUpperCase().indexOf(word.toUpperCase());
-            if (index >= 0) {
+            while (index != -1) {
                 text = text.substring(0, index) + SYMBOLS + text.substring(index + 3);
+                index = text.toUpperCase().indexOf(word.toUpperCase());
             }
         }
         return text;

@@ -3,88 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${employee.name} + ' - Reviewer'"></title>
-    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class=container>
     <div th:insert="blocks/header :: header"></div>
-    <div class="page">
-        <div class="body">
-            <div class="page-name">
-                <p th:text="${employee.name}"></p>
-            </div>
-            <div class="content">
-                <div class="two-items">
-                    <div style="margin-right: 30px">
-                        <img class="employee-page"
-                             th:src="@{/images/employee/{imageURL}(imageURL=${employee.imageURL})}">
-                        <div>
-                            <div th:if="${user != null && (user.isAdmin() || user.isModerator())}">
-                                <a th:href="@{/employee/edit/{id}(id=${employee.id})}" th:text="'Редактировать'"></a>
-                                <a th:href="@{/employee/delete/{id}(id=${employee.id})}" th:text="'Удалить'"></a>
-                                <a th:href="@{/employee/block/{id}(id=${employee.id})}" th:if="${employee.visible}"
-                                   th:text="'Заблокировать'"></a>
-                                <a th:href="@{/employee/block/{id}(id=${employee.id})}" th:text="'Разблокировать'"
-                                   th:unless="${employee.visible}"></a>
-                            </div>
-                            <a th:href="@{/employee/report/{id}(id=${employee.id})}" th:text="'Пожаловаться'"></a>
-                        </div>
-                    </div>
-                    <div>
-                        <p th:text="${employee.type.name}"></p>
-                        <p>Работает в <a th:href="@{/entity/{id}(id=${employee.entity.id})}"
-                                         th:text="${employee.entity.name}"></a></p>
-                        <br><br>
-                        <p th:text="'Рейтинг: ' + ${employee.getAverageRating()}"></p>
-                        <p th:text="'Отзывов оставлено: ' + ${employee.reviewsAmount}"></p>
-                        <p th:text="${employee.peopleInvolved} + ' людей написали эти отзывы'"></p>
-                    </div>
-                </div>
-
-                <p class="success" th:text="${success}"></p>
-                <p class="error" th:text="${error}"></p>
-
-                <div th:if="${user == null}">
-                    <h4><a th:href="@{/login(redirect = ${#request.getRequestURI().substring(1)})}"
-                           th:text="'Войдите в аккаунт'"></a>, чтобы иметь возможность оставить свой
-                        отзыв, либо проголосовать за существующие.</h4>
-                </div>
-                <div th:if="${user != null}">
-                    <div th:if="${!user.hasRole(employee.entity.id)}">
-                        <p class="error">Отзывы, оставляемые <a th:href="@{/account/roles}"
-                                                                th:text="'без подтверждения своей роли'"></a> в
-                            учреждении образования будут помечены как "Неподтвержденные",
-                            после подтверждения связи с учреждением образования отзывы будет помечены как
-                            "Подтвержденные"</p>
-                    </div>
-                    <div th:insert="blocks/review :: left-employee-review(e = ${employee}, roles = ${roles})"></div>
-                </div>
-
+    <div class="content">
+        <h1 th:text="${employee.name}"></h1>
+        <div class="two-items">
+            <div style="margin-right: 30px">
+                <img class="img-fluid"
+                     th:src="@{/images/employee/{imageURL}(imageURL=${employee.imageURL})}"><br><br>
                 <div>
-                    <form method="get" th:href="@{/employee/{id}(id=${employee.id})}">
-                        <label for="mark">Оценки: </label>
-                        <select name="mark" id="mark">
-                            <option th:text="'Не выбрано'" th:value="0"></option>
-                            <option th:each="i : ${#numbers.sequence(1, 5)}" th:selected="${i eq mark}" th:text="${i}"
-                                    th:value="${i}"></option>
-                        </select><br><br>
-                        <button>Показать</button>
-                    </form>
+                    <p th:if="${user != null && (user.isAdmin() || user.isModerator())}">
+                        <a class="btn btn-primary" th:href="@{/employee/edit/{id}(id=${employee.id})}"
+                           th:text="'Редактировать'"></a>
+                        <a class="btn btn-primary" th:href="@{/employee/delete/{id}(id=${employee.id})}"
+                           th:text="'Удалить'"></a>
+                        <a class="btn btn-primary" th:href="@{/employee/block/{id}(id=${employee.id})}"
+                           th:if="${employee.visible}"
+                           th:text="'Заблокировать'"></a>
+                        <a class="btn btn-primary" th:href="@{/employee/block/{id}(id=${employee.id})}"
+                           th:text="'Разблокировать'"
+                           th:unless="${employee.visible}"></a>
+                    </p>
+                    <a class="btn btn-primary" th:href="@{/employee/report/{id}(id=${employee.id})}"
+                       th:text="'Пожаловаться'"></a>
                 </div>
-                <div th:unless="${reviews.isEmpty()}">
-                    <h4>Отзывы:</h4>
-                    <div class="reviews" th:each="review : ${reviews}">
-                        <div th:insert="blocks/review :: employee-review(r = ${review})"></div>
-                    </div>
-                </div>
-                <div th:if="${reviews.isEmpty()}">
-                    <h4>Отзывов еще нет.</h4>
-                </div>
+            </div>
+            <div>
+                <b th:text="${employee.type.name}"></b><br>
+                <b>Работает в </b><a th:href="@{/entity/{id}(id=${employee.entity.id})}"
+                                     th:text="${employee.entity.name}"></a>
+                <br><br>
+                <b>Рейтинг: </b><span th:text="${employee.getAverageRating()}"></span><br>
+                <b>Отзывов: </b><span
+                    th:text="${employee.reviewsAmount} + ' от ' + ${employee.peopleInvolved} + ' авторов'"></span>
             </div>
         </div>
-        <div th:insert="blocks/sidebar :: sidebar"></div>
+
+        <div th:if="${success != null}" class="alert alert-dismissible alert-success">
+            <p th:text="${success}"></p>
+        </div>
+        <div th:if="${error != null}" class="alert alert-dismissible alert-secondary">
+            <p th:text="${error}"></p>
+        </div>
+
+        <div th:if="${user == null}" class="alert alert-dismissible alert-warning">
+            <p class="mb-0"><a th:href="@{/login(redirect = ${#request.getRequestURI().substring(1)})}"
+                               th:text="'Войдите в аккаунт'"></a>, чтобы иметь возможность оставить свой
+                отзыв, либо проголосовать за существующие.</p>
+        </div>
+        <div th:if="${user != null}">
+            <div th:if="${!user.hasRole(employee.entity.id)}" class="alert alert-dismissible alert-warning">
+                <p class="mb-0">Отзывы, оставляемые <a th:href="@{/account/roles}"
+                                                       th:text="'без подтверждения своей роли'"></a> в
+                    учреждении образования будут помечены как "Неподтвержденные",
+                    после подтверждения связи с учреждением образования отзывы будет помечены как
+                    "Подтвержденные"</p>
+            </div>
+            <div th:insert="blocks/review :: left-employee-review(e = ${employee}, roles = ${roles})"></div>
+        </div>
+
+        <div th:insert="blocks/review :: show-employee-reviews(employee = ${employee})"></div>
+        <br>
+        <div th:unless="${reviews.isEmpty()}">
+            <h4>Отзывы:</h4>
+            <div class="reviews" th:each="review : ${reviews}">
+                <div th:insert="blocks/review :: employee-review(r = ${review})"></div>
+            </div>
+        </div>
+        <div th:if="${reviews.isEmpty()}" class="alert alert-dismissible alert-light">
+            <h4>Отзывов еще нет.</h4>
+        </div>
     </div>
-</div>
 <div th:insert="blocks/footer :: footer"></div>
 </div>
 </body>

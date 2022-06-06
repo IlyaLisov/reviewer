@@ -3,77 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <title>Панель администратора - Reviewer</title>
-    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class="container">
     <div th:insert="blocks/header :: header"></div>
-    <div class="page">
-        <div class="body">
-            <div class="page-name">
-                Панель администратора
-            </div>
-            <div class="account">
-                <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
-                <div class="account-content">
-                    <p>На данной странице Вы можете увидеть все заблокированные отзывы и разблокировать их.</p>
-                    <p class="success" th:text="${success}"></p>
-                    <p class="error" th:text="${error}"></p>
-                    <table>
-                        <thead>
-                        <td>№</td>
-                        <td>Учреждение образования</td>
-                        <td>Отзыв</td>
-                        <td>Действие</td>
-                        </thead>
-                        <tr th:each="review, iter : ${entityReviews}">
-                            <td><span th:text="${iter.count}"></span></td>
-                            <td>
-                                <div th:insert="blocks/review :: entity-review-with-anchor(r = ${review})"></div>
-                            </td>
-                            <td>
-                                <a th:href="@{/reviews/report/entity-review/block/{id}(id=${review.id})}"
-                                   th:text="'Разблокировать'"></a>
-                                <h4>Жалобы пользователей:</h4>
-                                <div th:each="report : ${reports}">
-                                    <div th:if="${report.entityReview != null && report.entityReview eq review}"
-                                         th:insert="blocks/report :: report(r = ${report})"></div>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                    <br>
-                    <table>
-                        <thead>
-                        <td>№</td>
-                        <td>Сотрудник</td>
-                        <td>Отзыв</td>
-                        <td>Действие</td>
-                        </thead>
-                        <tr th:each="review, iter : ${employeeReviews}">
-                            <td><span th:text="${iter.count}"></span></td>
-                            <td>
-                                <div th:insert="blocks/review :: employee-review-with-anchor(r = ${review})"></div>
-                            </td>
-                            <td>
-                                <a th:href="@{/reviews/report/employee-review/block/{id}(id=${review.id})}"
-                                   th:if="${!review.visible}"
-                                   th:text="'Разблокировать'"></a>
-                                <a th:href="@{/reviews/report/employee-review/block/{id}(id=${review.id})}"
-                                   th:if="${review.visible}"
-                                   th:text="'Заблокировать'"></a>
-                                <h4>Жалобы пользователей:</h4>
-                                <div th:each="report : ${reports}">
-                                    <div th:if="${report.employeeReview != null && report.employeeReview eq review}"
-                                         th:insert="blocks/report :: report(r = ${report})"></div>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
+    <div class="content">
+        <h1>Заблокированные отзывы</h1>
+        <div class="account">
+            <div th:insert="${session.user.isAdmin()}? ~{blocks/account-menu-admin :: account-menu-admin} : ~{blocks/account-menu-moderator :: account-menu-moderator}"></div>
+            <div class="account-content">
+                <p>На данной странице Вы можете увидеть все заблокированные отзывы и разблокировать их.</p>
+
+                <div th:if="${success != null}" class="alert alert-dismissible alert-success">
+                    <p th:text="${success}"></p>
+                </div>
+                <div th:if="${error != null}" class="alert alert-dismissible alert-secondary">
+                    <p th:text="${error}"></p>
+                </div>
+
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#education">Отзывы об учреждениях
+                            образования</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#employee">Отзывы о сотрудниках</a>
+                    </li>
+                </ul>
+                <div id="myTabContent" class="tab-content">
+                    <div class="tab-pane fade active show" id="education">
+                        <br>
+                        <table class="table table-hover">
+                            <thead>
+                            <td>№</td>
+                            <td>Учреждение образования</td>
+                            <td>Отзыв</td>
+                            </thead>
+                            <tr th:each="review, iter : ${entityReviews}">
+                                <td><span th:text="${iter.count}"></span></td>
+                                <td>
+                                    <div th:insert="blocks/review :: entity-review-with-anchor(r = ${review})"></div>
+                                </td>
+                                <td>
+                                    <a th:href="@{/reviews/report/entity-review/block/{id}(id=${review.id})}"
+                                       th:text="'Разблокировать'"></a>
+                                    <h4>Жалобы пользователей:</h4>
+                                    <div th:each="report : ${reports}">
+                                        <div th:if="${report.entityReview != null && report.entityReview eq review}"
+                                             th:insert="blocks/report :: report(r = ${report})"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="tab-pane fade" id="employee">
+                        <br>
+                        <table class="table table-hover">
+                            <thead>
+                            <td>№</td>
+                            <td>Сотрудник</td>
+                            <td>Отзыв</td>
+                            </thead>
+                            <tr th:each="review, iter : ${employeeReviews}">
+                                <td><span th:text="${iter.count}"></span></td>
+                                <td>
+                                    <div th:insert="blocks/review :: employee-review-with-anchor(r = ${review})"></div>
+                                </td>
+                                <td>
+                                    <a th:href="@{/reviews/report/employee-review/block/{id}(id=${review.id})}"
+                                       th:if="${!review.visible}"
+                                       th:text="'Разблокировать'"></a>
+                                    <a th:href="@{/reviews/report/employee-review/block/{id}(id=${review.id})}"
+                                       th:if="${review.visible}"
+                                       th:text="'Заблокировать'"></a>
+                                    <h4>Жалобы пользователей:</h4>
+                                    <div th:each="report : ${reports}">
+                                        <div th:if="${report.employeeReview != null && report.employeeReview eq review}"
+                                             th:insert="blocks/report :: report(r = ${report})"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-        <div th:insert="blocks/sidebar :: sidebar"></div>
     </div>
     <div th:insert="blocks/footer :: footer"></div>
 </div>

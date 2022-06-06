@@ -3,44 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <title>Редактирование сотрудника - Reviewer</title>
-    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
 </head>
 <body>
 <div class=container>
     <div th:insert="blocks/header :: header"></div>
-    <div class="page">
-        <div class="body">
-            <div class="page-name">
-                <p th:text="${employee.name}"></p>
-            </div>
-            <div class="content">
-                <img class="employee-page" th:src="@{/images/employee/{imageURL}(imageURL=${employee.imageURL})}">
-                <p class="success" th:text="${success}"></p>
-                <p class="error" th:text="${error}"></p>
-                <p><a th:href="@{/employee/{id}(id=${employee.id})}" th:text="'Перейти к сотруднику'"></a></p>
-                <form enctype="multipart/form-data" method="post" th:action="@{/employee/edit/{id}(id=${employee.id})}">
-                    <label for="file">Фотография сотрудника (не более 8МБ, .png, .jpeg, .jpg)</label><br>
-                    <input type="file" name="file" id="file"><br><br>
-                    <label for="name">ФИО сотрудника:</label><br>
-                    <input id="name" name="name" placeholder="обязательное поле" required style="width: 300px"
+    <div class="content">
+        <h1 th:text="${employee.name}"></h1>
+        <img class="img-fluid" th:src="@{/images/employee/{imageURL}(imageURL=${employee.imageURL})}"><br><br>
+
+        <div th:if="${success != null}" class="alert alert-dismissible alert-success">
+            <p th:text="${success}"></p>
+        </div>
+        <div th:if="${error != null}" class="alert alert-dismissible alert-secondary">
+            <p th:text="${error}"></p>
+        </div>
+
+        <p><a th:href="@{/employee/{id}(id=${employee.id})}" th:text="'Перейти к сотруднику'"></a></p>
+
+        <form enctype="multipart/form-data" method="post" th:action="@{/employee/edit/{id}(id=${employee.id})}">
+            <fieldset>
+                <div class="form-group">
+                    <label for="file" class="form-label mt-4">Фотография сотрудника (не более 8МБ, .png, .jpeg, .jpg)</label><br>
+                    <input class="form-control" type="file" name="file" id="file">
+                </div>
+                <div class="form-group">
+                    <label for="name" class="form-label mt-4">ФИО сотрудника:</label><br>
+                    <input class="form-control" id="name" name="name" placeholder="обязательное поле" required
                            th:value="${employee.name}" type="text">
-                    <br><br><label for="type">Тип сотрудника:</label><br>
-                    <select id="type" name="type">
+                </div>
+                <div class="form-group">
+                    <label for="type" class="form-label mt-4">Тип сотрудника:</label><br>
+                    <select class="form-select" id="type" name="type">
                         <option th:each="employeeType : ${types}" th:selected="${employeeType eq employee.type}"
                                 th:text="${employeeType.name}" th:value="${employeeType}"></option>
-                    </select><br>
-                    <br><br><label for="entity">Учреждение образования, в котором работает этот
-                    сотрудник:</label><br>
-                    <select id="entity" name="entity">
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="entity" class="form-label mt-4">Учреждение образования, в котором работает этот
+                        сотрудник:</label><br>
+                    <select class="form-select" id="entity" name="entity">
                         <option th:each="entity : ${entities}" th:selected="${entity.id eq employee.entity.id}"
                                 th:text="${entity.name}" th:value="${entity.id}"></option>
-                    </select><br><br>
-                    <button>Сохранить</button>
-                </form>
-            </div>
-        </div>
-        <div th:insert="blocks/sidebar :: sidebar"></div>
+                    </select>
+                </div>
+            </fieldset>
+            <br>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </form>
     </div>
     <div th:insert="blocks/footer :: footer"></div>
 </div>

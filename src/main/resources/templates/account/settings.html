@@ -1,36 +1,45 @@
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Настройки - Reviewer</title>
-    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class="container">
     <div th:insert="blocks/header :: header"></div>
-    <div class="page">
-        <div class="body">
-            <div class="page-name">
-                Аккаунт
-            </div>
-            <div class="account">
-                <div th:insert="${session.user.isAdmin() || session.user.isModerator()}? ~{blocks/account-menu :: account-menu-admin} : ~{blocks/account-menu :: account-menu-user}"></div>
-                <div class="account-content">
-                    <form id="settings" method="post" th:action="@{/account/settings}">
-                        <br><label for="password">Новый пароль</label><br>
-                        <input id="password" name="password" placeholder="обязательное поле" required type="password">
-                        <br><br><label for="passwordConfirmation">Подтверждение нового пароля</label><br>
-                        <input id="passwordConfirmation" name="passwordConfirmation" placeholder="обязательное поле"
-                               required
-                               type="password">
-                        <br><br>
-                        <button>Сохранить</button>
-                    </form>
-                    <p class="success" th:text="${success}"></p>
-                    <p class="error" th:text="${error}"></p>
+    <div class="content">
+        <h1>Аккаунт</h1>
+        <div class="account">
+            <div th:insert="${session.user.isAdmin() || session.user.isModerator()}? ~{blocks/account-menu :: account-menu-admin} : ~{blocks/account-menu :: account-menu-user}"></div>
+            <div class="account-content">
+                <p>Здесь Вы можете изменить свой пароль на новый.</p>
+                <form method="post" th:action="@{/account/settings}">
+                    <fieldset>
+                        <div class="form-group">
+                            <label for="password" class="form-label mt-4">Новый пароль</label>
+                            <input class="form-control" id="password" name="password" placeholder="обязательное поле" required
+                                   type="password">
+                        </div>
+                        <div class="form-group">
+                            <label for="passwordConfirmation" class="form-label mt-4">Подтверждение нового
+                                пароля</label>
+                            <input class="form-control" id="passwordConfirmation" name="passwordConfirmation" placeholder="обязательное поле"
+                                   required
+                                   type="password">
+                        </div>
+                    </fieldset>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </form>
+
+                <div th:if="${success != null}" class="alert alert-dismissible alert-success">
+                    <p th:text="${success}"></p>
+                </div>
+                <div th:if="${error != null}" class="alert alert-dismissible alert-secondary">
+                    <p th:text="${error}"></p>
                 </div>
             </div>
         </div>
-        <div th:insert="blocks/sidebar :: sidebar"></div>
     </div>
     <div th:insert="blocks/footer :: footer"></div>
 </div>

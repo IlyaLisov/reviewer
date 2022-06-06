@@ -3,33 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <title>Жалоба на сотрудника - Reviewer</title>
-    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
 </head>
 <body>
 <div class=container>
     <div th:insert="blocks/header :: header"></div>
-    <div class="page">
-        <div class="body">
-            <div class="page-name">
-                <p th:text="${employee.name}"></p>
-            </div>
-            <div class="content">
-                <img class="employee-page" th:src="@{/images/employee/{imageURL}(imageURL=${employee.imageURL})}">
-                <p class="success" th:text="${success}"></p>
-                <p><a th:href="@{/employee/{id}(id=${employee.id})}" th:text="'Перейти к сотруднику'"></a></p>
-                <form id="feedback" method="post" th:action="@{/employee/report/{id}(id=${employee.id})}">
-                    <label for="theme">Причина</label>
-                    <select id="theme" name="theme" required>
-                        <option th:each="type : ${types}" th:value="${type}" th:text="${type.name}"></option>
-                    </select><br><br>
-                    <label for="text">Ваше сообщение</label><br>
-                    <textarea id="text" name="text" style="width: 90%; height: 150px; resize: none;"></textarea><br><br>
-                    <button type="submit">Отправить</button>
-                </form>
-            </div>
+    <div class="content">
+        <h1 th:text="'Жалоба на ' + ${employee.name}"></h1>
+        <img class="img-fluid" th:src="@{/images/employee/{imageURL}(imageURL=${employee.imageURL})}"><br><br>
+
+        <div th:if="${success != null}" class="alert alert-dismissible alert-success">
+            <p th:text="${success}"></p>
         </div>
-        <div th:insert="blocks/sidebar :: sidebar"></div>
+        <div th:if="${error != null}" class="alert alert-dismissible alert-secondary">
+            <p th:text="${error}"></p>
+        </div>
+
+        <p><a th:href="@{/employee/{id}(id=${employee.id})}" th:text="'Перейти к сотруднику'"></a></p>
+        <form method="post" th:action="@{/employee/report/{id}(id=${employee.id})}">
+            <fieldset>
+                <div class="form-group">
+                    <label for="theme" class="form-label mt-4">Причина</label>
+                    <select class="form-select" id="theme" name="theme" required>
+                        <option th:each="type : ${types}" th:value="${type}" th:text="${type.name}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="text" class="form-label mt-4">Ваше сообщение</label><br>
+                    <textarea class="form-control" id="text" name="text" style="width: 90%; height: 150px; resize: none;"></textarea>
+                </div>
+            </fieldset>
+            <br>
+            <button type="submit" class="btn btn-primary">Отправить</button>
+        </form>
     </div>
     <div th:insert="blocks/footer :: footer"></div>
 </div>

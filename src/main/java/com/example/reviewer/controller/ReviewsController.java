@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/reviews")
 public class ReviewsController extends com.example.reviewer.controller.Controller {
-    @GetMapping()
-    public String index(Model model) {
+    @GetMapping("/education")
+    public String education(Model model) {
         List<EntityReview> entityReviews = (List<EntityReview>) entityReviewRepository.findAll();
         model.addAttribute("entityReviews", entityReviews.stream()
                 .filter(review -> !review.getText().isEmpty())
@@ -30,7 +30,11 @@ public class ReviewsController extends com.example.reviewer.controller.Controlle
                 .filter(review -> !review.getDeleted())
                 .sorted((e1, e2) -> e2.getReviewDate().compareTo(e1.getReviewDate()))
                 .collect(Collectors.toList()));
+        return "reviews/education";
+    }
 
+    @GetMapping("/employee")
+    public String employee(Model model) {
         List<EmployeeReview> employeeReviews = (List<EmployeeReview>) employeeReviewRepository.findAll();
         model.addAttribute("employeeReviews", employeeReviews.stream()
                 .filter(review -> !review.getText().isEmpty())
@@ -38,8 +42,7 @@ public class ReviewsController extends com.example.reviewer.controller.Controlle
                 .filter(review -> !review.getDeleted())
                 .sorted((e1, e2) -> e2.getReviewDate().compareTo(e1.getReviewDate()))
                 .collect(Collectors.toList()));
-
-        return "reviews/index";
+        return "reviews/employee";
     }
 
     @GetMapping("/report/entity-review/{id}")

@@ -79,12 +79,12 @@ ul.account-menu {
     margin: 0;
     padding-left: 0;
     background: #B8D5CD;
+    width: 195px;
 }
 
 .account {
     display: flex;
-    flex-direction: row;
-    margin: 10px;
+    flex-direction: row
 }
 
 ul.account-menu {
@@ -96,11 +96,12 @@ ul.account-menu {
     display: -webkit-flex;
     -webkit-flex-direction: column;
     display: block;
+    width: 195px;
     background: #B8D5CD;
 }
 
 a.account-menu {
-    width: 130px;
+    width: 195px;
     text-align: center;
     text-decoration: none;
     font-size: 14pt;

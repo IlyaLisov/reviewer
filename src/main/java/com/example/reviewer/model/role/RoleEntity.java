@@ -30,14 +30,18 @@ public class RoleEntity {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-    public RoleEntity() {
+    @NotNull
+    private Boolean isConfirmed;
 
+    public RoleEntity() {
+        this.isConfirmed = false;
     }
 
     public RoleEntity(User user, Entity entity, Role role) {
         this.user = user;
         this.entity = entity;
         this.role = role;
+        this.isConfirmed = false;
     }
 
     public Long getId() {
@@ -70,6 +74,14 @@ public class RoleEntity {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Boolean getConfirmed() {
+        return isConfirmed;
+    }
+
+    public void setConfirmed(Boolean confirmed) {
+        isConfirmed = confirmed;
     }
 
     @Override

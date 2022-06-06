@@ -3,26 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Удаление сотрудника - Reviewer</title>
-    <link href="../static/css/style.css" rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
 </head>
 <body>
 <div class=container>
     <div th:insert="blocks/header :: header"></div>
-    <div class="page">
-        <div class="body">
-            <div class="page-name">
-                <p th:text="${employee.name}"></p>
-            </div>
-            <div class="content">
-                <p><b>Вы действительно хотите удалить этого сотрудника?</b></p>
-                <p><a th:href="@{/employee/{id}(id=${employee.id})}" th:text="'Перейти к сотруднику'"></a></p>
-                <form method="post" th:action="@{/employee/delete/{id}(id=${employee.id})}">
-                    <button>Удалить</button>
-                </form>
-            </div>
+    <div class="content">
+        <h1 th:text="'Удаление сотрудника ' + ${employee.name}"></h1>
+        <p><a th:href="@{/employee/{id}(id=${employee.id})}" th:text="'Перейти к сотруднику'"></a></p>
+        <div class="alert alert-dismissible alert-warning">
+            <p class="mb-0">Вы действительно хотите удалить этого сотрудника?</p>
         </div>
-        <div th:insert="blocks/sidebar :: sidebar"></div>
+
+        <form method="post" th:action="@{/employee/delete/{id}(id=${employee.id})}">
+            <button type="submit" class="btn btn-primary">Удалить</button>
+        </form>
     </div>
     <div th:insert="blocks/footer :: footer"></div>
 </div>

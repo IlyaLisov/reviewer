@@ -13,13 +13,13 @@
         <div th:each="employee, iter : ${employees}">
             <tr>
                 <td><span th:text="${iter.count + 10 * (page - 1)}"></span></td>
-                <td><img class="employee-rating"
-                         th:src="@{/images/employee/{imageURL}(imageURL = ${employee.imageURL == null ? 'default.jpg' : employee.imageURL})}">
+                <td><img class="img-thumbnail"
+                         th:src="@{/images/employee/{imageURL}(imageURL = ${employee.imageURL})}">
                 </td>
                 <td><span th:text="${employee.getAverageRating()} + ' (' + ${employee.reviewsAmount} + ' отзывов)'"></span></td>
                 <td><a th:href="@{/employee/{id}(id = ${employee.id})}" th:text="${employee.name}"></a>
                 </td>
-                <td><a th:href="@{/rating?employeeType={type}(type = ${employee.type})}"
+                <td><a th:href="@{/rating/employee(employeeType=${employee.type})}"
                        th:text="${employee.type.name}"></a></td>
                 <td><a th:href="@{/entity/{id}(id = ${employee.entity.id})}"
                        th:text="${employee.entity.name}"></a></td>
@@ -45,7 +45,7 @@
                 <td><span th:text="${entity.getAverageRating()} + ' (' + ${entity.reviewsAmount} + ' отзывов)'"></span>
                 </td>
                 <td><a th:href="@{/entity/{id}(id = ${entity.id})}" th:text="${entity.name}"></a></td>
-                <td><a th:href="@{/rating?entityType={type}(type = ${entity.type})}" th:text="${entity.type.name}"></a>
+                <td><a th:href="@{/rating/education(entityType=${entity.type})}" th:text="${entity.type.name}"></a>
                 </td>
                 <td><span th:text="${entity.address}"></span></td>
             </tr>
